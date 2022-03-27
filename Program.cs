@@ -21,7 +21,15 @@ builder.Services.AddAuthentication("CookieUser").AddCookie("CookieUser", option 
 {
     option.Cookie.Name = "CookieUser";
     option.LoginPath = "/account/login";
+    option.AccessDeniedPath = "/account/accessdenied";
     option.ReturnUrlParameter = "returnpage";
+});
+builder.Services.AddAuthorization(options => 
+{
+    options.AddPolicy("AdminRolePolicy", policy => 
+    {
+        policy.RequireRole("User");
+    });
 });
 builder.Services.AddScoped<IUserService, UserService>();
 
@@ -32,7 +40,6 @@ if (args.Length == 1 && args[0].ToLower() == "seeddata")
     Seed.SeedData(app);
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
