@@ -1,0 +1,49 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+@media only screen and (min-width: 0px) and (max-width:320px) {
+    .card-login {
+        width: 15rem;
+    }
+}
+
+@media only screen and (min-width: 320px) and (max-width:900px) {
+    .card-login {
+        width: 19rem;
+    }
+}
+@media only screen and (min-width: 900px) {
+    .card-login {
+        width: 30rem;
+    }
+}
+.card-login {
+    margin-left: auto;
+    margin-right: auto;
+    animation-duration: 1s;
+    animation-name: slideIn;
+}
+
+@keyframes slideIn{
+    from{
+        transform:translateY(10px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
