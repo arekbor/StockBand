@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 appsettings.json
 Properties/*
+Data/Seed.cs
