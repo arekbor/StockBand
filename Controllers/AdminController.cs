@@ -1,14 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StockBand.Interfaces;
 
 namespace StockBand.Controllers
 {
     [Authorize(Policy = "AdminRolePolicy")]
     public class AdminController : Controller
     {
-        public IActionResult Index()
+        private readonly IAdminService _adminService;
+        public AdminController(IAdminService adminService)
         {
-            return View();
+            _adminService = adminService;
+        }
+        public async Task<IActionResult> Index()
+        {
+            var users = await _adminService.GetAllUsersAsync();
+            return View(users);
         }
     }
 }

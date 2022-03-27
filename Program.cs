@@ -21,17 +21,18 @@ builder.Services.AddAuthentication("CookieUser").AddCookie("CookieUser", option 
 {
     option.Cookie.Name = "CookieUser";
     option.LoginPath = "/account/login";
-    option.AccessDeniedPath = "/account/accessdenied";
+    option.AccessDeniedPath = "/exceptions/forbidden";
     option.ReturnUrlParameter = "returnpage";
 });
 builder.Services.AddAuthorization(options => 
 {
     options.AddPolicy("AdminRolePolicy", policy => 
     {
-        policy.RequireRole("User");
+        policy.RequireRole("Admin");
     });
 });
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 
@@ -42,7 +43,7 @@ if (args.Length == 1 && args[0].ToLower() == "seeddata")
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/exceptions/InternalServerError");
     app.UseHsts();
 
 }

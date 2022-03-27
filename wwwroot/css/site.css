@@ -14,11 +14,16 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+   margin-bottom: 60px;
+   overflow: hidden; /* Hide scrollbars */
 }
 @media only screen and (min-width: 0px) and (max-width:320px) {
     .card-login {
         width: 15rem;
+    }
+    .adminpaneltbody {
+        max-height: 45vh;
+        font-size:8px;
     }
 }
 
@@ -26,11 +31,19 @@ body {
     .card-login {
         width: 19rem;
     }
+    .adminpaneltbody {
+        max-height: 50vh;
+        font-size: 10px;
+    }
 }
 @media only screen and (min-width: 900px) {
     .card-login {
         width: 30rem;
     }
+    .adminpaneltbody {
+        max-height: 40vh;
+    }
+
 }
 .card-login {
     margin-left: auto;
@@ -38,12 +51,25 @@ body {
     animation-duration: 1s;
     animation-name: slideIn;
 }
+.card-forbidden {
+    animation-duration: 1s;
+    animation-name: fadeIn;
+}
 
-@keyframes slideIn{
+@keyframes slideIn {
     from{
         transform:translateY(10px);
     }
     to {
         transform: translateY(0);
+    }
+}
+@keyframes fadeIn {
+    from {
+        opacity:0.5;
+    }
+
+    to {
+        opacity:1;
     }
 }
