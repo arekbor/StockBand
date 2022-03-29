@@ -118,7 +118,6 @@ namespace StockBand.Services
             user.Block = model.Block;
             user.RoleId = role.Id;
 
-
             _dbContext.UserDbContext.Update(user);
             _dbContext.SaveChanges();
             return true;
