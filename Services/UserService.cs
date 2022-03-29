@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
@@ -32,14 +31,14 @@ namespace StockBand.Services
                 .FirstOrDefaultAsync(x => x.Name.Equals(userDto.Name));
             if (user is null)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("Password", "Invalid username or passowrd");
+                _actionContext.ActionContext.ModelState.AddModelError("", "Invalid username or passowrd");
                 return false;
             }
                 
             var validatePwd = _passwordHasher.VerifyHashedPassword(user, user.HashPassword, userDto.Password);
             if (validatePwd == PasswordVerificationResult.Failed)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("Password", "Invalid username or passowrd");
+                _actionContext.ActionContext.ModelState.AddModelError("", "Invalid username or passowrd");
                 return false;
             }
             var claims = new List<Claim>()
@@ -68,6 +67,65 @@ namespace StockBand.Services
         {
             await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
             return true;
+        }
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            var users = await _dbContext.UserDbContext.Include(x => x.Role).ToListAsync();
+            if (users is null)
+                return null;
+            return users;
+        }
+        public async Task<User> GetUserAsync(int id)
+        {
+            var user = await _dbContext
+                .UserDbContext
+                .Include(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+                return null;
+            return user;
+        }
+        public async Task<IEnumerable<Role>> GetAllRolesAsync()
+        {
+            var roles = await _dbContext.RoleDbContext.ToListAsync();
+            if (roles is null)
+                return null;
+            return roles;
+        }
+        public async Task<bool> UpdateUser(int id, EditUserDto model)
+        {
+            var adminId = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
+            var validatePwd = _passwordHasher.VerifyHashedPassword(userAdmin, userAdmin.HashPassword, model.PasswordAdmin);
+            if(validatePwd == PasswordVerificationResult.Failed)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Wrong admin password");
+                return false;
+            }
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if(user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "User does not exist");
+                return false;
+            }
+            var role = await _dbContext.RoleDbContext.FirstOrDefaultAsync(x => x.Name.Equals(model.Role.Name));
+            if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Role does not exist");
+                return false;
+            }
+            user.Name = model.Name;
+            user.Block = model.Block;
+            user.RoleId = role.Id;
+
+
+            _dbContext.UserDbContext.Update(user);
+            _dbContext.SaveChanges();
+            return true;
+        }
+        private ClaimsPrincipal GetUser()
+        {
+            return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
     }
 }

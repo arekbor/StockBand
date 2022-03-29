@@ -12,11 +12,8 @@ namespace Stock_Band.Controllers
         {
             _userService = userService;
         }
+        [HttpGet]
         public IActionResult Login()
-        {
-            return View();
-        }
-        public IActionResult AccessDenied()
         {
             return View();
         }
@@ -38,7 +35,7 @@ namespace Stock_Band.Controllers
             var status = await _userService.LogoutUserAsync();
             if(status)
                 return RedirectToAction("index", "home");
-            return RedirectToAction("index", "home");//TODO zrob tu redirect to fail
+            return RedirectToAction("index", "home");
         }
     }  
 }

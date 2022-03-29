@@ -8,7 +8,8 @@ namespace StockBand.Data
     {
         public ApplicationProfile()
         {
-            CreateMap<UserLoginDto, User>();
+            //CreateMap<UserLoginDto, User>();
+            CreateMap<User,EditUserDto>();
         }
     }
 }

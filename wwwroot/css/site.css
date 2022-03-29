@@ -18,26 +18,35 @@ body {
    overflow: hidden; /* Hide scrollbars */
 }
 @media only screen and (min-width: 0px) and (max-width:320px) {
-    .card-login {
+    .card-custom {
         width: 15rem;
     }
     .adminpaneltbody {
         max-height: 45vh;
         font-size:8px;
     }
+    table th{
+        font-size:10px;
+    }
+    .table-role{
+
+    }
 }
 
 @media only screen and (min-width: 320px) and (max-width:900px) {
-    .card-login {
+    .card-custom {
         width: 19rem;
     }
     .adminpaneltbody {
         max-height: 50vh;
         font-size: 10px;
     }
+    .table-role {
+        width: 20%;
+    }
 }
 @media only screen and (min-width: 900px) {
-    .card-login {
+    .card-custom {
         width: 30rem;
     }
     .adminpaneltbody {
@@ -45,7 +54,7 @@ body {
     }
 
 }
-.card-login {
+.card-custom {
     margin-left: auto;
     margin-right: auto;
     animation-duration: 1s;
@@ -72,4 +81,18 @@ body {
     to {
         opacity:1;
     }
+}
+.bg-image {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+.thead-borderless > tr > th{
+    border:none;
 }

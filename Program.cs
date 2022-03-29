@@ -32,7 +32,6 @@ builder.Services.AddAuthorization(options =>
     });
 });
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 

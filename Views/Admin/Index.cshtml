@@ -10,10 +10,10 @@
     </div>
     <div class="card-body">
         <table class="table bg-dark" style="width: 100%;">
-            <thead class="text-left" style="display:table; width:100%; table-layout:fixed;">
-                <tr>
-                    <th class="p-0 ps-3" scope="col">Id</th>
-                    <th class="p-0 ps-3" scope="col">Name</th>
+            <thead class="text-left thead-borderless" style="display:table; width:100%; table-layout:fixed;">
+                <tr class="text-light">
+                    <th class="p-0 ps-3" style="width: 12% !important;" scope="col">Id</th>
+                    <th class="p-0 ps-3 table-role" style="width: 45% !important;" scope="col">Name</th>
                     <th class="p-0 ps-3" scope="col">Role</th>
                     <th class="p-0 ps-3" scope="col"></th>
                 </tr>
@@ -21,15 +21,20 @@
             <tbody class="adminpaneltbody mt-3 border-secondary" style="display:block; overflow-y:auto; table-layout:fixed; border-width:1px 0px 0px 0px;">
                 @foreach (var user in Model)
                 {
-                    <tr class="mt-2" style="display: table; width: 100%; table-layout: fixed;">
-                        <td class="p-0 ps-3" scope="row">@user.Id</td>
-                        <td class="p-0 ps-3">
+                    <tr class="mt-1" style="display: table; width: 100%; table-layout: fixed; ">
+                        <td class="p-0 ps-3" style="width: 12% !important;" scope="row">@user.Id</td>
+                        <td class="p-0 ps-3 table-role" style="width: 45% !important;">
                             <div>
                                 <p class="fw-bold mb-1">@user.Name</p>
-                                <p class="text-muted mb-0">Tracks: 0</p>
+                                <p class="text-muted mb-0">Block: @user.Block</p>
                             </div>
                         </td>
-                        <td class="p-0 ps-3">@user.Role.Name</td>
+                        <td class="p-0 ps-3">
+                            <div>
+                                <p class="fw-bold mb-1">@user.Role.Name</p>
+                                <p class="text-muted mb-0">RoleId: @user.Role.Id</p>
+                            </div>
+                        </td>
                         <td class="p-0 ps-3" style="text-align:right;"><a asp-controller="admin" asp-action="edituser" asp-route-id="@user.Id"><i class="fa-solid fa-pen-to-square"></i></a></td>
                     </tr>
                 }
