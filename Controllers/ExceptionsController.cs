@@ -19,5 +19,10 @@ namespace StockBand.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult CustomException()
+        {
+            return View();
+        }
     }
 }

@@ -44,8 +44,17 @@ namespace Stock_Band.Controllers
         {
             var verifyGuid = UniqueLinkService.VerifyLink(guid);
             if (!verifyGuid)
-                return RedirectToAction("badrequest", "exceptions");
-            return View(guid);
+            {
+                TempData["Message"] = "Link you followed has expired.";
+                return RedirectToAction("customexception", "exceptions");
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                TempData["Message"] = "Cannot create a new account when you're logged.";
+                return RedirectToAction("customexception", "exceptions");
+            }
+            TempData["Guid"] = guid;
+            return View();
         }
     }  
 }

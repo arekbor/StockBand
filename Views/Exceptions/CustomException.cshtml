@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Exception";
+    Layout = "_SimpleLayout";
+}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card mt-5 card-forbidden">
+                <div class="card-header">
+                    <h5>Server error</h5>
+                </div>
+                <div class="card-body mt-2">
+                    <h6>@TempData["Message"]</h6>
+                    <a class="btn-primary btn btn-primary mt-4" asp-controller="Home" asp-action="Index">Got to home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
