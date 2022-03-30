@@ -39,18 +39,23 @@ namespace StockBand.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("admin/edituser/{id:int}")]
-        public async Task<IActionResult> EditUser(int id, EditUserDto model)
+        public async Task<IActionResult> EditUser(int id, EditUserDto userDto)
         {
             if (!ModelState.IsValid)
-                return View(model);
-            var status = await _userService.UpdateUser(id, model);
+                return View(userDto);
+            var status = await _userService.UpdateUser(id, userDto);
             if(status)
                 return RedirectToAction("index", "admin");
             var roles = await _userService.GetAllRolesAsync();
             if (roles is null)
                 return RedirectToAction("badrequest", "exceptions");
-            model.ListOfRoles = roles;
-            return View(model);
+            userDto.ListOfRoles = roles;
+            return View(userDto);
+        }
+        [HttpGet]
+        public IActionResult UniqueLink()
+        {
+            return View();
         }
     }
 }

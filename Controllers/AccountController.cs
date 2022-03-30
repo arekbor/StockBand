@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StockBand.Data;
 using StockBand.Interfaces;
+using StockBand.Services;
 using StockBand.ViewModel;
 
 namespace Stock_Band.Controllers
@@ -36,6 +37,15 @@ namespace Stock_Band.Controllers
             if(status)
                 return RedirectToAction("index", "home");
             return RedirectToAction("index", "home");
+        }
+        [HttpGet]
+        [Route("account/create/{guid:Guid}")]
+        public async Task<IActionResult> Create(Guid guid)
+        {
+            var verifyGuid = UniqueLinkService.VerifyLink(guid);
+            if (!verifyGuid)
+                return RedirectToAction("badrequest", "exceptions");
+            return View(guid);
         }
     }  
 }
