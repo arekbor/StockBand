@@ -10,7 +10,7 @@ namespace StockBand.ViewModel
         [MaxLength(20)]
         [MinLength(5)]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
+        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
         public string Name { get; set; }
         [Required]
         public bool Block { get; set; }
