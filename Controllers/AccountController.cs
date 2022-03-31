@@ -40,21 +40,32 @@ namespace Stock_Band.Controllers
         }
         [HttpGet]
         [Route("account/create/{guid:Guid}")]
-        public async Task<IActionResult> Create(Guid guid)
+        public IActionResult Create(Guid guid)
         {
             var verifyGuid = UniqueLinkService.VerifyLink(guid);
             if (!verifyGuid)
             {
-                TempData["Message"] = "Link you followed has expired.";
+                TempData["Message"] = "Link you followed has expired";
                 return RedirectToAction("customexception", "exceptions");
             }
             if (User.Identity.IsAuthenticated)
             {
-                TempData["Message"] = "Cannot create a new account when you're logged.";
+                TempData["Message"] = "Cannot create a new account when you're logged";
                 return RedirectToAction("customexception", "exceptions");
             }
-            TempData["Guid"] = guid;
             return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("account/create/{guid:Guid}")]
+        public async Task<IActionResult> CreateAsync(Guid guid,CreateUserDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+            var status = await _userService.CreateUser(guid, dto);
+            if (status)
+                return RedirectToAction("login", "account");
+            return View(dto);
         }
     }  
 }

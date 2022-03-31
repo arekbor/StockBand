@@ -13,8 +13,6 @@
                 </div>
                 <div class="card-body">
                     <form method="post" asp-controller="account" asp-action="create">
-                        <input asp-for="GuidValidation" value="@TempData["Guid"]"/>
-                        @*//TODO tutaj zastanow sie czy ma byc dalej weryfikowany guid*@
                         <div class="validation text-danger" asp-validation-summary="All"></div>
                         <div class="form-group mt-1">
                             <label asp-for="Name"></label>

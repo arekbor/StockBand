@@ -13,5 +13,6 @@ namespace StockBand.Interfaces
         public Task<User> GetUserAsync(int id);
         public Task<IEnumerable<Role>> GetAllRolesAsync();
         public Task<bool> UpdateUser(int id,EditUserDto model);
+        public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);
     }
 }

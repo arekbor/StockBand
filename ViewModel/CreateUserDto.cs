@@ -9,14 +9,15 @@ namespace StockBand.ViewModel
         [MaxLength(20)]
         [MinLength(5)]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
+        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
         public string Name { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[a-z])|(?=.*[A-Z])|(?=.*\d)|(?=.*[^a-zA-Z\d])$", ErrorMessage = "Password should have atleast one lowercase | atleast one uppercase, should have atleast one number, should have atleast one special character")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number")]
         public string Password { get; set; }
+        [Required]
         [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
         public string ConfirmPassword { get; set; }
-        public Guid GuidValidation { get; set; }
     }
 }

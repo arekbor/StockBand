@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
@@ -16,12 +18,14 @@ namespace StockBand.Services
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IActionContextAccessor _actionContext;
-        public UserService(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext)
+        private readonly IMapper _mapper;
+        public UserService(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _httpContextAccessor = httpContextAccessor;
             _actionContext = actionContext;
+            _mapper = mapper;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -120,6 +124,47 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Update(user);
             _dbContext.SaveChanges();
+
+            return true;
+        }
+        public async Task<bool> CreateUser(Guid guid,CreateUserDto userDto)
+        {
+            if (!UniqueLinkService.VerifyLink(guid))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Guid has expired");
+                return false;
+            }
+            var userNameVerify = await _dbContext
+                .UserDbContext
+                .AnyAsync(x => x.Name == userDto.Name);
+            if (userNameVerify)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Than username already exists");
+                return false;
+            }
+            if (userDto.Password != userDto.ConfirmPassword)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Passwords are not matching");
+                return false;
+            }
+            if (userDto.Password == userDto.Name)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Password cannot be the same as username");
+                return false;
+            }
+            if (!UniqueLinkService.DeleteLink(guid))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", "Guid has expired");
+                return false;
+            }
+            var user = _mapper.Map<User>(userDto);
+
+            var hashedPwd = _passwordHasher.HashPassword(user, userDto.Password);
+            user.HashPassword = hashedPwd;
+
+            _dbContext.UserDbContext.Add(user);
+            _dbContext.SaveChanges();
+            
             return true;
         }
         private ClaimsPrincipal GetUser()
