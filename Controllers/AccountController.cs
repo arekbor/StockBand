@@ -45,12 +45,12 @@ namespace Stock_Band.Controllers
             var verifyGuid = UniqueLinkService.VerifyLink(guid);
             if (!verifyGuid)
             {
-                TempData["Message"] = "Link you followed has expired";
+                TempData["Message"] = Message.LinkExpired;
                 return RedirectToAction("customexception", "exceptions");
             }
             if (User.Identity.IsAuthenticated)
             {
-                TempData["Message"] = "Cannot create a new account when you're logged";
+                TempData["Message"] = Message.CannotCreateWhenLogged;
                 return RedirectToAction("customexception", "exceptions");
             }
             return View();

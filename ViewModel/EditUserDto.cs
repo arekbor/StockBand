@@ -1,4 +1,5 @@
-﻿using StockBand.Models;
+﻿using StockBand.Data;
+using StockBand.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
@@ -10,7 +11,7 @@ namespace StockBand.ViewModel
         [MaxLength(20)]
         [MinLength(5)]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
+        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = Message.RegularExpName)]
         public string Name { get; set; }
         [Required]
         public bool Block { get; set; }

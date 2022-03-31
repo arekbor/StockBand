@@ -1,4 +1,5 @@
-﻿using StockBand.Models;
+﻿using StockBand.Data;
+using StockBand.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
@@ -9,11 +10,11 @@ namespace StockBand.ViewModel
         [MaxLength(20)]
         [MinLength(5)]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = "No white space and special characters allowed")]
+        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = Message.RegularExpName)]
         public string Name { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = Message.RegularExpPwd)]
         public string Password { get; set; }
         [Required]
         [DataType(DataType.Password)]

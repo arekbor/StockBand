@@ -35,14 +35,14 @@ namespace StockBand.Services
                 .FirstOrDefaultAsync(x => x.Name.Equals(userDto.Name));
             if (user is null)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Invalid username or passowrd");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.InvalidUsrPwd);
                 return false;
             }
                 
             var validatePwd = _passwordHasher.VerifyHashedPassword(user, user.HashPassword, userDto.Password);
             if (validatePwd == PasswordVerificationResult.Failed)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Invalid username or passowrd");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.InvalidUsrPwd);
                 return false;
             }
             var claims = new List<Claim>()
@@ -56,6 +56,7 @@ namespace StockBand.Services
             var authenticationProperties = new AuthenticationProperties();
             if (!userDto.RememberMe)
             {
+                //TODO daj expire do appsettings
                 authenticationProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
                 authenticationProperties.IsPersistent = false;
             }
@@ -103,19 +104,19 @@ namespace StockBand.Services
             var validatePwd = _passwordHasher.VerifyHashedPassword(userAdmin, userAdmin.HashPassword, model.PasswordAdmin);
             if(validatePwd == PasswordVerificationResult.Failed)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Wrong admin password");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.WrongAdmPwd);
                 return false;
             }
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if(user is null)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "User does not exist");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.UserNotEx);
                 return false;
             }
             var role = await _dbContext.RoleDbContext.FirstOrDefaultAsync(x => x.Name.Equals(model.Role.Name));
             if (user is null)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Role does not exist");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.RoleNotEx);
                 return false;
             }
             user.Name = model.Name;
@@ -131,7 +132,7 @@ namespace StockBand.Services
         {
             if (!UniqueLinkService.VerifyLink(guid))
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Guid has expired");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.GuidExpired);
                 return false;
             }
             var userNameVerify = await _dbContext
@@ -139,22 +140,22 @@ namespace StockBand.Services
                 .AnyAsync(x => x.Name == userDto.Name);
             if (userNameVerify)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Than username already exists");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.UsrAlreadyEx);
                 return false;
             }
             if (userDto.Password != userDto.ConfirmPassword)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Passwords are not matching");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.PwdNotMatch);
                 return false;
             }
             if (userDto.Password == userDto.Name)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Password cannot be the same as username");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.PwdUsr);
                 return false;
             }
             if (!UniqueLinkService.DeleteLink(guid))
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", "Guid has expired");
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.GuidExpired);
                 return false;
             }
             var user = _mapper.Map<User>(userDto);
