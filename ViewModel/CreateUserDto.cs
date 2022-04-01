@@ -10,11 +10,11 @@ namespace StockBand.ViewModel
         [MaxLength(20)]
         [MinLength(5)]
         [DataType(DataType.Text)]
-        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = Message.RegularExpName)]
+        [RegularExpression(@"^[0-9a-zA-Z]*$", ErrorMessage = Message.Code11)]
         public string Name { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = Message.RegularExpPwd)]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = Message.Code12)]
         public string Password { get; set; }
         [Required]
         [DataType(DataType.Password)]

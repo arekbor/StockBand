@@ -1,12 +1,10 @@
-﻿@*<form method="post" class="form-inline" asp-controller="account" asp-action="logout">
-    <button type="submit" class="btn btn-light">Logout</button>
-</form>*@
+﻿@*//TODO napraw dropdown przy malych nazwach uzytkownika*@
 <div class="dropdown">
 	<button class="btn btn-link text-white dropdown-toggle p-0" style="text-decoration: none;" type="button" id="dropdownMenuUserPanel" data-bs-toggle="dropdown" aria-expanded="false">
 	@User.Identity.Name
 	</button>
 	<ul class="dropdown-menu" aria-labelledby="dropdownMenuUserPanel">
-		<li><a class="dropdown-item" href="#">Profile</a></li>
+		<li><a class="dropdown-item" asp-controller="account" asp-action="changepassword">Change password</a></li>
 		<li><a class="dropdown-item" href="#">Activity</a></li>
 		<div class="dropdown-divider"></div>
 		<li>

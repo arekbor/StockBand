@@ -1,6 +1,6 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Unique link";
+    Layout = "_Layout";
 }
 @{
     var url = Url.Action("create", "account", new {guid = UniqueLinkService.AddLink()},Context.Request.Scheme);

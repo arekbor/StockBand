@@ -1,12 +1,9 @@
 ﻿@{
-    if (User.Identity.IsAuthenticated)
+    var role = User.FindFirst(x => x.Type == ClaimTypes.Role).Value;
+    if (role.Equals("Admin"))
     {
-        var role = User.FindFirst(x => x.Type == ClaimTypes.Role).Value;
-        if (role.Equals("Admin"))
-        {
-            <li class="nav-item">
-                <a class="nav-link text-danger" asp-controller="admin" asp-action="index">Admin Panel</a>
-            </li>
-        }
+        <li class="nav-item">
+            <a class="nav-link text-danger" asp-controller="admin" asp-action="index">Admin Panel</a>
+        </li>
     }
 }

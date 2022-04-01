@@ -2,22 +2,28 @@
 {
     public static class Message
     {
-        public const string LinkExpired = "Link you followed has expired";
-        public const string GuidExpired = "Guid has expired";
-        public const string CannotCreateWhenLogged = "Cannot create a new account when you're logged";
-        public const string InvalidUsrPwd = "Invalid username or passowrd";
-        public const string WrongAdmPwd = "Wrong admin password";
-        public const string UserNotEx = "User does not exist";
-        public const string RoleNotEx = "Role does not exist";
-        public const string UsrAlreadyEx = "Than username already exists";
-        public const string PwdNotMatch = "Passwords are not matching";
-        public const string PwdUsr = "Password cannot be the same as username";
-        public const string RegularExpName = "No white space and special characters allowed";
-        public const string RegularExpPwd = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number";
+        public const string Code01 = "Link you followed has expired";
+        public const string Code02 = "Cannot create a new account when you're logged";
+
+        public const string Code03 = "Invalid username or passowrd";
+        public const string Code04 = "Wrong admin password";
+
+        public const string Code05 = "Guid has expired";
+        public const string Code06 = "Password cannot be the same as username";
+        public const string Code07 = "Passwords are not matching";
+
+        public const string Code08 = "Role does not exist";
+        public const string Code09 = "User does not exist";
+
+        public const string Code10 = "Than username already exists";
+        public const string Code11 = "No white space and special characters allowed";
+
+        public const string Code12 = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number";
+        public const string Code13 = "Invalid old passowrd or new passwords are not matchning";
     }
     public static class SystemMessage
     {
-        public static Func<string, string> DbContextSuccess = x => $"{x} DbContext seed successfully created";
-        public static Func<string, string> DbContextAlreadyCreated = x => $"{x} DbContext has already been created";
+        public static Func<string, string> Code01 = x => $"{x} DbContext seed successfully created";
+        public static Func<string, string> Code02 = x => $"{x} DbContext has already been created";
     }
 }
