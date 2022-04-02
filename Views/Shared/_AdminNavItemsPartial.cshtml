@@ -1,6 +1,6 @@
 ﻿@{
     var role = User.FindFirst(x => x.Type == ClaimTypes.Role).Value;
-    if (role.Equals("Admin"))
+    if (role == UserRoles.Roles[1])
     {
         <li class="nav-item">
             <a class="nav-link text-danger" asp-controller="admin" asp-action="index">Admin Panel</a>
