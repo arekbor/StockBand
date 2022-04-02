@@ -38,14 +38,11 @@ namespace StockBand.Services
             return usersActivities;
         }
 
-        public async Task<IEnumerable<UserActivity>> GetAllUserActivityAsync(int id)
+        public IQueryable<UserActivity> GetAllUserActivityAsync(int id)
         {
-            var userActivity = await _dbContext
+            var userActivity = _dbContext
                 .UserActivityDbContext
-                .Where(x => x.UserId == id)
-                .ToListAsync();
-            if (userActivity is null)
-                return null;
+                .Where(x => x.UserId == id);
             return userActivity;
         }
     }

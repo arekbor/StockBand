@@ -1,0 +1,30 @@
+﻿@model PaginetedList<UserActivity>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Description
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Description
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.PreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.NextPage ? "disabled" : "";
+    var userId = int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+}
+<a asp-controller="account" asp-action="activity" asp-route-pageNumber="@(Model.PageIndex-1)" asp-route-id="@userId" class="btn btn-default @prevDisabled">Previous</a>
+
+<a asp-controller="account" asp-action="activity" asp-route-pageNumber="@(Model.PageIndex+1)" asp-route-id="@userId" class="btn btn-default @nextDisabled">Next</a>

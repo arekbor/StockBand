@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StockBand.Data;
 using StockBand.Interfaces;
+using StockBand.Models;
 using StockBand.Services;
 using StockBand.ViewModel;
 using System.Security.Claims;
@@ -12,9 +13,11 @@ namespace Stock_Band.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
-        public AccountController(IUserService userService)
+        private readonly IUserActivityService _userActivityService;
+        public AccountController(IUserService userService, IUserActivityService userActivityService)
         {
             _userService = userService;
+            _userActivityService = userActivityService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -92,6 +95,12 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("index", "home");
             }
             return View(dto);
+        }
+        [HttpGet]
+        [Route("account/activity/{id:Int}")]
+        public async Task<IActionResult> Activity(int id, int pageNumber=1)
+        {
+            return View(await PaginetedList<UserActivity>.CreateAsync(_userActivityService.GetAllUserActivityAsync(id), pageNumber, 3));
         }
     }  
 }
