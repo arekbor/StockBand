@@ -98,6 +98,11 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
             }
+            if(userAdmin.Role != UserRoles.Roles[1])
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
+                return false;
+            }
             var validatePwd = _passwordHasher.VerifyHashedPassword(userAdmin, userAdmin.HashPassword, model.PasswordAdmin);
             if(validatePwd == PasswordVerificationResult.Failed)
             {

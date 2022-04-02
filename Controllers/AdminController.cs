@@ -29,11 +29,8 @@ namespace StockBand.Controllers
             var user = await _userService.GetUserAsync(id);
             if (user is null)
                 return RedirectToAction("badrequest", "exceptions");
-            var roles = await _userService.GetAllRolesAsync();
-            if(roles is null)
-                return RedirectToAction("badrequest", "exceptions");
+
             var viewModel = _mapper.Map<EditUserDto>(user);
-            viewModel.ListOfRoles = roles;
             return View(viewModel);
         }
         [HttpPost]
@@ -46,10 +43,6 @@ namespace StockBand.Controllers
             var status = await _userService.UpdateUser(id, userDto);
             if(status)
                 return RedirectToAction("index", "admin");
-            var roles = await _userService.GetAllRolesAsync();
-            if (roles is null)
-                return RedirectToAction("badrequest", "exceptions");
-            userDto.ListOfRoles = roles;
             return View(userDto);
         }
         [HttpGet]

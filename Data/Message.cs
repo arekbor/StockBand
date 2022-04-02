@@ -10,16 +10,20 @@
 
         public const string Code05 = "Guid has expired";
         public const string Code06 = "Password cannot be the same as username";
+
         public const string Code07 = "Passwords are not matching";
-
         public const string Code08 = "Role does not exist";
+
         public const string Code09 = "User does not exist";
-
         public const string Code10 = "Than username already exists";
-        public const string Code11 = "No white space and special characters allowed";
 
+        public const string Code11 = "No white space and special characters allowed";
         public const string Code12 = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number";
+
         public const string Code13 = "Invalid old passowrd or new passwords are not matchning";
+        public const string Code14 = "Authentication failed";
+
+        public const string Code15 = "You don't have perrmision";
     }
     public static class SystemMessage
     {
