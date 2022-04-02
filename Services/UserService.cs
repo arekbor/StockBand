@@ -107,15 +107,14 @@ namespace StockBand.Services
                 return false;
             }
             //TODO zrob weryfikacje czy rola znajduje sie na liscie
-            var role = await _dbContext.RoleDbContext.FirstOrDefaultAsync(x => x.Name.Equals(model.Role.Name));
-            if (user is null)
-            {
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
-                return false;
-            }
+            //var role = await _dbContext.RoleDbContext.FirstOrDefaultAsync(x => x.Name.Equals(model.Role.Name));
+            //if (user is null)
+            //{
+            //    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
+            //    return false;
+            //}
             user.Name = model.Name;
             user.Block = model.Block;
-            user.RoleId = role.Id;
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
