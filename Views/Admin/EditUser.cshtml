@@ -19,10 +19,10 @@
                         </div>
                         <div class="form-group mt-3">
                             <label>Update Role</label>
-                            <select asp-for="Role.Name" class="form-control">
-                                @foreach (var item in Model.ListOfRoles)
+                            <select asp-for="Role" class="form-control">
+                                @foreach (var item in UserRoles.Roles)
                                 {
-                                    <option>@item.Name</option>
+                                    <option>@item</option>
                                 }
                             </select>
                         </div>
