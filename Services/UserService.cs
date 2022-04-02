@@ -73,7 +73,7 @@ namespace StockBand.Services
         }
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            var users = await _dbContext.UserDbContext.Include(x => x.Role).ToListAsync();
+            var users = await _dbContext.UserDbContext.ToListAsync();
             if (users is null)
                 return null;
             return users;
@@ -89,6 +89,7 @@ namespace StockBand.Services
         }
         public async Task<bool> UpdateUser(int id, EditUserDto model)
         {
+            //TODO block if admin will want to change role
             var adminId = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
             if (userAdmin is null)

@@ -64,6 +64,7 @@ namespace Stock_Band.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("account/create/{guid:Guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> CreateAsync(Guid guid,CreateUserDto dto)
         {
             if (!ModelState.IsValid)
