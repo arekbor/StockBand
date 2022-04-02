@@ -38,7 +38,6 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code03);
                 return false;
             }
-                
             var validatePwd = _passwordHasher.VerifyHashedPassword(user, user.HashPassword, userDto.Password);
             if (validatePwd == PasswordVerificationResult.Failed)
             {
@@ -94,6 +93,11 @@ namespace StockBand.Services
         {
             var adminId = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
+            if (userAdmin is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
+                return false;
+            }
             var validatePwd = _passwordHasher.VerifyHashedPassword(userAdmin, userAdmin.HashPassword, model.PasswordAdmin);
             if(validatePwd == PasswordVerificationResult.Failed)
             {
@@ -106,19 +110,18 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code09);
                 return false;
             }
-            //TODO zrob weryfikacje czy rola znajduje sie na liscie
-            //var role = await _dbContext.RoleDbContext.FirstOrDefaultAsync(x => x.Name.Equals(model.Role.Name));
-            //if (user is null)
-            //{
-            //    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
-            //    return false;
-            //}
+            if (!UserRoles.Roles.Contains(user.Role))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
+                return false;
+            }
             user.Name = model.Name;
             user.Block = model.Block;
+            user.Role = model.Role;
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-
+            _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         public async Task<bool> CreateUser(Guid guid,CreateUserDto userDto)
@@ -158,6 +161,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Add(user);
             await _dbContext.SaveChangesAsync();
+            _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         public async Task<bool> ChangePasswordUser(ProfileEditUser userDto)
@@ -166,7 +170,7 @@ namespace StockBand.Services
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code09);
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
             }
             var verifyOldPwd = _passwordHasher.VerifyHashedPassword(user, user.HashPassword, userDto.OldPassword);
@@ -184,6 +188,7 @@ namespace StockBand.Services
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
+            _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         private ClaimsPrincipal GetUser()
