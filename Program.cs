@@ -28,7 +28,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminRolePolicy", policy => 
     {
-        policy.RequireRole("Admin");
+        policy.RequireRole(UserRoles.Roles[1]);
     });
 });
 builder.Services.AddScoped<IUserService, UserService>();

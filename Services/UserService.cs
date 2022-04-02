@@ -31,7 +31,6 @@ namespace StockBand.Services
         {
             var user = await _dbContext
                 .UserDbContext
-                .Include(x => x.Role)
                 .FirstOrDefaultAsync(x => x.Name.Equals(userDto.Name));
             if (user is null)
             {
@@ -83,7 +82,6 @@ namespace StockBand.Services
         {
             var user = await _dbContext
                 .UserDbContext
-                .Include(x => x.Role)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
                 return null;

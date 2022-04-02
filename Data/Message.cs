@@ -23,7 +23,8 @@
         public const string Code13 = "Invalid old passowrd or new passwords are not matchning";
         public const string Code14 = "Authentication failed";
 
-        public const string Code15 = "You don't have perrmision";
+        public const string Code15 = "You do not have permission";
+        public const string Code16 = "You do not have permission to access this page";
     }
     public static class SystemMessage
     {
