@@ -19,5 +19,6 @@ namespace StockBand.ViewModel
         [DataType(DataType.Password)]
         [Display(Name = "Password admin")]
         public string PasswordAdmin { get; set; }
+        public string Role { get; set; }
     }
 }
