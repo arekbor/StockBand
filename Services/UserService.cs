@@ -54,7 +54,7 @@ namespace StockBand.Services
             var authenticationProperties = new AuthenticationProperties();
             if (!userDto.RememberMe)
             {
-                //TODO daj expire do appsettings
+                //TODO insert expire to appsettings
                 authenticationProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
                 authenticationProperties.IsPersistent = false;
             }
