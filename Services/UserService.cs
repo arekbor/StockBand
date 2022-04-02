@@ -19,13 +19,15 @@ namespace StockBand.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IActionContextAccessor _actionContext;
         private readonly IMapper _mapper;
-        public UserService(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        private readonly IUserActivityService _userActivityService;
+        public UserService(ApplicationDbContext dbContext, IUserActivityService userActivityService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _httpContextAccessor = httpContextAccessor;
             _actionContext = actionContext;
             _mapper = mapper;
+            _userActivityService = userActivityService;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -63,12 +65,15 @@ namespace StockBand.Services
                 authenticationProperties.IsPersistent = true;
             }
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
+            await _userActivityService.AddToActivityAsync(ActivityMessage.Code01, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         public async Task<bool> LogoutUserAsync()
         {
             await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
+            await _userActivityService.AddToActivityAsync(ActivityMessage.Code02, 
+                int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return true;
         }
         public async Task<IEnumerable<User>> GetAllUsersAsync()
@@ -125,6 +130,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
+            await _userActivityService.AddToActivityAsync(ActivityMessage.Code04, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -165,6 +171,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Add(user);
             await _dbContext.SaveChangesAsync();
+            await _userActivityService.AddToActivityAsync(ActivityMessage.Code03, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -192,6 +199,7 @@ namespace StockBand.Services
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
+            await _userActivityService.AddToActivityAsync(ActivityMessage.Code05, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -199,5 +207,6 @@ namespace StockBand.Services
         {
             return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
+        
     }
 }
