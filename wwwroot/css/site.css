@@ -33,7 +33,7 @@ body {
     }
 }
 
-@media only screen and (min-width: 320px) and (max-width:900px) {
+@media only screen and (min-width: 320px) and (max-width:700px) {
     .card-custom {
         width: 19rem;
     }
@@ -45,12 +45,32 @@ body {
         width: 20%;
     }
 }
+@media only screen and (min-width:700px) and (max-width:900px){
+    .card-custom {
+        width: 19rem;
+    }
+    .adminpaneltbody {
+        max-height: 50vh;
+        font-size: 10px;
+    }
+    .table-role {
+        width: 20%;
+    }
+    .dropdownCustom {
+        right: 0 !important;
+        left: auto !important;
+    }
+}
 @media only screen and (min-width: 900px) {
     .card-custom {
         width: 30rem;
     }
     .adminpaneltbody {
         max-height: 40vh;
+    }
+    .dropdownCustom {
+        right: 0 !important;
+        left: auto !important;
     }
 
 }
