@@ -49,7 +49,7 @@ namespace StockBand.Services
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name,user.Name),
-                new Claim(ClaimTypes.Role,user.Role.Name)
+                new Claim(ClaimTypes.Role,user.Role)
             };
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
@@ -89,13 +89,6 @@ namespace StockBand.Services
             if (user is null)
                 return null;
             return user;
-        }
-        public async Task<IEnumerable<Role>> GetAllRolesAsync()
-        {
-            var roles = await _dbContext.RoleDbContext.ToListAsync();
-            if (roles is null)
-                return null;
-            return roles;
         }
         public async Task<bool> UpdateUser(int id, EditUserDto model)
         {
