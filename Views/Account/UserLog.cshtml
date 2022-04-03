@@ -1,4 +1,4 @@
-﻿@{
+﻿@*@{
     ViewData["Title"] = "Logs";
     Layout = "_Layout";
 }
@@ -36,11 +36,59 @@
 
 <nav aria-label="Page navigation example">
   <ul class="pagination">
-    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+    <li class="page-item @prevDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
     @foreach (var item in Model.Pages(1))
     {
         <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
     }
-    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+    <li class="page-item @nextDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
   </ul>
-</nav>
+</nav>*@
+
+@model PaginetedList<UserLog>
+@{
+    ViewData["Title"] = "Logs";
+    Layout = "_Layout";
+    var prevDisabled = !Model.PreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.NextPage ? "disabled" : "";
+}
+<div class="card">
+    <div class="card-header">
+        <h5>Logs</h5>
+    </div>
+    <div class="card-body">
+        <table class="table bg-dark" style="width: 100%;">
+            <thead class="text-left thead-borderless" style="display:table; width:100%; table-layout:fixed;">
+                <tr class="text-light">
+                    <th class="p-0 ps-3" style="width: 15% !important;" scope="col">Id</th>
+                    <th class="p-0 ps-3" style="width: 40% !important;" scope="col">Action</th>
+                    <th class="p-0 ps-3" style="width: 45% !important;" scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody class="adminpaneltbody mt-3 border-secondary" style="display:block; overflow-y:auto; table-layout:fixed; border-width:1px 0px 0px 0px;">
+               @foreach (var item in Model)
+               {
+                    <tr class="mt-1" style="display: table; width: 100%; table-layout: fixed;">
+                        <td class="p-0 ps-3" style="width: 15% !important;" scope="row">@item.Id</td>
+                        <td class="p-0 ps-3" style="width: 40% !important;" scope="row">@item.Description</td>
+                        <td class="p-0 ps-3" style="width: 45% !important;" scope="row">@item.CreatedDate</td>
+                    </tr>
+               }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-center">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item @prevDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                @foreach (var item in Model.Pages(1))
+                {
+                    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+                }
+                <li class="page-item @nextDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+
