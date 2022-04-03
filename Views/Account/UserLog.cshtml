@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Logs";
+    Layout = "_Layout";
+}
+
+
+@model PaginetedList<UserLog>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Description
+                @Model.TotalPages
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Description
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@{
+    var prevDisabled = !Model.PreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.NextPage ? "disabled" : "";
+}
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+    @foreach (var item in Model.Pages(1))
+    {
+        <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+    }
+    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+  </ul>
+</nav>

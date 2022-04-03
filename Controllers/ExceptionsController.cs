@@ -5,24 +5,12 @@ namespace StockBand.Controllers
     public class ExceptionsController : Controller
     {
         [HttpGet]
-        public IActionResult Forbidden()
-        {
-            return View();
-        }
+        public IActionResult Forbidden() => View();
         [HttpGet]
-        public IActionResult BadRequest()
-        {
-            return View();
-        }
+        public IActionResult BadRequest() => View();
         [HttpGet]
-        public IActionResult InternalServerError()
-        {
-            return View();
-        }
+        public IActionResult InternalServerError() => View();
         [HttpGet]
-        public IActionResult CustomException()
-        {
-            return View();
-        }
+        public IActionResult CustomException() => View();
     }
 }

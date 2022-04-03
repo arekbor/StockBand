@@ -32,5 +32,12 @@ namespace StockBand.Models
             var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginetedList<T>(items, count, pageIndex, pageSize);
         }
+        public IEnumerable<int> Pages(int range)
+        {
+            var limit = Math.Min(Math.Max(1, TotalPages - 2 * range), Math.Max(1, PageIndex - range));
+            return Enumerable.Range(limit, range * 2 + 1)
+                .TakeWhile(p => p <= TotalPages)
+                .ToList();
+        }
     }
 }

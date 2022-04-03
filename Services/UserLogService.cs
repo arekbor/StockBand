@@ -6,44 +6,51 @@ using System.Security.Claims;
 
 namespace StockBand.Services
 {
-    public class UserActivityService : IUserActivityService
+    public class UserLogService : IUserLogService
     {
         private readonly ApplicationDbContext _dbContext;
-        public UserActivityService(ApplicationDbContext dbContext)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserLogService(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<bool> AddToActivityAsync(string description,int id)
+        public async Task<bool> AddToLogsAsync(string description, int id)
         {
             if (String.IsNullOrEmpty(description))
                 return false;
-            var userActivity = new UserActivity()
+            var userActivity = new UserLog()
             {
                 Description = description,
                 CreatedDate = DateTime.UtcNow,
                 UserId = id
             };
-            await _dbContext.UserActivityDbContext.AddAsync(userActivity);
+            await _dbContext.UserLogDbContext.AddAsync(userActivity);
             await _dbContext.SaveChangesAsync();
             return true;
         }
 
-        public async Task<IEnumerable<UserActivity>> GetAllActivityAsync()
+        public async Task<IEnumerable<UserLog>> GetAllLogsAsync()
         {
             var usersActivities = await _dbContext
-                .UserActivityDbContext
+                .UserLogDbContext
                 .ToListAsync();
             if (usersActivities is null)
                 return null;
             return usersActivities;
         }
 
-        public IQueryable<UserActivity> GetAllUserActivityAsync(int id)
+        public IQueryable<UserLog> GetAllUserLogsAsync()
         {
+            var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var userActivity = _dbContext
-                .UserActivityDbContext
+                .UserLogDbContext
                 .Where(x => x.UserId == id);
             return userActivity;
+        }
+        private ClaimsPrincipal GetUser()
+        {
+            return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
     }
 }

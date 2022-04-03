@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
@@ -13,11 +14,11 @@ namespace Stock_Band.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IUserActivityService _userActivityService;
-        public AccountController(IUserService userService, IUserActivityService userActivityService)
+        private readonly IUserLogService _userLogService;
+        public AccountController(IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
-            _userActivityService = userActivityService;
+            _userLogService = userLogService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -97,10 +98,20 @@ namespace Stock_Band.Controllers
             return View(dto);
         }
         [HttpGet]
-        [Route("account/activity/{id:Int}")]
-        public async Task<IActionResult> Activity(int id, int pageNumber=1)
+        public async Task<IActionResult> UserLog(int pageNumber=1)
         {
-            return View(await PaginetedList<UserActivity>.CreateAsync(_userActivityService.GetAllUserActivityAsync(id), pageNumber, 3));
+            if(pageNumber <= 0)
+                return RedirectToAction("userlog", "account", new { pageNumber = 1 });
+            var userActivity = _userLogService.GetAllUserLogsAsync().AsQueryable();
+            if (!userActivity.Any())
+            {
+                TempData["Message"] = Message.Code17;
+                return RedirectToAction("customexception", "exceptions");
+            }  
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userActivity.AsNoTracking(), pageNumber, 4);
+            if (pageNumber > paginatedList.TotalPages)
+                return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
+            return View(paginatedList);
         }
     }  
 }
