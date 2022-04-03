@@ -6,7 +6,6 @@ using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.Services;
 using StockBand.ViewModel;
-using System.Security.Claims;
 
 namespace Stock_Band.Controllers
 {
@@ -102,7 +101,8 @@ namespace Stock_Band.Controllers
         {
             if(pageNumber <= 0)
                 return RedirectToAction("userlog", "account", new { pageNumber = 1 });
-            var userActivity = _userLogService.GetAllUserLogsAsync().AsQueryable();
+            //TODO take from last 5 days
+            var userActivity = _userLogService.GetAllUserLogsAsync().OrderByDescending(x => x.CreatedDate).Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7)).AsQueryable();
             if (!userActivity.Any())
             {
                 TempData["Message"] = Message.Code17;
@@ -111,6 +111,7 @@ namespace Stock_Band.Controllers
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userActivity.AsNoTracking(), pageNumber, 15);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
+            ViewBag.Currentpage = pageNumber;
             return View(paginatedList);
         }
     }  

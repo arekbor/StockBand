@@ -1,6 +1,6 @@
 ﻿namespace StockBand.Data
 {
-    public static class ActivityMessage
+    public static class LogMessage
     {
         public const string Code01 = "Logged in";
         public const string Code02 = "Logged out";

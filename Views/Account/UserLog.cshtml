@@ -1,57 +1,4 @@
-﻿@*@{
-    ViewData["Title"] = "Logs";
-    Layout = "_Layout";
-}
-
-
-@model PaginetedList<UserLog>
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Description
-                @Model.TotalPages
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @item.Description
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-@{
-    var prevDisabled = !Model.PreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.NextPage ? "disabled" : "";
-}
-
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item @prevDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-    @foreach (var item in Model.Pages(1))
-    {
-        <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
-    }
-    <li class="page-item @nextDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-  </ul>
-</nav>*@
-
-@model PaginetedList<UserLog>
-@{
-    ViewData["Title"] = "Logs";
-    Layout = "_Layout";
-    var prevDisabled = !Model.PreviousPage ? "disabled" : "";
-    var nextDisabled = !Model.NextPage ? "disabled" : "";
-}
+﻿@model PaginetedList<UserLog>
 <div class="card">
     <div class="card-header">
         <h5>Logs</h5>
@@ -77,15 +24,15 @@
             </tbody>
         </table>
     </div>
-    <div class="card-footer text-center">
-        <nav>
+    <div class="card-footer">
+        <nav class="nav justify-content-center">
             <ul class="pagination">
-                <li class="page-item @prevDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
                 @foreach (var item in Model.Pages(1))
                 {
-                    <li class="page-item"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
                 }
-                <li class="page-item @nextDisabled"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
             </ul>
         </nav>
     </div>

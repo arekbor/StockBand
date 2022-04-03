@@ -39,5 +39,17 @@ namespace StockBand.Models
                 .TakeWhile(p => p <= TotalPages)
                 .ToList();
         }
+        public string ActivePage(int page)
+        {
+            return page == PageIndex ? "active" : "";
+        }
+        public string PreviousDisabled()
+        {
+            return !PreviousPage ? "disabled" : "";
+        }
+        public string NextDisabled()
+        {
+            return !NextPage ? "disabled" : "";
+        }
     }
 }

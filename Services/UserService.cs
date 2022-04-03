@@ -65,14 +65,14 @@ namespace StockBand.Services
                 authenticationProperties.IsPersistent = true;
             }
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
-            await _userLogService.AddToLogsAsync(ActivityMessage.Code01, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code01, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         public async Task<bool> LogoutUserAsync()
         {
             await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
-            await _userLogService.AddToLogsAsync(ActivityMessage.Code02, 
+            await _userLogService.AddToLogsAsync(LogMessage.Code02, 
                 int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return true;
         }
@@ -130,7 +130,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(ActivityMessage.Code04, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code04, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -171,7 +171,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Add(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(ActivityMessage.Code03,user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code03,user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -199,7 +199,7 @@ namespace StockBand.Services
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(ActivityMessage.Code05,user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code05,user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
