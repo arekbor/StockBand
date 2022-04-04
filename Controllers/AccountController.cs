@@ -115,7 +115,6 @@ namespace Stock_Band.Controllers
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 15);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
-            ViewBag.Currentpage = pageNumber;
             return View(paginatedList);
         }
     }  

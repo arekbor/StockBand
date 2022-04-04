@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -160,3 +160,7 @@ body {
         height: 20vh !important;
     }
 }*/
+.btn-toolbar {
+    text-align: center;
+}
+​

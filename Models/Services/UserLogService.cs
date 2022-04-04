@@ -29,17 +29,15 @@ namespace StockBand.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
-
-        public async Task<IEnumerable<UserLog>> GetAllLogsAsync()
+        public IQueryable<UserLog> GetAllLogsAsync()
         {
-            var usersActivities = await _dbContext
+            var usersActivities = _dbContext
                 .UserLogDbContext
-                .ToListAsync();
+                .AsQueryable();
             if (usersActivities is null)
                 return null;
             return usersActivities;
         }
-
         public IQueryable<UserLog> GetAllUserLogsAsync()
         {
             var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);

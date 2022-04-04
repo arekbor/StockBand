@@ -1,19 +1,19 @@
 ﻿@{
-    ViewData["Title"] = "Logs";
+    ViewData["Title"] = "All Logs";
     Layout = "_Layout";
 }
-
 
 @model PaginetedList<UserLog>
 <div class="card">
     <div class="card-header">
-        <h5>Logs</h5>
+        <h5>All logs</h5>
     </div>
     <div class="card-body">
         <table class="table bg-dark" style="width: 100%;">
             <thead class="text-left thead-borderless" style="display:table; width:100%; table-layout:fixed;">
                 <tr class="text-light">
                     <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Guid</th>
+                    <th class="p-0 ps-3" style="width: 25% !important;" scope="col">User</th>
                     <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Action</th>
                     <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Date</th>
                 </tr>
@@ -23,6 +23,7 @@
                {
                     <tr class="mt-1" style="display: table; width: 100%; table-layout: fixed;">
                         <td class="p-0 ps-3 text-warning" style="width: 25% !important;" scope="row">@item.Guid</td>
+                        <td class="p-0 ps-3" style="width: 25% !important;" scope="row">@item.User.Name</td>
                         <td class="p-0 ps-3" style="width: 25% !important;" scope="row">@item.Action</td>
                         <td class="p-0 ps-3" style="width: 25% !important;" scope="row">@item.CreatedDate.ToString("dd/MM/yy-HH:mm")</td>
                     </tr>
@@ -33,14 +34,13 @@
     <div class="card-footer">
         <nav class="nav justify-content-center">
             <ul class="pagination">
-                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="logs" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
                 @foreach (var item in Model.Pages(1))
                 {
-                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="logs" asp-route-pageNumber="@item">@item</a></li>
                 }
-                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="logs" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
             </ul>
         </nav>
     </div>
 </div>
-
