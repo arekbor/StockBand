@@ -3,22 +3,23 @@
     <div class="card-header">
         <h5>Logs</h5>
     </div>
+    @*//TODO fix font size on small devices*@
     <div class="card-body">
         <table class="table bg-dark" style="width: 100%;">
             <thead class="text-left thead-borderless" style="display:table; width:100%; table-layout:fixed;">
                 <tr class="text-light">
-                    <th class="p-0 ps-3" style="width: 15% !important;" scope="col">Id</th>
-                    <th class="p-0 ps-3" style="width: 40% !important;" scope="col">Action</th>
-                    <th class="p-0 ps-3" style="width: 45% !important;" scope="col">Date</th>
+                    <th class="p-0 ps-3" style="width: 32% !important;" scope="col">Guid</th>
+                    <th class="p-0 ps-3" style="width: 48% !important;" scope="col">Action</th>
+                    <th class="p-0 ps-3" style="width: 20% !important;" scope="col">Date</th>
                 </tr>
             </thead>
             <tbody class="adminpaneltbody mt-3 border-secondary" style="display:block; overflow-y:auto; table-layout:fixed; border-width:1px 0px 0px 0px;">
                @foreach (var item in Model)
                {
                     <tr class="mt-1" style="display: table; width: 100%; table-layout: fixed;">
-                        <td class="p-0 ps-3" style="width: 15% !important;" scope="row">@item.Id</td>
-                        <td class="p-0 ps-3" style="width: 40% !important;" scope="row">@item.Description</td>
-                        <td class="p-0 ps-3" style="width: 45% !important;" scope="row">@item.CreatedDate</td>
+                        <td class="p-0 ps-3" style="width: 32% !important;" scope="row">@item.Guid</td>
+                        <td class="p-0 ps-3" style="width: 48% !important;" scope="row">@item.Action</td>
+                        <td class="p-0 ps-3" style="width: 20% !important;" scope="row">@item.CreatedDate</td>
                     </tr>
                }
             </tbody>
@@ -37,5 +38,4 @@
         </nav>
     </div>
 </div>
-
 

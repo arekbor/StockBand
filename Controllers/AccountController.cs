@@ -99,16 +99,20 @@ namespace Stock_Band.Controllers
         [HttpGet]
         public async Task<IActionResult> UserLog(int pageNumber=1)
         {
-            if(pageNumber <= 0)
+            if (pageNumber <= 0)
                 return RedirectToAction("userlog", "account", new { pageNumber = 1 });
-            //TODO take from last 5 days
-            var userActivity = _userLogService.GetAllUserLogsAsync().OrderByDescending(x => x.CreatedDate).Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7)).AsQueryable();
-            if (!userActivity.Any())
+            var userLogs = _userLogService
+                .GetAllUserLogsAsync()
+                .OrderByDescending(x => x.CreatedDate)
+                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7))
+                .AsQueryable();
+
+            if (!userLogs.Any())
             {
                 TempData["Message"] = Message.Code17;
                 return RedirectToAction("customexception", "exceptions");
             }  
-            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userActivity.AsNoTracking(), pageNumber, 15);
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 15);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
             ViewBag.Currentpage = pageNumber;

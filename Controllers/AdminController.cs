@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.ViewModel;
+using System.Security.Claims;
 
 namespace StockBand.Controllers
 {
@@ -11,10 +13,12 @@ namespace StockBand.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public AdminController(IUserService userService, IMapper mapper)
+        private readonly IUserLogService _userLogService;
+        public AdminController(IUserService userService, IMapper mapper,IUserLogService userLogService)
         {
             _userService = userService;
             _mapper = mapper;
+            _userLogService = userLogService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -46,8 +50,10 @@ namespace StockBand.Controllers
             return View(userDto);
         }
         [HttpGet]
-        public IActionResult UniqueLink()
+        public async Task<IActionResult> UniqueLink()
         {
+            await _userLogService.AddToLogsAsync(LogMessage.Code06, 
+                int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return View();
         }
     }

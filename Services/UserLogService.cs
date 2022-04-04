@@ -21,7 +21,7 @@ namespace StockBand.Services
                 return false;
             var userActivity = new UserLog()
             {
-                Description = description,
+                Action = description,
                 CreatedDate = DateTime.UtcNow,
                 UserId = id
             };
