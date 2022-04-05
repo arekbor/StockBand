@@ -6,20 +6,18 @@
     var url = Url.Action("create", "account", new {guid = UniqueLinkService.AddLink()},Context.Request.Scheme);
 }
 
-<div class="container mt-5">
-    <div class="row">
-        <div class="col">
-            <div class="card card-custom">
-                <div class="card-header">
-                    <h5>Unique Link:</h5>
-                </div>
-                <div class="card-body">
-                    <div class="input-group mb-3">
-                      <div class="input-group-prepend">
-                        <button class="btn btn-outline-secondary" onclick="myFunction()" type="button">Copy</button>
-                      </div>
-                        <input type="text" class="form-control" id="copyFuncion" readonly="readonly" value="@url">
+<div class="row mt-5">
+    <div class="col">
+        <div class="card card-custom">
+            <div class="card-header">
+                <h5>Unique Link:</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" onclick="myFunction()" type="button">Copy</button>
                     </div>
+                    <input type="text" class="form-control" id="copyFuncion" readonly="readonly" value="@url">
                 </div>
             </div>
         </div>

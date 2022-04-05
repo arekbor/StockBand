@@ -3,42 +3,40 @@
     ViewData["Title"] = "Edit " + Model.Name;
     Layout = "_Layout";
 }
-<div class="container mt-5">
-    <div class="row">
-        <div class="col"> 
-            <div class="card card-custom">
-                <div class="card-header">
-                    <h5>Edit user</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post" asp-controller="admin" asp-action="edituser">
-                        <div class="validation text-danger" asp-validation-summary="All"></div>
-                        <div class="form-group mt-1">
-                            <label>Update Username</label>
-                            <input asp-for="Name" class="form-control" placeholder="Update Username">
-                        </div>
-                        <div class="form-group mt-3">
-                            <label>Update Role</label>
-                            <select asp-for="Role" class="form-control">
-                                @foreach (var item in UserRoles.Roles)
-                                {
-                                    <option>@item</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="form-group mt-3">
-                            <input asp-for="Block" type="checkbox" class="form-check-input" id="blockcheckbox">
-                            <label class="form-check-label" for="blockcheckbox">Block</label>
-                        </div>
-                        <div class="form-group mt-3">
-                            <label>Admin password</label>
-                            <input asp-for="PasswordAdmin" type="password" class="form-control" placeholder="Password">
-                        </div>
-                        <div class="form-group mt-3 text-center">
-                            <button type="submit" class="btn btn-warning">Submit</button>
-                        </div>
-                    </form>
-                </div>
+<div class="row mt-5">
+    <div class="col"> 
+        <div class="card card-custom">
+            <div class="card-header">
+                <h5>Edit user</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-controller="admin" asp-action="edituser">
+                    <div class="validation text-danger" asp-validation-summary="All"></div>
+                    <div class="form-group mt-1">
+                        <label>Update Username</label>
+                        <input asp-for="Name" class="form-control" placeholder="Update Username">
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>Update Role</label>
+                        <select asp-for="Role" class="form-control">
+                            @foreach (var item in UserRoles.Roles)
+                            {
+                                <option>@item</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input asp-for="Block" type="checkbox" class="form-check-input" id="blockcheckbox">
+                        <label class="form-check-label" for="blockcheckbox">Block</label>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>Admin password</label>
+                        <input asp-for="PasswordAdmin" type="password" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <button type="submit" class="btn btn-warning">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
