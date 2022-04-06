@@ -366,3 +366,4 @@ appsettings.json
 Properties/*
 Data/Seed.cs
 Migrations/*
+node_modules

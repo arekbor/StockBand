@@ -23,7 +23,7 @@ namespace StockBand.Controllers
             _userLogService = userLogService;
         }
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Userspanel()
         {
             var users = await _userService.GetAllUsersAsync();
             return View(users);
@@ -74,7 +74,7 @@ namespace StockBand.Controllers
                 TempData["Message"] = Message.Code17;
                 return RedirectToAction("customexception", "exceptions");
             }
-            var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber, 15);
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("logs", "admin", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);

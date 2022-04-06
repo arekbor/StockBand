@@ -112,7 +112,7 @@ namespace Stock_Band.Controllers
                 TempData["Message"] = Message.Code17;
                 return RedirectToAction("customexception", "exceptions");
             }  
-            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 15);
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);

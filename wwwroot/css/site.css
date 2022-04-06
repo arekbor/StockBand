@@ -1,8 +1,35 @@
-﻿body {
-    overflow: hidden;
+﻿.text-nowrap {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bg-nav {
+    background-color: #262626;
 }
 
-.scrollable {
-    height: 85vh;
-    overflow-y: auto;
+::-webkit-scrollbar {
+    width: 10px;
 }
+
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+@media only screen and (min-width: 700px) {
+
+    .dropdownCustom {
+        right: 0 !important;
+        left: auto !important;
+    }
+}
+

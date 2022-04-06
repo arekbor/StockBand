@@ -11,7 +11,7 @@
 </head>
 <body>
     <header style="position:relative;">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+        <nav id="navbar_top" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3 bg-nav">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-music-note-list"></i> Stock Band</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -40,3 +40,4 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
