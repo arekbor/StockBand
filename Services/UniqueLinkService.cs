@@ -45,7 +45,7 @@ namespace StockBand.Services
                 return false;
             if(!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var result))
                 return false;
-            if (verifyLink.DateTimeExpire.AddMinutes(result) >= DateTime.UtcNow)
+            if (verifyLink.DateTimeExpire.AddMinutes(result) >= DateTime.Now)
                 return true;
             return false;
         }

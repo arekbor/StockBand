@@ -22,7 +22,7 @@ namespace StockBand.Services
             var userActivity = new UserLog()
             {
                 Action = description,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = DateTime.Now,
                 UserId = id
             };
             await _dbContext.UserLogDbContext.AddAsync(userActivity);

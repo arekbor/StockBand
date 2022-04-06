@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
@@ -56,13 +55,13 @@ namespace StockBand.Services
             var authenticationProperties = new AuthenticationProperties();
             if (!userDto.RememberMe)
             {
-                //TODO insert expire to appsettings
-                authenticationProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
+                authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
                 authenticationProperties.IsPersistent = false;
             }
             else
             {
                 authenticationProperties.IsPersistent = true;
+                await _userLogService.AddToLogsAsync(LogMessage.Code07, user.Id);
             }
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
             await _userLogService.AddToLogsAsync(LogMessage.Code01, user.Id);
@@ -168,6 +167,7 @@ namespace StockBand.Services
 
             var hashedPwd = _passwordHasher.HashPassword(user, userDto.Password);
             user.HashPassword = hashedPwd;
+            user.CreatedTime = DateTime.Now;
 
             _dbContext.UserDbContext.Add(user);
             await _dbContext.SaveChangesAsync();
