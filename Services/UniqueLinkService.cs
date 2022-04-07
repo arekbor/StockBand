@@ -12,7 +12,7 @@ namespace StockBand.Services
             var uniqueLink = new UniqueLink()
             {
                 Guid = Guid.NewGuid(),
-                DateTimeExpire = DateTime.UtcNow
+                DateTimeExpire = DateTime.Now
             };
             _repository.Add(uniqueLink);
             return uniqueLink.Guid;

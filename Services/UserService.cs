@@ -48,7 +48,8 @@ namespace StockBand.Services
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name,user.Name),
-                new Claim(ClaimTypes.Role,user.Role)
+                new Claim(ClaimTypes.Role,user.Role),
+                new Claim("Color",user.Color)
             };
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
@@ -118,7 +119,8 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code09);
                 return false;
             }
-            if (!UserRoles.Roles.Contains(user.Role))
+            //TODO sprawdz czy to dziala - zmiana z user na model.role
+            if (!UserRoles.Roles.Contains(model.Role))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
                 return false;
@@ -203,10 +205,30 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        public async Task<bool> ChangeUserColor(SettingsUserDto userDto)
+        {
+            var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
+                return false;
+            }
+            if (!UserColor.Colors.Contains(userDto.Color))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code18);
+                return false;
+            }
+            user.Color = userDto.Color;
+            _dbContext.UserDbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code08, user.Id);
+            _actionContext.ActionContext.ModelState.Clear();
+            return true;
+        }
         private ClaimsPrincipal GetUser()
         {
             return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
-        
     }
 }

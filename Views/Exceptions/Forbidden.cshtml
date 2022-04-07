@@ -2,13 +2,13 @@
     ViewData["Title"] = "403 Forbidden";
     Layout = "_SimpleLayout";
 }
-<div class="row mt-5">
-    <div class="col">
-        <div class="card mt-5 card-forbidden">
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:50vh;">
             <div class="card-header">
                 <h5>Server error</h5>
             </div>
-            <div class="card-body mt-2">
+            <div class="card-body">
                 <h2 class="text-danger">403</h2> 
                 <h6>@Message.Code16</h6>
                 <a class="btn-primary btn btn-primary mt-4" asp-controller="Home" asp-action="Index">Got to home</a>

@@ -26,6 +26,7 @@
         public const string Code15 = "You do not have permission";
         public const string Code16 = "You do not have permission to access this page";
         public const string Code17 = "Empty result";
+        public const string Code18 = "Color does not exist";
     }
     public static class SystemMessage
     {

@@ -5,22 +5,6 @@
 
 
 @model PaginetedList<UserLog>
-
- <div class="row">
-    <div class="col-12">
-        <nav class="nav justify-content-start">
-            <ul class="pagination">
-                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                @foreach (var item in Model.Pages(1))
-                {
-                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
-                }
-                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
     <thead>
@@ -43,33 +27,8 @@
     </table>
 </div>
 
-
-@*<div class="card">
-    <div class="card-header">
-        <h5>Logs</h5>
-    </div>
-    <div class="card-body">
-        <table class="table bg-dark" style="width: 100%;">
-            <thead class="text-left thead-borderless" style="display:table; width:100%; table-layout:fixed;">
-                <tr class="text-light">
-                    <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Guid</th>
-                    <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Action</th>
-                    <th class="p-0 ps-3" style="width: 25% !important;" scope="col">Date</th>
-                </tr>
-            </thead>
-            <tbody class="adminpaneltbody mt-3 border-secondary" style="display:block; overflow-y:auto; table-layout:fixed; border-width:1px 0px 0px 0px;">
-               @foreach (var item in Model)
-               {
-                    <tr class="mt-1" style="display: table; width: 100%; table-layout: fixed;">
-                        <td class="p-0 ps-3 text-warning" style="width: 25% !important;" scope="row">@item.Guid</td>
-                        <td class="p-0 ps-3" style="width: 25% !important;" scope="row">@item.Action</td>
-                        <td class="p-0 ps-3" style="width: 25% !important;" scope="row">@item.CreatedDate.ToString("dd/MM/yy-HH:mm")</td>
-                    </tr>
-               }
-            </tbody>
-        </table>
-    </div>
-    <div class="card-footer">
+ <div class="row pagginationDiv">
+    <div class="col-12">
         <nav class="nav justify-content-center">
             <ul class="pagination">
                 <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
@@ -82,4 +41,3 @@
         </nav>
     </div>
 </div>
-*@

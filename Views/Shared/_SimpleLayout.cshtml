@@ -1,23 +1,26 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Stock Band</title>
-    <link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css"/>
-    <script src="https://kit.fontawesome.com/72752b8346.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <partial name="_headPartial"/>
 </head>
-<body>
-    <div class="container">
+<body class="page-container">
+    <header style="position:relative;">
+        <nav id="navbar_top" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3 bg-nav">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class="bi bi-music-note-list"></i> Stock Band</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid content-wrap"> 
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
+    <partial name="_footerPartial"/>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

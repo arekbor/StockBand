@@ -117,5 +117,23 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);
         }
+        [HttpGet]
+        public IActionResult UserSettings()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Color(SettingsUserDto userDto)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction("usersettings", "account", userDto);
+            var status = await _userService.ChangeUserColor(userDto);
+            if (status)
+            {
+                //TODO try update cookie with a new color
+                return RedirectToAction("index", "home");
+            }
+            return RedirectToAction("usersettings", "account", userDto);
+        }
     }  
 }
