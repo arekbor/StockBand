@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
@@ -14,10 +16,12 @@ namespace Stock_Band.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserLogService _userLogService;
-        public AccountController(IUserService userService, IUserLogService userLogService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AccountController(IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _userLogService = userLogService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -130,7 +134,6 @@ namespace Stock_Band.Controllers
             var status = await _userService.ChangeUserColor(userDto);
             if (status)
             {
-                //TODO try update cookie with a new color
                 return RedirectToAction("index", "home");
             }
             return RedirectToAction("usersettings", "account", userDto);

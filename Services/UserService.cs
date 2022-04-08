@@ -44,28 +44,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code03);
                 return false;
             }
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Name,user.Name),
-                new Claim(ClaimTypes.Role,user.Role),
-                new Claim("Color",user.Color)
-            };
-            var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
-            var claimPrincipal = new ClaimsPrincipal(claimIdentity);
-            var authenticationProperties = new AuthenticationProperties();
-            if (!userDto.RememberMe)
-            {
-                authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
-                authenticationProperties.IsPersistent = false;
-            }
-            else
-            {
-                authenticationProperties.IsPersistent = true;
-                await _userLogService.AddToLogsAsync(LogMessage.Code07, user.Id);
-            }
-            await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
-            await _userLogService.AddToLogsAsync(LogMessage.Code01, user.Id);
+            await Cookie(user, userDto,CookieOperation.Login);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -223,7 +202,45 @@ namespace StockBand.Services
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code08, user.Id);
+            await Cookie(user,null,CookieOperation.Refresh);
             _actionContext.ActionContext.ModelState.Clear();
+            return true;
+        }
+        private async Task<bool> Cookie(User user, UserLoginDto userDto,CookieOperation cookieOperation)
+        {
+            string msg = String.Empty;
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                new Claim(ClaimTypes.Name,user.Name),
+                new Claim(ClaimTypes.Role,user.Role),
+                new Claim("Color",user.Color)
+            };
+            var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
+            var claimPrincipal = new ClaimsPrincipal(claimIdentity);
+            var authenticationProperties = new AuthenticationProperties();
+            if (cookieOperation == CookieOperation.Login)
+            {
+                if (!userDto.RememberMe)
+                {
+                     authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
+                    authenticationProperties.IsPersistent = false;
+                }
+                else
+                {
+                    authenticationProperties.IsPersistent = true;
+                    await _userLogService.AddToLogsAsync(LogMessage.Code07, user.Id);
+                }
+                msg = LogMessage.Code01;
+            }
+            if (cookieOperation == CookieOperation.Refresh)
+            {
+                await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
+                msg = LogMessage.Code09;
+            }
+
+            await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
+            await _userLogService.AddToLogsAsync(msg, user.Id);
             return true;
         }
         private ClaimsPrincipal GetUser()
