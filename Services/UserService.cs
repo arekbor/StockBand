@@ -92,28 +92,26 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code04);
                 return false;
             }
+
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if(user is null)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code09);
                 return false;
             }
-            //TODO sprawdz czy to dziala - zmiana z user na model.role
+            if (user.Role == UserRoles.Roles[1])
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code19);
+                return false;
+            }
             if (!UserRoles.Roles.Contains(model.Role))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
                 return false;
             }
-            if(GetUser().FindFirst(x => x.Type == ClaimTypes.Role).Value != model.Role)
-            {
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code19);
-                return false;
-            }
-
             user.Name = model.Name;
             user.Block = model.Block;
             user.Role = model.Role;
-            
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
