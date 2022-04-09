@@ -44,11 +44,12 @@ namespace StockBand.Controllers
         [Route("admin/edituser/{id:int}")]
         public async Task<IActionResult> EditUser(int id, EditUserDto userDto)
         {
+            //TODO relog user after update
             if (!ModelState.IsValid)
                 return View(userDto);
             var status = await _userService.UpdateUser(id, userDto);
             if(status)
-                return RedirectToAction("index", "admin");
+                return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
         [HttpGet]

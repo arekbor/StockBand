@@ -104,9 +104,16 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
                 return false;
             }
+            if(GetUser().FindFirst(x => x.Type == ClaimTypes.Role).Value != model.Role)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code19);
+                return false;
+            }
+
             user.Name = model.Name;
             user.Block = model.Block;
             user.Role = model.Role;
+            
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
@@ -214,6 +221,7 @@ namespace StockBand.Services
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
                 new Claim(ClaimTypes.Name,user.Name),
                 new Claim(ClaimTypes.Role,user.Role),
+                new Claim("Block",user.Block.ToString()),
                 new Claim("Color",user.Color)
             };
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
@@ -223,7 +231,7 @@ namespace StockBand.Services
             {
                 if (!userDto.RememberMe)
                 {
-                     authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
+                    authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
                     authenticationProperties.IsPersistent = false;
                 }
                 else

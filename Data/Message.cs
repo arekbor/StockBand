@@ -27,6 +27,7 @@
         public const string Code16 = "You do not have permission to access this page";
         public const string Code17 = "Empty result";
         public const string Code18 = "Color does not exist";
+        public const string Code19 = "Role can't be changed for your account";
     }
     public static class SystemMessage
     {
