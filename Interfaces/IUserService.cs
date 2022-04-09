@@ -13,7 +13,7 @@ namespace StockBand.Interfaces
         public Task<User> GetUserAsync(int id);
         public Task<bool> UpdateUser(int id,EditUserDto model);
         public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);
-        public Task<bool> ChangePasswordUser(ProfileEditUser userDto);
-        public Task<bool> ChangeUserColor(SettingsUserDto userDto);
+        public Task<bool> ChangePasswordUser(ChangePasswordDto userDto);
+        public Task<bool> ChangeUserColor(ChangeColorDto userDto);
     }
 }

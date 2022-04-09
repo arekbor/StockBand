@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
-    public class ProfileEditUser
+    public class ChangePasswordDto
     {
         [Required]
         [DataType(DataType.Password)]

@@ -19,7 +19,7 @@
     {
         <tr>
             <th class="text-warning" scope="row">@log.Guid</th>
-            <td class="text-info" >@log.User.Name</td>
+            <td style="color:@log.User.Color;">@log.User.Name</td>
             <td class="text-warning">@log.CreatedDate.ToString("F")</td>
             <td class="text-info">@log.Action</td>
         </tr>

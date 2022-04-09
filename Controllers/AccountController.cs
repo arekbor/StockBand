@@ -90,7 +90,7 @@ namespace Stock_Band.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ProfileEditUser dto)
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);
@@ -128,8 +128,13 @@ namespace Stock_Band.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult ChangeColor()
+        {
+            return View();
+        }
         [HttpPost]
-        public async Task<IActionResult> Color(SettingsUserDto userDto)
+        public async Task<IActionResult> ChangeColor(ChangeColorDto userDto)
         {
             if (!ModelState.IsValid)
                 return RedirectToAction("usersettings", "account", userDto);

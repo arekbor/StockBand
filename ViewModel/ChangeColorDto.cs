@@ -1,6 +1,6 @@
 ﻿namespace StockBand.ViewModel
 {
-    public class SettingsUserDto
+    public class ChangeColorDto
     {
         public string Color { get; set; }
     }

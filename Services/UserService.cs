@@ -165,7 +165,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> ChangePasswordUser(ProfileEditUser userDto)
+        public async Task<bool> ChangePasswordUser(ChangePasswordDto userDto)
         {
             var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
@@ -193,7 +193,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> ChangeUserColor(SettingsUserDto userDto)
+        public async Task<bool> ChangeUserColor(ChangeColorDto userDto)
         {
             var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);

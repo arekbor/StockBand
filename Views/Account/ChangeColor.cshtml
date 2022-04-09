@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "Change Color";
+    Layout = "_Layout";
+}
+@model ChangeColorDto
+
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:50vh;">
+            <div class="card-header">
+                <h5>Change password</h5>
+            </div>
+            <div class="card-body">
+                <form asp-controller="account" asp-action="changecolor">
+                    <div class="validation text-danger" asp-validation-summary="All"></div>
+                    <div class="form-group mt-3">
+                        <label>Update color</label>
+                        <select asp-for="Color" class="form-control">
+                            @foreach (var item in UserColor.Colors)
+                            {
+                                <option>@item</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <button type="submit" class="btn btn-warning">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
