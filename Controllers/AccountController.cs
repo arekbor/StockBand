@@ -17,11 +17,13 @@ namespace Stock_Band.Controllers
         private readonly IUserService _userService;
         private readonly IUserLogService _userLogService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AccountController(IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
+        private readonly IUniqueLinkService _uniqueLinkService;
+        public AccountController(IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _userLogService = userLogService;
             _httpContextAccessor = httpContextAccessor;
+            _uniqueLinkService = uniqueLinkService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -53,9 +55,9 @@ namespace Stock_Band.Controllers
         [HttpGet]
         [Route("account/create/{guid:Guid}")]
         [AllowAnonymous]
-        public IActionResult Create(Guid guid)
+        public async Task<IActionResult> Create(Guid guid)
         {
-            var verifyGuid = UniqueLinkService.VerifyLink(guid);
+            var verifyGuid = await _uniqueLinkService.VerifyLink(guid);
             if (!verifyGuid)
             {
                 TempData["Message"] = Message.Code01;

@@ -9,7 +9,7 @@ namespace StockBand.Interfaces
     {
         public Task<bool> LoginUserAsync(UserLoginDto userDto);
         public Task<bool> LogoutUserAsync();
-        public Task<IEnumerable<User>> GetAllUsersAsync();
+        public IQueryable<User> GetAllUsersAsync();
         public Task<User> GetUserAsync(int id);
         public Task<bool> UpdateUser(int id,EditUserDto model);
         public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);

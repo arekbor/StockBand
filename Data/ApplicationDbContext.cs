@@ -7,6 +7,7 @@ namespace StockBand.Data
     {
         public DbSet<User> UserDbContext { get; set; }
         public DbSet<UserLog> UserLogDbContext { get; set; }
+        public DbSet<UniqueLink> UniqueLinkDbContext { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> contextOptions) : base(contextOptions)
         {
 

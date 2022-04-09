@@ -33,6 +33,7 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLogService, UserLogService>();
+builder.Services.AddScoped<IUniqueLinkService, UniqueLinkService>();
 
 var app = builder.Build();
 

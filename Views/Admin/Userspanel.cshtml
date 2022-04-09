@@ -2,7 +2,7 @@
     ViewData["Title"] = "Users panel";
     Layout = "_Layout";
 }
-@model IEnumerable<User>
+@model PaginetedList<User>
 
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
@@ -33,5 +33,21 @@
     </tbody>
     </table>
 </div>
+
+ <div class="row pagginationDiv">
+    <div class="col-12">
+        <nav class="nav justify-content-center border-top border-white">
+            <ul class="pagination mt-2">
+                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                @foreach (var item in Model.Pages(1))
+                {
+                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@item">@item</a></li>
+                }
+                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
 
 

@@ -1,49 +1,65 @@
-﻿using StockBand.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using StockBand.Data;
+using StockBand.Interfaces;
 using StockBand.Models;
 
 namespace StockBand.Services
 {
-    public static class UniqueLinkService
+    //TODO add type 
+    //TODO edit expire time, add this in AddLinkFunction and disable checking on controller 
+    public class UniqueLinkService : IUniqueLinkService
     {
-        private static List<UniqueLink> _repository = new List<UniqueLink>();
-
-        public static Guid AddLink()
+        private readonly ApplicationDbContext _applicationDbContext;
+        public UniqueLinkService(ApplicationDbContext applicationDbContext)
+        {
+            _applicationDbContext = applicationDbContext;
+        }
+        public async Task<Guid> AddLink()
         {
             var uniqueLink = new UniqueLink()
             {
                 Guid = Guid.NewGuid(),
                 DateTimeExpire = DateTime.Now
             };
-            _repository.Add(uniqueLink);
+            await _applicationDbContext
+                .UniqueLinkDbContext
+                .AddAsync(uniqueLink);
             return uniqueLink.Guid;
         }
 
-        public static bool DeleteLink(Guid guid)
+        public async Task<bool> DeleteLink(Guid guid)
         {
-            var uniqueLink = _repository
-                .FirstOrDefault(x => x.Guid == guid);
-            if(uniqueLink is null)
+            var uniqueLink = await _applicationDbContext
+                .UniqueLinkDbContext
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if (uniqueLink is null)
+            {
                 return false;
-            _repository.Remove(uniqueLink);
+            }
+            _applicationDbContext
+                .UniqueLinkDbContext
+                .Remove(uniqueLink);
+            _applicationDbContext.SaveChanges();
             return true;
         }
 
-        public static IEnumerable<UniqueLink> GetAllLinks()
+        public async Task<IEnumerable<UniqueLink>> GetAllLinks()
         {
-            var uniqueLinks = _repository
-                .ToList();
+            var uniqueLinks = await _applicationDbContext
+                .UniqueLinkDbContext
+                .ToListAsync();
             if (uniqueLinks is null)
                 return null;
             return uniqueLinks;
         }
-
-        public static bool VerifyLink(Guid guid)
+        public async Task<bool> VerifyLink(Guid guid)
         {
-            var verifyLink = _repository
-                .FirstOrDefault(x => x.Guid == guid);
+            var verifyLink = await _applicationDbContext
+                .UniqueLinkDbContext
+                .FirstOrDefaultAsync(x => x.Guid == guid);
             if (verifyLink is null)
                 return false;
-            if(!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var result))
+            if (!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var result))
                 return false;
             if (verifyLink.DateTimeExpire.AddMinutes(result) >= DateTime.Now)
                 return true;

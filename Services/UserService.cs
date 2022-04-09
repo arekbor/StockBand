@@ -19,7 +19,8 @@ namespace StockBand.Services
         private readonly IActionContextAccessor _actionContext;
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
-        public UserService(ApplicationDbContext dbContext, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        private readonly IUniqueLinkService _uniqueLinkService;
+        public UserService(ApplicationDbContext dbContext,IUniqueLinkService uniqueLinkService, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -27,6 +28,7 @@ namespace StockBand.Services
             _actionContext = actionContext;
             _mapper = mapper;
             _userLogService = userLogService;
+            _uniqueLinkService = uniqueLinkService;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -55,9 +57,11 @@ namespace StockBand.Services
                 int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return true;
         }
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public IQueryable<User> GetAllUsersAsync()
         {
-            var users = await _dbContext.UserDbContext.ToListAsync();
+            var users = _dbContext
+                .UserDbContext
+                .AsQueryable();
             if (users is null)
                 return null;
             return users;
@@ -121,7 +125,7 @@ namespace StockBand.Services
         }
         public async Task<bool> CreateUser(Guid guid,CreateUserDto userDto)
         {
-            if (!UniqueLinkService.VerifyLink(guid))
+            if (!await _uniqueLinkService.VerifyLink(guid))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
@@ -144,7 +148,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code06);
                 return false;
             }
-            if (!UniqueLinkService.DeleteLink(guid))
+            if (!await _uniqueLinkService.DeleteLink(guid))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
