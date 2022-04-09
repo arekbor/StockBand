@@ -137,13 +137,30 @@ namespace Stock_Band.Controllers
         public async Task<IActionResult> ChangeColor(ChangeColorDto userDto)
         {
             if (!ModelState.IsValid)
-                return RedirectToAction("usersettings", "account", userDto);
+                return RedirectToAction("changecolor", "account", userDto);
             var status = await _userService.ChangeUserColor(userDto);
             if (status)
             {
                 return RedirectToAction("index", "home");
             }
-            return RedirectToAction("usersettings", "account", userDto);
+            return RedirectToAction("changecolor", "account", userDto);
+        }
+        [HttpGet]
+        public IActionResult ChangeTheme()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangeTheme(ChangeThemeDto userDto)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction("changetheme", "account", userDto);
+            var status = await _userService.ChangeUserTheme(userDto);
+            if (status)
+            {
+                return RedirectToAction("index", "home");
+            }
+            return RedirectToAction("changetheme", "account", userDto);
         }
     }  
 }

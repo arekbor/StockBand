@@ -11,6 +11,7 @@
         public const string Code07 = "Selected checkbox remember me";
         public const string Code08 = "Color changed";
         public const string Code09 = "Cookie updated";
+        public const string Code10 = "Theme updated";
 
     }
 }

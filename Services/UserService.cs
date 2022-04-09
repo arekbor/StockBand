@@ -53,8 +53,7 @@ namespace StockBand.Services
         public async Task<bool> LogoutUserAsync()
         {
             await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
-            await _userLogService.AddToLogsAsync(LogMessage.Code02, 
-                int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
+            await _userLogService.AddToLogsAsync(LogMessage.Code02, ParseUserId());
             return true;
         }
         public IQueryable<User> GetAllUsersAsync()
@@ -78,7 +77,7 @@ namespace StockBand.Services
         public async Task<bool> UpdateUser(int id, EditUserDto model)
         {
             //TODO block if admin will want to change role
-            var adminId = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var adminId = ParseUserId();
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
             if (userAdmin is null)
             {
@@ -167,7 +166,7 @@ namespace StockBand.Services
         }
         public async Task<bool> ChangePasswordUser(ChangePasswordDto userDto)
         {
-            var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var id = ParseUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
@@ -195,7 +194,7 @@ namespace StockBand.Services
         }
         public async Task<bool> ChangeUserColor(ChangeColorDto userDto)
         {
-            var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var id = ParseUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
@@ -215,6 +214,28 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        public async Task<bool> ChangeUserTheme(ChangeThemeDto userDto)
+        {
+            var id = ParseUserId();
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
+                return false;
+            }
+            if (!UserTheme.Themes.Contains(userDto.Theme))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code20);
+                return false;
+            }
+            user.Theme = userDto.Theme;
+            _dbContext.UserDbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code10, user.Id);
+            await Cookie(user, null, CookieOperation.Refresh);
+            _actionContext.ActionContext.ModelState.Clear();
+            return true;
+        }
         private async Task<bool> Cookie(User user, UserLoginDto userDto,CookieOperation cookieOperation)
         {
             string msg = String.Empty;
@@ -224,7 +245,8 @@ namespace StockBand.Services
                 new Claim(ClaimTypes.Name,user.Name),
                 new Claim(ClaimTypes.Role,user.Role),
                 new Claim("Block",user.Block.ToString()),
-                new Claim("Color",user.Color)
+                new Claim("Color",user.Color),
+                new Claim("Theme",user.Theme),
             };
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
@@ -252,6 +274,11 @@ namespace StockBand.Services
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
             await _userLogService.AddToLogsAsync(msg, user.Id);
             return true;
+        }
+        
+        private int ParseUserId()
+        {
+            return int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
         }
         private ClaimsPrincipal GetUser()
         {

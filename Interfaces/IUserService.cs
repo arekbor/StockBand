@@ -15,5 +15,6 @@ namespace StockBand.Interfaces
         public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);
         public Task<bool> ChangePasswordUser(ChangePasswordDto userDto);
         public Task<bool> ChangeUserColor(ChangeColorDto userDto);
+        public Task<bool> ChangeUserTheme(ChangeThemeDto userDto);
     }
 }

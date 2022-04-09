@@ -1,7 +1,22 @@
 ﻿<meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>@ViewData["Title"] - Stock Band</title>
-<link rel="stylesheet" href="~/css/bootstrap.min.css" asp-append-version="true" />
+@{
+    string href = String.Empty;
+    if (User.Identity.IsAuthenticated)
+    {
+        var theme = User.FindFirst(x => x.Type == "Theme").Value;
+        href = @$"~/css/{theme}.css";
+    }
+    else
+    {
+        href = @"~/css/basic.css";
+    }
+}
+
+<link rel="stylesheet" href="@href" asp-append-version="true" />
+
+
 <link rel="stylesheet" href="~/css/site.css"/>
 <script src="https://kit.fontawesome.com/72752b8346.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">

@@ -11,5 +11,6 @@ namespace StockBand.Models
         public bool Block { get; set; } = false;
         public DateTime CreatedTime { get; set; }
         public string Color { get; set; } = UserColor.Colors[0];
+        public string Theme { get; set; } = UserTheme.Themes[0];
     }
 }
