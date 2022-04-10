@@ -30,28 +30,27 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <!--- admin ---><partial name="_AdminNavItemsPartial"/>
-                         <!--- home ---><li class="nav-item">
-                            <a class="nav-link" href="#">Home
-                                <span class="badge rounded-pill badge-notification bg-warning">1</span> <!--- new tracks count --->
+                        <!--- admin --->
+                        <partial name="_AdminNavItemsPartial"/>
+                         <!--- home --->
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="index">Home
                             </a>
                         </li>
-                        <!--- library ---><li class="nav-item">
+                        <!--- library --->
+                        <li class="nav-item">
                             <a class="nav-link" href="#">Library</a>
                         </li>
-                        <!--- upload ---><li class="nav-item">
+                        <!--- upload --->
+                        <li class="nav-item">
                             <a class="nav-link" href="#">Upload</a>
                         </li>
-                        <!--- search ---><form class="d-flex input-group w-auto">
-                            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
-                            <span class="input-group-text border-0" id="search-addon">
-                                <i class="fas fa-search"></i>
-                            </span>
-                        </form>
+                        
                     </ul>
                     <div class="d-flex align-items-center">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <!--- userPanel ---><partial name="_ProfilePartial"/>
+                            <!--- userPanel --->
+                            <partial name="_ProfilePartial"/>
                         </ul>
                     </div>
                 </div>
