@@ -2,4 +2,11 @@
     ViewData["Title"] = "Home";
     Layout = "_Layout";
 }
-
+<script>
+    $(document).ready(function(){
+        
+        $("#searchInput").autocomplete({
+            source: 'api/values/search'
+        });
+    });
+</script>
