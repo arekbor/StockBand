@@ -2,6 +2,7 @@
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
+using System.Security.Claims;
 
 namespace StockBand.Services
 {
