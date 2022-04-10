@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -18,12 +19,16 @@ namespace Stock_Band.Controllers
         private readonly IUserLogService _userLogService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUniqueLinkService _uniqueLinkService;
-        public AccountController(IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
+        private readonly ApplicationDbContext _applicationDbContext;
+        private readonly IMapper _mapper;
+        public AccountController(ApplicationDbContext applicationDbContext,IMapper mapper, IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _userLogService = userLogService;
             _httpContextAccessor = httpContextAccessor;
             _uniqueLinkService = uniqueLinkService;
+            _applicationDbContext = applicationDbContext;
+            _mapper = mapper;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -163,3 +168,4 @@ namespace Stock_Band.Controllers
         }
     }  
 }
+ 
