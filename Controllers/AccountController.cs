@@ -43,8 +43,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("index", "home");
             return View(user);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> LogoutAsync()
         {
             var status = await _userService.LogoutUserAsync();

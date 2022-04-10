@@ -1,15 +1,22 @@
 ﻿@{
     if (User.Identity.IsAuthenticated && User.IsInRole(UserRoles.Roles[1]))
     {
-        <div class="dropdown">
-			<button class="btn btn-link text-danger dropdown-toggle p-0" style="text-decoration: none;" type="button" id="dropdownMenuUserPanel" data-bs-toggle="dropdown" aria-expanded="false">
-			Admin
-			</button>
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenuUserPanel">
-				<li><a class="dropdown-item" asp-controller="admin" asp-action="userspanel">User panel</a></li>
-				<li><a class="dropdown-item" asp-controller="admin" asp-action="logs">All logs</a></li>
-				<li><a class="dropdown-item" asp-controller="admin" asp-action="uniquelink">Unique link</a></li>
-			</ul>
-		</div>
+		<li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin
+                <span class="badge rounded-pill badge-notification bg-info">1</span> <!--- new logs count --->
+                <span class="badge rounded-pill badge-notification bg-danger">1</span> <!--- new unique links count --->
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li>
+                    <a class="dropdown-item" asp-controller="admin" asp-action="userspanel">User panel</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-controller="admin" asp-action="logs">All logs</a>
+                </li>
+                 <li>
+                    <a class="dropdown-item" asp-controller="admin" asp-action="uniquelink">Unique link</a>
+                </li>
+            </ul>
+        </li>
     }
 }

@@ -1,21 +1,19 @@
 ﻿@{
 	string color = User.FindFirst(x => x.Type == "Color").Value;
 }
-
-<div class="dropdown">
-	<button class="btn btn-link dropdown-toggle p-0" style="text-decoration: none; color:@color;" type="button" id="dropdownMenuUserPanel" data-bs-toggle="dropdown" aria-expanded="false">
-	@User.Identity.Name
+<li class="nav-item dropdown">
+    <button class="btn btn-link dropdown-toggle p-0" style="text-decoration: none; color:@color;" type="button" id="dropdownMenuUserPanel" data-bs-toggle="dropdown" aria-expanded="false">
+		@User.Identity.Name
 	</button>
-	<ul class="dropdown-menu dropdownCustom" aria-labelledby="dropdownMenuUserPanel">
-		<li><a class="dropdown-item" asp-controller="account" asp-action="userlog">Logs</a></li>
-		<li><a class="dropdown-item" asp-controller="account" asp-action="usersettings">Settings</a></li>
-
+    <ul class="dropdown-menu dropdownCustom" aria-labelledby="dropdownMenuUserPanel">
+        <li>
+            <a class="dropdown-item" asp-controller="account" asp-action="userlog">Logs</a>
+        </li>
+        <li>
+            <a class="dropdown-item" asp-controller="account" asp-action="usersettings">Settings</a>
+        </li>
 		<li>
-			<div class="dropdown-item">
-				<form method="post" class="form-inline" asp-controller="account" asp-action="logout">
-					<button type="submit" class="btn btn-link text-warning p-0" style="text-decoration: none;">Log out</button>
-				</form>
-			</div>
-		</li>
-	</ul>
-</div>
+            <a class="dropdown-item" asp-controller="account" asp-action="logout">Logout</a>
+        </li>
+    </ul>
+</li>
