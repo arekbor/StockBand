@@ -15,12 +15,15 @@ namespace StockBand.Services
         {
             _applicationDbContext = applicationDbContext;
         }
-        public async Task<Guid> AddLink()
+        public async Task<Guid> AddLink(string type)
         {
+            if (!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var minutes))
+                throw new ArgumentException("Parsing UniqueLinkExpire fail");
             var uniqueLink = new UniqueLink()
             {
                 Guid = Guid.NewGuid(),
-                DateTimeExpire = DateTime.Now
+                DateTimeExpire = DateTime.Now.AddMinutes(minutes),
+                Type = type
             };
             await _applicationDbContext
                 .UniqueLinkDbContext
@@ -60,9 +63,7 @@ namespace StockBand.Services
                 .FirstOrDefaultAsync(x => x.Guid == guid);
             if (verifyLink is null)
                 return false;
-            if (!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var result))
-                return false;
-            if (verifyLink.DateTimeExpire.AddMinutes(result) >= DateTime.Now)
+            if (verifyLink.DateTimeExpire >= DateTime.Now)
                 return true;
             return false;
         }

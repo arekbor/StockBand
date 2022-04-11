@@ -74,7 +74,7 @@ namespace StockBand.Controllers
         public async Task<IActionResult> UniqueLink()
         {
             var uniqueLink = await _uniqueLinkService
-                .AddLink();
+                .AddLink(UniqueLinkType.Types[0]);
             string url = Url.Action("create", "account", new {guid = uniqueLink },_httpContextAccessor.HttpContext.Request.Scheme);
             await _userLogService.AddToLogsAsync(LogMessage.Code06,int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return View("uniquelink", url);
