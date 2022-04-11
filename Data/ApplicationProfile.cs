@@ -10,7 +10,6 @@ namespace StockBand.Data
         {
             CreateMap<User,EditUserDto>();
             CreateMap<CreateUserDto,User>();
-            CreateMap<User,SearchUserDto>();
         }
     }
 }
