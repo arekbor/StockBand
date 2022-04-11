@@ -11,6 +11,7 @@
         <th scope="col">Guid</th>
         <th scope="col">Username</th>
         <th scope="col">Date</th>
+        <th scope="col">Action desc</th>
         <th scope="col">Action</th>
         </tr>
     </thead>
@@ -22,6 +23,7 @@
             <td style="color:@log.User.Color;">@log.User.Name</td>
             <td class="text-warning">@log.CreatedDate.ToString("F")</td>
             <td class="text-info">@log.Action</td>
+            <td><a asp-controller="admin" asp-action="deletelog" asp-route-id="@log.Guid" asp-route-pNumber="@Model.PageIndex"class="btn btn-danger btn-sm">Delete</a></td>
         </tr>
     }
     </tbody>

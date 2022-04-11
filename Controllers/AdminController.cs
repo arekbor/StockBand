@@ -100,5 +100,14 @@ namespace StockBand.Controllers
                 return RedirectToAction("logs", "admin", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);
         }
+        [HttpGet]
+        [Route("admin/deletelog/{id:guid}/{pNumber:int}")]
+        public async Task<IActionResult> DeleteLog(Guid id,int pNumber)
+        {
+            var status = await _userLogService.DeleteLogAsync(id);
+            if(status)
+                return RedirectToAction("logs", "admin", new { pageNumber = pNumber});
+            return RedirectToAction("badrequest", "exceptions");
+        }
     }
 }

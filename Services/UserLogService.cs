@@ -41,11 +41,28 @@ namespace StockBand.Services
         }
         public IQueryable<UserLog> GetAllUserLogsAsync()
         {
-            var id = int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var id = ParseUserId();
             var userActivity = _dbContext
                 .UserLogDbContext
                 .Where(x => x.UserId == id);
             return userActivity;
+        }
+        public async Task<bool> DeleteLogAsync(Guid id)
+        {
+            if (!GetUser().IsInRole(UserRoles.Roles[1]))
+                return false;
+            var log = await _dbContext
+                .UserLogDbContext
+                .FirstOrDefaultAsync(x => x.Guid == id);
+            if (log is null)
+                return false;
+            _dbContext.UserLogDbContext.Remove(log);
+            _dbContext.SaveChanges();
+            return true;
+        }
+        private int ParseUserId()
+        {
+            return int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
         }
         private ClaimsPrincipal GetUser()
         {
