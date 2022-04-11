@@ -32,20 +32,23 @@ namespace StockBand.Services
         }
         public IQueryable<UserLog> GetAllLogsAsync()
         {
-            var usersActivities = _dbContext
+            var usersLogs = _dbContext
                 .UserLogDbContext
                 .AsQueryable();
-            if (usersActivities is null)
+            if (usersLogs is null)
                 return null;
-            return usersActivities;
+            return usersLogs;
         }
         public IQueryable<UserLog> GetAllUserLogsAsync()
         {
             var id = ParseUserId();
-            var userActivity = _dbContext
+            var userLogs = _dbContext
                 .UserLogDbContext
-                .Where(x => x.UserId == id);
-            return userActivity;
+                .Where(x => x.UserId == id)
+                .AsQueryable();
+            if (userLogs is null)
+                return null;
+            return userLogs;
         }
         public async Task<bool> DeleteLogAsync(Guid id)
         {

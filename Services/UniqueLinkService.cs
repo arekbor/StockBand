@@ -6,8 +6,6 @@ using System.Security.Claims;
 
 namespace StockBand.Services
 {
-    //TODO add type 
-    //TODO edit expire time, add this in AddLinkFunction and disable checking on controller 
     public class UniqueLinkService : IUniqueLinkService
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -15,15 +13,15 @@ namespace StockBand.Services
         {
             _applicationDbContext = applicationDbContext;
         }
-        public async Task<Guid> AddLink(string type)
+        public async Task<Guid> AddLink(string type, int userId)
         {
-            if (!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var minutes))
-                throw new ArgumentException("Parsing UniqueLinkExpire fail");
+            var minutes = GetCurrentExpireMintues();
             var uniqueLink = new UniqueLink()
             {
                 Guid = Guid.NewGuid(),
                 DateTimeExpire = DateTime.Now.AddMinutes(minutes),
-                Type = type
+                Type = type,
+                UserId = userId
             };
             await _applicationDbContext
                 .UniqueLinkDbContext
@@ -47,14 +45,21 @@ namespace StockBand.Services
             return true;
         }
 
-        public async Task<IEnumerable<UniqueLink>> GetAllLinks()
+        public IQueryable<UniqueLink> GetAllLinks()
         {
-            var uniqueLinks = await _applicationDbContext
+            var uniqueLinks =  _applicationDbContext
                 .UniqueLinkDbContext
-                .ToListAsync();
+                .AsQueryable();
             if (uniqueLinks is null)
                 return null;
             return uniqueLinks;
+        }
+
+        public int GetCurrentExpireMintues()
+        {
+            if (!int.TryParse(ConfigurationManager.Configuration["UniqueLinkExpire"], out var minutes))
+                throw new ArgumentException("Parsing UniqueLinkExpire fail");
+            return minutes;
         }
         public async Task<bool> VerifyLink(Guid guid)
         {

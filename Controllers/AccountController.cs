@@ -109,9 +109,7 @@ namespace Stock_Band.Controllers
             var userLogs = _userLogService
                 .GetAllUserLogsAsync()
                 .OrderByDescending(x => x.CreatedDate)
-                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7))
-                .AsQueryable();
-
+                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
             if (!userLogs.Any())
             {
                 TempData["Message"] = Message.Code17;

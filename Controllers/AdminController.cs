@@ -33,8 +33,7 @@ namespace StockBand.Controllers
             if (pageNumber <= 0)
                 return RedirectToAction("userspanel", "admin", new { pageNumber = 1 });
             var users = _userService
-                .GetAllUsersAsync()
-                .AsQueryable();
+                .GetAllUsersAsync();
             if (!users.Any())
             {
                 TempData["Message"] = Message.Code17;
@@ -74,7 +73,7 @@ namespace StockBand.Controllers
         public async Task<IActionResult> UniqueLink()
         {
             var uniqueLink = await _uniqueLinkService
-                .AddLink(UniqueLinkType.Types[0]);
+                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             string url = Url.Action("create", "account", new {guid = uniqueLink },_httpContextAccessor.HttpContext.Request.Scheme);
             await _userLogService.AddToLogsAsync(LogMessage.Code06,int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             return View("uniquelink", url);
@@ -88,8 +87,7 @@ namespace StockBand.Controllers
                 .GetAllLogsAsync()
                 .Include(x => x.User)
                 .OrderByDescending(x => x.CreatedDate)
-                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7))
-                .AsQueryable();
+                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
             if (!logs.Any())
             {
                 TempData["Message"] = Message.Code17;
@@ -108,6 +106,25 @@ namespace StockBand.Controllers
             if(status)
                 return RedirectToAction("logs", "admin", new { pageNumber = pNumber});
             return RedirectToAction("badrequest", "exceptions");
+        }
+        [HttpGet]
+        public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1)
+        {
+            if (pageNumber <= 0)
+                return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = 1 });
+            var links = _uniqueLinkService
+                .GetAllLinks()
+                .Include(x => x.User)
+                .OrderByDescending(x => x.DateTimeExpire);
+            if (!links.Any())
+            {
+                TempData["Message"] = Message.Code17;
+                return RedirectToAction("customexception", "exceptions");
+            }
+            var paginatedList = await PaginetedList<UniqueLink>.CreateAsync(links.AsNoTracking(), pageNumber, 30);
+            if (pageNumber > paginatedList.TotalPages)
+                return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = paginatedList.TotalPages });
+            return View(paginatedList);
         }
     }
 }
