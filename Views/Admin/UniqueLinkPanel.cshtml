@@ -6,8 +6,8 @@
 @model PaginetedList<UniqueLink>
 @inject IUniqueLinkService _uniqueLinkService
 @{
-    int minutes = _uniqueLinkService.GetCurrentExpireMintues();
     string textColor = String.Empty;
+
 }
 
 <div class="table-responsive scrollable">
@@ -17,38 +17,49 @@
             <th scope="col">Guid</th>
             <th scope="col">DateTimeExpire</th>
             <th scope="col">Type</th>
-            <th scope="col">Author Name</th>
             <th scope="col">Author Id</th>
+            <th scope="col">Author Name</th>
             <th scope="col">Action</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (var link in Model)
-    {
-        <tr>
-            <th class="text-warning" scope="row">@link.Guid</th>
-            @{
-                if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult())
-                {
-                    textColor = "text-success";
+    @{
+    if(Model is not null){
+        foreach (var link in Model)
+        {
+            <tr>
+                <th class="text-warning" scope="row">@link.Guid</th>
+                @{
+                    if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult())
+                    {
+                        textColor = "text-success";
+                    }
+                    else
+                    {
+                        textColor = "text-danger";
+                    }
                 }
-                else
-                {
-                    textColor = "text-danger";
-                }
-            }
-            <td class="@textColor">@link.DateTimeExpire.ToString("F")</td>
-            <th class="text-warning" scope="row">@link.Type</th>
-            <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
-            <th class="text-info"  scope="row">@link.User.Id</th>
-            <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
-        </tr>
+                <td class="@textColor">@link.DateTimeExpire.ToString("F")</td>
+                <th class="text-warning" scope="row">@link.Type</th>
+                <th class="text-info"  scope="row">@link.User.Id</th>
+                <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
+                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
+                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
+                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-success btn-sm">Copy link</a></td>
+            </tr>
+        }
+    }
     }
     </tbody>
     </table>
 </div>
 
- <div class="row pagginationDiv">
+@{
+if(Model is not null)
+{
+<div class="row pagginationDiv">
     <div class="col-12">
         <nav class="nav justify-content-center border-top border-white">
             <ul class="pagination mt-2">
@@ -61,4 +72,9 @@
             </ul>
         </nav>
     </div>
-</div>
+</div>     
+}
+}
+
+
+

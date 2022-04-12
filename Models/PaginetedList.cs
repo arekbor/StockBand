@@ -8,9 +8,20 @@ namespace StockBand.Models
         public int TotalPages { get; set; }
         public PaginetedList(List<T> items, int count, int pageIndex, int pageSize)
         {
-            PageIndex = pageIndex;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
-            this.AddRange(items);
+
+            if(items.Count() > 0)
+            {
+                PageIndex = pageIndex;
+                TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+                this.AddRange(items);
+            }
+            else
+            {
+                items = null;
+                count = 0;
+                pageIndex = 0;
+                pageSize = 0;
+            }
         }
         public bool PreviousPage
         {

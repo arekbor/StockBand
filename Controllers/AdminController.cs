@@ -108,19 +108,15 @@ namespace StockBand.Controllers
             return RedirectToAction("badrequest", "exceptions");
         }
         [HttpGet]
-        public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1)
+        public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1, string search = "")
         {
             if (pageNumber <= 0)
                 return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = 1 });
             var links = _uniqueLinkService
                 .GetAllLinks()
                 .Include(x => x.User)
+                .Where(x => x.Guid.ToString().Contains(search) || x.Type.Contains(search))
                 .OrderByDescending(x => x.DateTimeExpire);
-            if (!links.Any())
-            {
-                TempData["Message"] = Message.Code17;
-                return RedirectToAction("customexception", "exceptions");
-            }
             var paginatedList = await PaginetedList<UniqueLink>.CreateAsync(links.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = paginatedList.TotalPages });
