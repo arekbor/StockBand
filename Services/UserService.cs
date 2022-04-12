@@ -246,11 +246,14 @@ namespace StockBand.Services
                 new Claim(ClaimTypes.Role,user.Role),
                 new Claim("Block",user.Block.ToString()),
                 new Claim("Color",user.Color),
-                new Claim("Theme",user.Theme),
+                new Claim("Theme",user.Theme)
             };
+            
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
             var authenticationProperties = new AuthenticationProperties();
+
+            
             if (cookieOperation == CookieOperation.Login)
             {
                 if (!userDto.RememberMe)
@@ -267,8 +270,10 @@ namespace StockBand.Services
             }
             if (cookieOperation == CookieOperation.Refresh)
             {
+                //TODO fix rememberme after resfresing cookie
                 await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
                 msg = LogMessage.Code09;
+                
             }
 
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
