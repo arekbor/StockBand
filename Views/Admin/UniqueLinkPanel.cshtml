@@ -1,11 +1,24 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Unique link panel";
     Layout = "_Layout";
     string textColor = String.Empty;
 }
 @model PaginetedList<UniqueLink>
 @inject IUniqueLinkService _uniqueLinkService
+
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <form method="get" asp-controller="admin" asp-action="uniquelinkpanel" autocomplete="off">
+            <div class="input-group mb-3">
+                <input type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="admin" asp-action="uniquelinkpanel" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 
 <div class="table-responsive scrollable">
@@ -31,7 +44,7 @@
             <tr>
                 @if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult()){textColor = "text-success";}else{textColor = "text-danger";}
                 <th class="text-warning" scope="row">@link.Guid</th>
-                <td class="@textColor">@link.DateTimeExpire.ToString("F")</td>
+                <td class="@textColor">@link.DateTimeExpire</td>
                 <th class="text-warning" scope="row">@link.Type</th>
                 <th class="text-info"  scope="row">@link.User.Id</th>
                 <th style="color:@link.User.Color" scope="row">@link.User.Name</th>

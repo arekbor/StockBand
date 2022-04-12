@@ -27,13 +27,31 @@ namespace StockBand.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
-        public async Task<IActionResult> Userspanel(int pageNumber = 1)
+        public async Task<IActionResult> Userspanel(int pageNumber = 1,string search="")
         {
             
             if (pageNumber <= 0)
                 return RedirectToAction("userspanel", "admin", new { pageNumber = 1 });
-            var users = _userService
-                .GetAllUsersAsync();
+            IQueryable<User> users = _userService.GetAllUsersAsync();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                users = _userService
+                .GetAllUsersAsync()
+                .Where(x => x.Id.ToString().Contains(search)
+                || x.Block.ToString().Contains(search)
+                || x.Name.Contains(search)
+                || x.Color.Contains(search)
+                || x.CreatedTime.ToString().Contains(search)
+                || x.Theme.Contains(search)
+                || x.Role.Contains(search));
+            }
+            else
+            {
+                users = _userService
+                    .GetAllUsersAsync();
+            }
+            
             if (!users.Any())
             {
                 return View();
@@ -69,22 +87,27 @@ namespace StockBand.Controllers
             return View(userDto);
         }
         [HttpGet]
-        public async Task<IActionResult> UniqueLink()
+        public async Task<IActionResult> CreateUser()
         {
             var uniqueLink = await _uniqueLinkService
                 .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
             string url = Url.Action("create", "account", new {guid = uniqueLink },_httpContextAccessor.HttpContext.Request.Scheme);
             await _userLogService.AddToLogsAsync(LogMessage.Code06,int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
-            return View("uniquelink", url);
+            return View("createuser", url);
         }
         [HttpGet]
-        public async Task<IActionResult> Logs(int pageNumber=1)
+        public async Task<IActionResult> Logs(int pageNumber=1, string search = "")
         {
             if(pageNumber <= 0)
                 return RedirectToAction("logs", "admin", new { pageNumber = 1 });
             var logs = _userLogService
                 .GetAllLogsAsync()
                 .Include(x => x.User)
+                .Where(x => x.Action.Contains(search)
+                || x.User.Name.Contains(search)
+                || x.User.Id.ToString().Contains(search)
+                || x.Guid.ToString().Contains(search)
+                || x.CreatedDate.ToString().Contains(search))
                 .OrderByDescending(x => x.CreatedDate);
             if (!logs.Any())
             {
@@ -112,7 +135,11 @@ namespace StockBand.Controllers
             var links = _uniqueLinkService
                 .GetAllLinks()
                 .Include(x => x.User)
-                .Where(x => x.Guid.ToString().Contains(search) || x.Type.Contains(search))
+                .Where(x => x.Guid.ToString().Contains(search)
+                || x.DateTimeExpire.ToString().Contains(search)
+                || x.Type.Contains(search)
+                || x.User.Name.Contains(search)
+                || x.User.Id.ToString().Contains(search))
                 .OrderByDescending(x => x.DateTimeExpire);
             if (!links.Any())
             {

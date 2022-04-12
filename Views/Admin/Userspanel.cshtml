@@ -4,6 +4,20 @@
 }
 @model PaginetedList<User>
 
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <form method="get" asp-controller="admin" asp-action="userspanel" autocomplete="off">
+            <div class="input-group mb-3">
+                <input type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="admin" asp-action="userspanel" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
     <thead>
