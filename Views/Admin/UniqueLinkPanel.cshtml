@@ -2,13 +2,11 @@
 @{
     ViewData["Title"] = "Unique link panel";
     Layout = "_Layout";
+    string textColor = String.Empty;
 }
 @model PaginetedList<UniqueLink>
 @inject IUniqueLinkService _uniqueLinkService
-@{
-    string textColor = String.Empty;
 
-}
 
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
@@ -26,21 +24,13 @@
     </thead>
     <tbody>
     @{
-    if(Model is not null){
+    if(Model is not null)
+    {
         foreach (var link in Model)
         {
             <tr>
+                @if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult()){textColor = "text-success";}else{textColor = "text-danger";}
                 <th class="text-warning" scope="row">@link.Guid</th>
-                @{
-                    if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult())
-                    {
-                        textColor = "text-success";
-                    }
-                    else
-                    {
-                        textColor = "text-danger";
-                    }
-                }
                 <td class="@textColor">@link.DateTimeExpire.ToString("F")</td>
                 <th class="text-warning" scope="row">@link.Type</th>
                 <th class="text-info"  scope="row">@link.User.Id</th>
@@ -49,32 +39,30 @@
                 <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
                 <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-success btn-sm">Copy link</a></td>
             </tr>
-        }
+        }        
     }
     }
     </tbody>
     </table>
 </div>
-
 @{
 if(Model is not null)
 {
-<div class="row pagginationDiv">
-    <div class="col-12">
-        <nav class="nav justify-content-center border-top border-white">
-            <ul class="pagination mt-2">
-                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                @foreach (var item in Model.Pages(1))
-                {
-                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@item">@item</a></li>
-                }
-                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-            </ul>
-        </nav>
+    <div class="row pagginationDiv">
+        <div class="col-12">
+            <nav class="nav justify-content-center border-top border-white">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Pages(1))
+                    {
+                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-</div>     
 }
 }
 
-
-
+   

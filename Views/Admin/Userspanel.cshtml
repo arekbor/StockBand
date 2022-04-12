@@ -18,23 +18,30 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var user in Model)
+    @{
+    if(Model is not null)
     {
-        <tr>
-            <th class="text-warning" scope="row">@user.Id</th>
-            <td style="color:@user.Color;">@user.Name</td>
-            <td class="text-warning">@user.CreatedTime.ToString("D")</td>
-            <td class="text-info">@user.Block</td>
-            <td class="text-warning">@user.Role</td>
-            <td class="text-info">@user.Theme</td>
-            <td><a asp-controller="admin" asp-action="edituser" asp-route-id="@user.Id" class="btn btn-info btn-sm">Edit</a></td>
-        </tr>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <th class="text-warning" scope="row">@user.Id</th>
+                <td style="color:@user.Color;">@user.Name</td>
+                <td class="text-warning">@user.CreatedTime.ToString("D")</td>
+                <td class="text-info">@user.Block</td>
+                <td class="text-warning">@user.Role</td>
+                <td class="text-info">@user.Theme</td>
+                <td><a asp-controller="admin" asp-action="edituser" asp-route-id="@user.Id" class="btn btn-info btn-sm">Edit</a></td>
+            </tr>
+        }
+    }
     }
     </tbody>
     </table>
 </div>
-
- <div class="row pagginationDiv">
+@{
+if(Model is not null)
+{
+<div class="row pagginationDiv">
     <div class="col-12">
         <nav class="nav justify-content-center border-top border-white">
             <ul class="pagination mt-2">
@@ -47,7 +54,10 @@
             </ul>
         </nav>
     </div>
-</div>
+</div>     
+}
+}
+
 
 
 

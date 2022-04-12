@@ -36,8 +36,7 @@ namespace StockBand.Controllers
                 .GetAllUsersAsync();
             if (!users.Any())
             {
-                TempData["Message"] = Message.Code17;
-                return RedirectToAction("customexception", "exceptions");
+                return View();
             }
             var paginatedList = await PaginetedList<User>.CreateAsync(users.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
@@ -86,12 +85,10 @@ namespace StockBand.Controllers
             var logs = _userLogService
                 .GetAllLogsAsync()
                 .Include(x => x.User)
-                .OrderByDescending(x => x.CreatedDate)
-                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
+                .OrderByDescending(x => x.CreatedDate);
             if (!logs.Any())
             {
-                TempData["Message"] = Message.Code17;
-                return RedirectToAction("customexception", "exceptions");
+                return View();
             }
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
@@ -117,6 +114,10 @@ namespace StockBand.Controllers
                 .Include(x => x.User)
                 .Where(x => x.Guid.ToString().Contains(search) || x.Type.Contains(search))
                 .OrderByDescending(x => x.DateTimeExpire);
+            if (!links.Any())
+            {
+                return View();
+            }
             var paginatedList = await PaginetedList<UniqueLink>.CreateAsync(links.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = paginatedList.TotalPages });

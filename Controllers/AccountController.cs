@@ -112,8 +112,7 @@ namespace Stock_Band.Controllers
                 .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
             if (!userLogs.Any())
             {
-                TempData["Message"] = Message.Code17;
-                return RedirectToAction("customexception", "exceptions");
+                return View();
             }  
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 30);
             if (pageNumber > paginatedList.TotalPages)

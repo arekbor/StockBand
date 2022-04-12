@@ -15,29 +15,39 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var log in Model)
+    @{
+    if(Model is not null)
     {
-        <tr>
-            <th class="text-warning" scope="row">@log.Guid</th>
-            <td class="text-warning">@log.CreatedDate.ToString("F")</td>
-            <td class="text-info">@log.Action</td>
-        </tr>
+        foreach (var log in Model)
+        {
+            <tr>
+                <th class="text-warning" scope="row">@log.Guid</th>
+                <td class="text-warning">@log.CreatedDate.ToString("F")</td>
+                <td class="text-info">@log.Action</td>
+            </tr>
+        }       
+    }
     }
     </tbody>
     </table>
 </div>
-
- <div class="row pagginationDiv">
-    <div class="col-12">
-        <nav class="nav justify-content-center border-top">
-            <ul class="pagination mt-2">
-                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                @foreach (var item in Model.Pages(1))
-                {
-                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
-                }
-                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-            </ul>
-        </nav>
+@{
+if(Model is not null)
+{
+    <div class="row pagginationDiv">
+        <div class="col-12">
+            <nav class="nav justify-content-center border-top">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Pages(1))
+                    {
+                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
-</div>
+}
+}
+
