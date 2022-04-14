@@ -16,5 +16,7 @@ namespace StockBand.Interfaces
         public Task<bool> ChangePasswordUser(ChangePasswordDto userDto);
         public Task<bool> ChangeUserColor(ChangeColorDto userDto);
         public Task<bool> ChangeUserTheme(ChangeThemeDto userDto);
+        public Task<bool> RemoveUserCookie();
+        public Task<bool> UpdateRememberMeStatus(int id, bool rememberMe);
     }
 }

@@ -20,6 +20,7 @@ namespace StockBand.Services
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
+        
         public UserService(ApplicationDbContext dbContext,IUniqueLinkService uniqueLinkService, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
@@ -46,13 +47,33 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code03);
                 return false;
             }
-            await Cookie(user, userDto,CookieOperation.Login);
+            await UpdateRememberMeStatus(user.Id, userDto.RememberMe);
+            await Cookie(user);
+            await _userLogService.AddToLogsAsync(LogMessage.Code01, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
+            return true;
+        }
+        public async Task<bool> UpdateRememberMeStatus(int id,bool rememberMe)
+        {
+            var user = await _dbContext
+                .UserDbContext
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+                return false;
+            user.RememberMe = rememberMe;
+            _dbContext.UserDbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> RemoveUserCookie()
+        {
+            await _userLogService.AddToLogsAsync(LogMessage.Code09, ParseUserId());
+            await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
             return true;
         }
         public async Task<bool> LogoutUserAsync()
         {
-            await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
+            await RemoveUserCookie();
             await _userLogService.AddToLogsAsync(LogMessage.Code02, ParseUserId());
             return true;
         }
@@ -64,7 +85,7 @@ namespace StockBand.Services
             if (users is null)
                 return null;
             return users;
-        }
+        } 
         public async Task<User> GetUserAsync(int id)
         {
             var user = await _dbContext
@@ -76,7 +97,6 @@ namespace StockBand.Services
         }
         public async Task<bool> UpdateUser(int id, EditUserDto model)
         {
-            //TODO block if admin will want to change role
             var adminId = ParseUserId();
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
             if (userAdmin is null)
@@ -184,6 +204,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code13);
                 return false;
             }
+            //TODO sprawdz czy usuwa ciastko po zmiane hasla
             var hashNewPassword = _passwordHasher.HashPassword(user, userDto.NewPassword);
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
@@ -210,7 +231,8 @@ namespace StockBand.Services
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code08, user.Id);
-            await Cookie(user,null,CookieOperation.Refresh);
+            await RemoveUserCookie();
+            await Cookie(user);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -232,11 +254,12 @@ namespace StockBand.Services
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code10, user.Id);
-            await Cookie(user, null, CookieOperation.Refresh);
+            await RemoveUserCookie();
+            await Cookie(user);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        private async Task<bool> Cookie(User user, UserLoginDto userDto,CookieOperation cookieOperation)
+        private async Task<bool> Cookie(User user)
         {
             string msg = String.Empty;
             var claims = new List<Claim>()
@@ -246,38 +269,24 @@ namespace StockBand.Services
                 new Claim(ClaimTypes.Role,user.Role),
                 new Claim("Block",user.Block.ToString()),
                 new Claim("Color",user.Color),
-                new Claim("Theme",user.Theme)
+                new Claim("Theme",user.Theme),
+                new Claim("RememberMe",user.RememberMe.ToString()),
             };
-            
             var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
             var authenticationProperties = new AuthenticationProperties();
 
-            
-            if (cookieOperation == CookieOperation.Login)
+            if (!user.RememberMe)
             {
-                if (!userDto.RememberMe)
-                {
-                    authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
-                    authenticationProperties.IsPersistent = false;
-                }
-                else
-                {
-                    authenticationProperties.IsPersistent = true;
-                    await _userLogService.AddToLogsAsync(LogMessage.Code07, user.Id);
-                }
-                msg = LogMessage.Code01;
+                authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
+                authenticationProperties.IsPersistent = false;
             }
-            if (cookieOperation == CookieOperation.Refresh)
+            else
             {
-                //TODO fix rememberme after resfresing cookie
-                await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
-                msg = LogMessage.Code09;
-                
+                authenticationProperties.IsPersistent = true;
+                await _userLogService.AddToLogsAsync(LogMessage.Code07, user.Id);
             }
-
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
-            await _userLogService.AddToLogsAsync(msg, user.Id);
             return true;
         }
         

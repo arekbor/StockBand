@@ -39,7 +39,7 @@
             <tr>
                 <th class="text-warning" scope="row">@log.Guid</th>
                 <td style="color:@log.User.Color;">@log.User.Name</td>
-                <td class="text-warning">@log.CreatedDate.ToString("F")</td>
+                <td class="text-warning">@log.CreatedDate</td>
                 <td class="text-info">@log.Action</td>
                 <td><a asp-controller="admin" asp-action="deletelog" asp-route-id="@log.Guid" asp-route-pNumber="@Model.PageIndex"class="btn btn-danger btn-sm">Delete</a></td>
             </tr>

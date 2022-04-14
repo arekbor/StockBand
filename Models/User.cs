@@ -12,6 +12,6 @@ namespace StockBand.Models
         public DateTime CreatedTime { get; set; }
         public string Color { get; set; } = UserColor.Colors[0];
         public string Theme { get; set; } = UserTheme.Themes[0];
+        public bool RememberMe { get; set; } = false;
     }
 }
-//test
