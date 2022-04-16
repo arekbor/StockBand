@@ -78,7 +78,6 @@ namespace StockBand.Controllers
         [Route("admin/edituser/{id:int}")]
         public async Task<IActionResult> EditUser(int id, EditUserDto userDto)
         {
-            //TODO relog user after update
             if (!ModelState.IsValid)
                 return View(userDto);
             var status = await _userService.UpdateUser(id, userDto);
@@ -86,14 +85,14 @@ namespace StockBand.Controllers
                 return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
+
+        //TODO usun to i zrob jedna strone pokazujaca linki CreateLink
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
             var uniqueLink = await _uniqueLinkService
-                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
-            string url = Url.Action("create", "account", new {guid = uniqueLink },_httpContextAccessor.HttpContext.Request.Scheme);
-            await _userLogService.AddToLogsAsync(LogMessage.Code06,int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value));
-            return View("createuser", url);
+                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value),"account","create");
+            return RedirectToAction("uniquelinkpanel", "link");
         }
         [HttpGet]
         public async Task<IActionResult> Logs(int pageNumber=1, string search = "")
@@ -126,29 +125,6 @@ namespace StockBand.Controllers
             if(status)
                 return RedirectToAction("logs", "admin", new { pageNumber = pNumber});
             return RedirectToAction("badrequest", "exceptions");
-        }
-        [HttpGet]
-        public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1, string search = "")
-        {
-            if (pageNumber <= 0)
-                return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = 1 });
-            var links = _uniqueLinkService
-                .GetAllLinks()
-                .Include(x => x.User)
-                .Where(x => x.Guid.ToString().Contains(search)
-                || x.DateTimeExpire.ToString().Contains(search)
-                || x.Type.Contains(search)
-                || x.User.Name.Contains(search)
-                || x.User.Id.ToString().Contains(search))
-                .OrderByDescending(x => x.DateTimeExpire);
-            if (!links.Any())
-            {
-                return View();
-            }
-            var paginatedList = await PaginetedList<UniqueLink>.CreateAsync(links.AsNoTracking(), pageNumber, 30);
-            if (pageNumber > paginatedList.TotalPages)
-                return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = paginatedList.TotalPages });
-            return View(paginatedList);
         }
     }
 }

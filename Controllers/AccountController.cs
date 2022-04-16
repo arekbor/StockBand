@@ -96,7 +96,6 @@ namespace Stock_Band.Controllers
             var status = await _userService.ChangePasswordUser(dto);
             if (status)
             {
-                await _userService.LogoutUserAsync();
                 return RedirectToAction("index", "home");
             }
             return View(dto);

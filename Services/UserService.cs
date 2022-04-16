@@ -20,8 +20,9 @@ namespace StockBand.Services
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
+        private readonly IUserContextService _userContextService;
         
-        public UserService(ApplicationDbContext dbContext,IUniqueLinkService uniqueLinkService, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, IUniqueLinkService uniqueLinkService, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -30,6 +31,7 @@ namespace StockBand.Services
             _mapper = mapper;
             _userLogService = userLogService;
             _uniqueLinkService = uniqueLinkService;
+            _userContextService = userContextService;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -67,14 +69,14 @@ namespace StockBand.Services
         }
         public async Task<bool> RemoveUserCookie()
         {
-            await _userLogService.AddToLogsAsync(LogMessage.Code09, ParseUserId());
+            await _userLogService.AddToLogsAsync(LogMessage.Code09, _userContextService.GetUserId());
             await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
             return true;
         }
         public async Task<bool> LogoutUserAsync()
         {
             await RemoveUserCookie();
-            await _userLogService.AddToLogsAsync(LogMessage.Code02, ParseUserId());
+            await _userLogService.AddToLogsAsync(LogMessage.Code02, _userContextService.GetUserId());
             return true;
         }
         public IQueryable<User> GetAllUsersAsync()
@@ -97,7 +99,7 @@ namespace StockBand.Services
         }
         public async Task<bool> UpdateUser(int id, EditUserDto model)
         {
-            var adminId = ParseUserId();
+            var adminId = _userContextService.GetUserId();
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
             if (userAdmin is null)
             {
@@ -178,7 +180,7 @@ namespace StockBand.Services
             user.HashPassword = hashedPwd;
             user.CreatedTime = DateTime.Now;
 
-            _dbContext.UserDbContext.Add(user);
+            await _dbContext.UserDbContext.AddAsync(user);
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code03,user.Id);
             _actionContext.ActionContext.ModelState.Clear();
@@ -186,7 +188,7 @@ namespace StockBand.Services
         }
         public async Task<bool> ChangePasswordUser(ChangePasswordDto userDto)
         {
-            var id = ParseUserId();
+            var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
@@ -204,18 +206,18 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code13);
                 return false;
             }
-            //TODO sprawdz czy usuwa ciastko po zmiane hasla
             var hashNewPassword = _passwordHasher.HashPassword(user, userDto.NewPassword);
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code05,user.Id);
+            await LogoutUserAsync();
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
         public async Task<bool> ChangeUserColor(ChangeColorDto userDto)
         {
-            var id = ParseUserId();
+            var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
@@ -238,7 +240,7 @@ namespace StockBand.Services
         }
         public async Task<bool> ChangeUserTheme(ChangeThemeDto userDto)
         {
-            var id = ParseUserId();
+            var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
             {
@@ -288,15 +290,6 @@ namespace StockBand.Services
             }
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
             return true;
-        }
-        
-        private int ParseUserId()
-        {
-            return int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
-        }
-        private ClaimsPrincipal GetUser()
-        {
-            return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
     }
 }

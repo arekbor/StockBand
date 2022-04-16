@@ -48,9 +48,15 @@
                 <th class="text-warning" scope="row">@link.Type</th>
                 <th class="text-info"  scope="row">@link.User.Id</th>
                 <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
-                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
-                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
-                <td><a asp-controller="" asp-action="" asp-route-id="" asp-route-pNumber="@Model.PageIndex" class="btn btn-success btn-sm">Copy link</a></td>
+                <td><a asp-controller="link" asp-action="deleteurl" asp-route-guid="@link.Guid" class="btn btn-danger btn-sm">Delete</a></td>
+                <td><a asp-controller="link" asp-action="refreshurl" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Refresh</a></td>
+                <td><a asp-controller="link" asp-action="shareurl" asp-route-guid="@link.Guid" class="btn btn-success btn-sm">Copy link</a></td>
+
+                @{
+                    //TODO make funcion setminutes
+                }
+
+                <td><a asp-controller="link" asp-action="setminutes" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Set minutes</a></td>
             </tr>
         }        
     }
@@ -65,12 +71,12 @@ if(Model is not null)
         <div class="col-12">
             <nav class="nav justify-content-center border-top border-white">
                 <ul class="pagination mt-2">
-                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="link" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
                     @foreach (var item in Model.Pages(1))
                     {
-                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@item">@item</a></li>
+                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="link" asp-action="uniquelinkpanel" asp-route-pageNumber="@item">@item</a></li>
                     }
-                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="link" asp-action="uniquelinkpanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
                 </ul>
             </nav>
         </div>

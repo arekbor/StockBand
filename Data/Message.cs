@@ -29,6 +29,8 @@
         public const string Code18 = "Color does not exist";
         public const string Code19 = "Settings can't be changed";
         public const string Code20 = "Theme does not exist";
+        public const string Code21 = "Can't refresh this link";
+
     }
     public static class SystemMessage
     {

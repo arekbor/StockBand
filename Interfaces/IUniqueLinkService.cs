@@ -4,10 +4,12 @@ namespace StockBand.Interfaces
 {
     public interface IUniqueLinkService
     {
-        Task<Guid> AddLink(string Type, int userId);
+        Task<Guid> AddLink(string type, int userId,string controller, string action);
         Task<bool> DeleteLink(Guid guid);
         IQueryable<UniqueLink> GetAllLinks();
         Task<bool> VerifyLink(Guid guid);
-        int GetCurrentExpireMintues();
+        Task<string> ShowLink(Guid guid);
+        Task<bool> VerifyAuthorId(Guid guid);
+        Task<bool> RefreshUrl(Guid guid);
     }
 }

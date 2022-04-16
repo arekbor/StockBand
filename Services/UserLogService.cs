@@ -9,11 +9,11 @@ namespace StockBand.Services
     public class UserLogService : IUserLogService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public UserLogService(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        private readonly IUserContextService _userContextService;
+        public UserLogService(ApplicationDbContext dbContext, IUserContextService userContextService)
         {
             _dbContext = dbContext;
-            _httpContextAccessor = httpContextAccessor;
+            _userContextService = userContextService;
         }
         public async Task<bool> AddToLogsAsync(string description, int id)
         {
@@ -41,7 +41,7 @@ namespace StockBand.Services
         }
         public IQueryable<UserLog> GetAllUserLogsAsync()
         {
-            var id = ParseUserId();
+            var id = _userContextService.GetUserId();
             var userLogs = _dbContext
                 .UserLogDbContext
                 .Where(x => x.UserId == id)
@@ -52,7 +52,7 @@ namespace StockBand.Services
         }
         public async Task<bool> DeleteLogAsync(Guid id)
         {
-            if (!GetUser().IsInRole(UserRoles.Roles[1]))
+            if (!_userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
                 return false;
             var log = await _dbContext
                 .UserLogDbContext
@@ -62,14 +62,6 @@ namespace StockBand.Services
             _dbContext.UserLogDbContext.Remove(log);
             _dbContext.SaveChanges();
             return true;
-        }
-        private int ParseUserId()
-        {
-            return int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
-        }
-        private ClaimsPrincipal GetUser()
-        {
-            return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
     }
 }
