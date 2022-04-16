@@ -1,4 +1,5 @@
 ﻿using StockBand.Models;
+using StockBand.ViewModel;
 
 namespace StockBand.Interfaces
 {
@@ -10,7 +11,7 @@ namespace StockBand.Interfaces
         IQueryable<UniqueLink> GetAllLinks();
         Task<UniqueLink> GetUniqueLink(Guid guid);
         Task<bool> RefreshUrl(UniqueLink link);
-        Task<bool> SetMinutesUrl(Guid guid, int minutes);
+        Task<bool> SetMinutes(Guid guid, UniqueLinkMinutesDto linkMinutesDto);
         Task<string> ShowLink(UniqueLink link);
         bool VerifyAuthorId(UniqueLink link);
         bool VerifyLink(UniqueLink link);

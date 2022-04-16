@@ -107,11 +107,12 @@ namespace StockBand.Controllers
             return RedirectToAction("badrequest", "exceptions");
         }
         [HttpGet]
-        [Route("link/setminutes/{guid:guid}")]
-        public async Task<IActionResult> SetMinutes(Guid guid)
+        //TODO nie dziala route
+        [Route("link/setminutes/{guid:guid}/{returnController:string}/{returnAction:string}/{returnPage:int}")]
+        public async Task<IActionResult> SetMinutes(Guid guid, string returnController, string returnAction, int returnPage)
         {
             var link = await _uniqueLinkService.GetUniqueLink(guid);
-            if(link is null)
+            if (link is null)
             {
                 return RedirectToAction("badrequest", "exceptions");
             }
@@ -121,6 +122,25 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var dto = _mapper.Map<UniqueLinkMinutesDto>(link);
+            dto.ReturnAction = returnAction;
+            dto.ReturnController = returnController;
+            dto.ReturnPage = returnPage;
+            return View(dto);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("link/setminutes/{guid:Guid}")]
+        public async Task<IActionResult> SetMinutes(Guid guid, UniqueLinkMinutesDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+            var status = await _uniqueLinkService.SetMinutes(guid, dto);
+            if (status)
+            {
+                if (dto.ReturnPage > 0)
+                    return RedirectToAction(dto.ReturnAction, dto.ReturnController, new { pageNumber = dto.ReturnPage });
+                return RedirectToAction(dto.ReturnAction, dto.ReturnController);
+            }
             return View(dto);
         }
     }

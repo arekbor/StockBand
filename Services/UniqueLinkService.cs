@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
+using StockBand.ViewModel;
 
 namespace StockBand.Services
 {
@@ -111,14 +112,14 @@ namespace StockBand.Services
             return true;
         }
 
-        public async Task<bool> SetMinutesUrl(Guid guid, int minutes)
+        public async Task<bool> SetMinutes(Guid guid, UniqueLinkMinutesDto linkMinutesDto)
         {
             var link = await _applicationDbContext
                 .UniqueLinkDbContext
                 .FirstOrDefaultAsync(x => x.Guid == guid);
             if (link is null)
                 return false;
-            link.Minutes = minutes;
+            link.Minutes = linkMinutesDto.Minutes;
             _applicationDbContext.Update(link);
             await _applicationDbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code14(link.Guid, link.Minutes), _userContextService.GetUserId());

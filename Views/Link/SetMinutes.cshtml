@@ -9,11 +9,13 @@
         <div class="card" style="width:50vh;">
             <div class="card-header">
                 <h5>Set default minutes of unique link</h5>
-                Guid: @Model.Guid
-                Controller: @Model.Controller
-                Action: @Model.Action
-                Actual minutes: @Model.Minutes
-                Author: @Model.User.Name
+                <div class="text-muted">
+                    <div><small>Guid: @Model.Guid</small></div>
+                    <div><small>Controller: @Model.Controller</small></div>
+                    <div><small>Action: @Model.Action</small></div>
+                    <div><small>Actual minutes: @Model.Minutes</small></div>
+                    <div><small>Author @Model.User.Name</small></div>
+                </div>
             </div>
             <div class="card-body">
                 <form asp-controller="link" asp-action="setminutes">
