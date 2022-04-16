@@ -56,8 +56,12 @@ namespace Stock_Band.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Create(Guid guid)
         {
-            var verifyGuid = await _uniqueLinkService.VerifyLink(guid);
-            if (!verifyGuid)
+            var link = await _uniqueLinkService.GetUniqueLink(guid);
+            if (link is null)
+            {
+                return RedirectToAction("badrequest", "exceptions");
+            }
+            if (!_uniqueLinkService.VerifyLink(link))
             {
                 TempData["Message"] = Message.Code01;
                 return RedirectToAction("customexception", "exceptions");
@@ -117,7 +121,7 @@ namespace Stock_Band.Controllers
             {
                 return View();
             }  
-            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber, 30);
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Set minutes of unique link";
+    Layout = "_Layout";
+}
+@model UniqueLinkMinutesDto
+
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:50vh;">
+            <div class="card-header">
+                <h5>Set default minutes of unique link</h5>
+                Guid: @Model.Guid
+                Controller: @Model.Controller
+                Action: @Model.Action
+                Actual minutes: @Model.Minutes
+                Author: @Model.User.Name
+            </div>
+            <div class="card-body">
+                <form asp-controller="link" asp-action="setminutes">
+                    <div class="validation text-danger" asp-validation-summary="All"></div>
+                    <div class="form-group mt-3">
+                        <label>Update default minutes</label>
+                    </div>
+                    <input type="number" asp-for="Minutes" class="form-control" placeholder="set minutes">
+                    <div class="form-group mt-3 text-center">
+                        <button type="submit" class="btn btn-warning">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

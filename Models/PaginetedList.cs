@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StockBand.Services;
 
 namespace StockBand.Models
 {
@@ -6,10 +7,11 @@ namespace StockBand.Models
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; set; }
-        public PaginetedList(List<T> items, int count, int pageIndex, int pageSize)
+        public static int MaxPageSize { get; } = int.Parse(ConfigurationHelper.config.GetSection("MaxCountOfPagination").Value);
+        public PaginetedList(List<T> items, int count, int pageIndex)
         {
             PageIndex = pageIndex;
-            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+            TotalPages = (int)Math.Ceiling(count / (double)MaxPageSize);
             this.AddRange(items);
         }
         public bool PreviousPage
@@ -26,11 +28,11 @@ namespace StockBand.Models
                 return (PageIndex < TotalPages);
             }
         }
-        public static async Task<PaginetedList<T>> CreateAsync(IQueryable<T> source,int pageIndex,int pageSize)
+        public static async Task<PaginetedList<T>> CreateAsync(IQueryable<T> source,int pageIndex)
         {
             var count = await source.CountAsync();
-            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-            return new PaginetedList<T>(items, count, pageIndex, pageSize);
+            var items = await source.Skip((pageIndex - 1) * MaxPageSize).Take(MaxPageSize).ToListAsync();
+            return new PaginetedList<T>(items, count, pageIndex);
         }
         public IEnumerable<int> Pages(int range)
         {

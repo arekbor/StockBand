@@ -4,7 +4,6 @@
     string textColor = String.Empty;
 }
 @model PaginetedList<UniqueLink>
-@inject IUniqueLinkService _uniqueLinkService
 
 <div class="row">
     <div class="col-sm-12 col-md-6 col-lg-3">
@@ -27,6 +26,7 @@
         <tr>
             <th scope="col">Guid</th>
             <th scope="col">DateTimeExpire</th>
+            <th scope="col">Minutes</th>
             <th scope="col">Type</th>
             <th scope="col">Author Id</th>
             <th scope="col">Author Name</th>
@@ -42,20 +42,23 @@
         foreach (var link in Model)
         {
             <tr>
-                @if (_uniqueLinkService.VerifyLink(link.Guid).GetAwaiter().GetResult()){textColor = "text-success";}else{textColor = "text-danger";}
+                @{
+                    string colorDateTimeExpire;
+                    if (link.DateTimeExpire >= DateTime.Now){
+                        colorDateTimeExpire = "text-success";
+                    }else{
+                        colorDateTimeExpire = "text-danger";
+                    }
+                }
                 <th class="text-warning" scope="row">@link.Guid</th>
-                <td class="@textColor">@link.DateTimeExpire</td>
+                <td class="@colorDateTimeExpire">@link.DateTimeExpire</td>
+                <td class="text-info">@link.Minutes</td>
                 <th class="text-warning" scope="row">@link.Type</th>
                 <th class="text-info"  scope="row">@link.User.Id</th>
                 <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
-                <td><a asp-controller="link" asp-action="deleteurl" asp-route-guid="@link.Guid" class="btn btn-danger btn-sm">Delete</a></td>
-                <td><a asp-controller="link" asp-action="refreshurl" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Refresh</a></td>
+                <td><a asp-controller="link" asp-action="deleteurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
+                <td><a asp-controller="link" asp-action="refreshurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
                 <td><a asp-controller="link" asp-action="shareurl" asp-route-guid="@link.Guid" class="btn btn-success btn-sm">Copy link</a></td>
-
-                @{
-                    //TODO make funcion setminutes
-                }
-
                 <td><a asp-controller="link" asp-action="setminutes" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Set minutes</a></td>
             </tr>
         }        

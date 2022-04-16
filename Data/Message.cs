@@ -30,6 +30,8 @@
         public const string Code19 = "Settings can't be changed";
         public const string Code20 = "Theme does not exist";
         public const string Code21 = "Can't refresh this link";
+        public const string Code22 = "Guid has expired or you do not have permission";
+        public const string Code23 = "Guid not found";
 
     }
     public static class SystemMessage

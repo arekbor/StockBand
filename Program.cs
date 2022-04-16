@@ -10,6 +10,8 @@ using StockBand.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigurationHelper.Initialize(builder.Configuration);
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

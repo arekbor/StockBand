@@ -146,7 +146,13 @@ namespace StockBand.Services
         }
         public async Task<bool> CreateUser(Guid guid,CreateUserDto userDto)
         {
-            if (!await _uniqueLinkService.VerifyLink(guid))
+            var link = await _uniqueLinkService.GetUniqueLink(guid);
+            if (link is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code23);
+                return false;
+            }
+            if (!_uniqueLinkService.VerifyLink(link))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
@@ -169,7 +175,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code06);
                 return false;
             }
-            if (!await _uniqueLinkService.DeleteLink(guid))
+            if (!await _uniqueLinkService.DeleteLink(link))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
@@ -280,7 +286,8 @@ namespace StockBand.Services
 
             if (!user.RememberMe)
             {
-                authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(int.Parse(ConfigurationManager.Configuration["CookieExpire"]));
+                var cookieExpire = int.Parse(ConfigurationHelper.config.GetSection("CookieExpire").Value);
+                authenticationProperties.ExpiresUtc = DateTimeOffset.Now.AddMinutes(cookieExpire);
                 authenticationProperties.IsPersistent = false;
             }
             else

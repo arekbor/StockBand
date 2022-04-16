@@ -6,6 +6,7 @@ using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace StockBand.Controllers
@@ -56,7 +57,7 @@ namespace StockBand.Controllers
             {
                 return View();
             }
-            var paginatedList = await PaginetedList<User>.CreateAsync(users.AsNoTracking(), pageNumber, 30);
+            var paginatedList = await PaginetedList<User>.CreateAsync(users.AsNoTracking(), pageNumber);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userspanel", "admin", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);
@@ -90,6 +91,7 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
+            
             var uniqueLink = await _uniqueLinkService
                 .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value),"account","create");
             return RedirectToAction("uniquelinkpanel", "link");
@@ -99,6 +101,7 @@ namespace StockBand.Controllers
         {
             if(pageNumber <= 0)
                 return RedirectToAction("logs", "admin", new { pageNumber = 1 });
+            
             var logs = _userLogService
                 .GetAllLogsAsync()
                 .Include(x => x.User)
@@ -112,9 +115,11 @@ namespace StockBand.Controllers
             {
                 return View();
             }
-            var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber, 30);
+            var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("logs", "admin", new { pageNumber = paginatedList.TotalPages });
+            
+            
             return View(paginatedList);
         }
         [HttpGet]
