@@ -111,27 +111,13 @@ namespace StockBand.Services
             return true;
         }
 
-        public async Task<bool> SetMinutes(Guid guid, UniqueLinkMinutesDto linkMinutesDto)
+        public async Task<bool> SetMinutes(UniqueLink link,int minutes)
         {
-            var link = await _applicationDbContext
-                .UniqueLinkDbContext
-                .FirstOrDefaultAsync(x => x.Guid == guid);
-            if (link is null)
-                return false;
-            link.Minutes = linkMinutesDto.Minutes;
+            link.Minutes = minutes;
             _applicationDbContext.Update(link);
             await _applicationDbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code14(link.Guid, link.Minutes), _userContextService.GetUserId());
             return true;
-        }
-        public async Task<int> GetActualMinutes(Guid guid)
-        {
-            var link = await _applicationDbContext
-                .UniqueLinkDbContext
-                .FirstOrDefaultAsync(x => x.Guid == guid);
-            if (link is null)
-                return 0;
-            return link.Minutes;
         }
     }
 }

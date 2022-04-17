@@ -139,7 +139,16 @@ namespace StockBand.Controllers
         {
             if (!ModelState.IsValid)
                 return View(dto);
-            var status = await _uniqueLinkService.SetMinutes(guid, dto);
+            var link = await _uniqueLinkService.GetUniqueLink(guid);
+
+            if (link is null)
+                return RedirectToAction("badrequestpage", "exceptions");
+            if (!_uniqueLinkService.VerifyAuthorId(link))
+            {
+                ModelState.AddModelError("", Message.Code22);
+                return View(dto);
+            }
+            var status = await _uniqueLinkService.SetMinutes(link,dto.Minutes);
             if (status)
             {
                 return RedirectToAction("uniquelinkpanel", "link");
