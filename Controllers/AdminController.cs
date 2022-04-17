@@ -69,7 +69,7 @@ namespace StockBand.Controllers
         {
             var user = await _userService.GetUserAsync(id);
             if (user is null)
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
 
             var viewModel = _mapper.Map<EditUserDto>(user);
             return View(viewModel);
@@ -129,7 +129,7 @@ namespace StockBand.Controllers
             var status = await _userLogService.DeleteLogAsync(id);
             if(status)
                 return RedirectToAction("logs", "admin", new { pageNumber = pNumber});
-            return RedirectToAction("badrequest", "exceptions");
+            return RedirectToAction("badrequestpage", "exceptions");
         }
     }
 }

@@ -7,7 +7,7 @@ namespace StockBand.Controllers
         [HttpGet]
         public IActionResult Forbidden() => View();
         [HttpGet]
-        public IActionResult BadRequest() => View();
+        public IActionResult BadRequestPage() => View();
         [HttpGet]
         public IActionResult InternalServerError() => View();
         [HttpGet]

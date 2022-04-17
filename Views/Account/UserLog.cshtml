@@ -49,6 +49,7 @@ if(Model is not null)
 {
     <div class="row pagginationDiv">
         <div class="col-12">
+            <small>@Model.Count of @Model.TotalCount</small>
             <nav class="nav justify-content-center border-top">
                 <ul class="pagination mt-2">
                     <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>

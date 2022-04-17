@@ -10,7 +10,7 @@
             "cornsilk", 
             "gold",
             "hotpink", 
-            "Linen", 
+            "linen", 
             "olive", 
             "plum",
             "salmon",

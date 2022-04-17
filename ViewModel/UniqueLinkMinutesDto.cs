@@ -1,4 +1,5 @@
 ﻿using StockBand.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
@@ -10,9 +11,8 @@ namespace StockBand.ViewModel
         public string Controller { get; set; }
         public string Action { get; set; }
         //TODO to ustaw max minutes z appsettings.json
+        [Required]
+        [Range(0,60)]
         public int Minutes { get; set; }
-        public string ReturnController { get; set; }
-        public string ReturnAction { get; set; }
-        public int ReturnPage { get; set; }
     }
 }

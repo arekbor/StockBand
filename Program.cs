@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using StockBand.Authorization;
+using StockBand.AuthorizationHandler;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
@@ -34,11 +37,13 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireRole(UserRoles.Roles[1]);
     });
+    options.AddPolicy("AuthorLinkRequirement", builder => builder.AddRequirements(new LinkAuthorRequirement()));
 });
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLogService, UserLogService>();
 builder.Services.AddScoped<IUniqueLinkService, UniqueLinkService>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
+builder.Services.AddScoped<IAuthorizationHandler, LinkAuthorRequirementHandler>();
 
 var app = builder.Build();
 

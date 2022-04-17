@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Set minutes of unique link";
+    ViewData["Title"] = "Edit expire time of unique link";
     Layout = "_Layout";
 }
 @model UniqueLinkMinutesDto
@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-center">
         <div class="card" style="width:50vh;">
             <div class="card-header">
-                <h5>Set default minutes of unique link</h5>
+                <h5>Set the default expire time for unique link</h5>
                 <div class="text-muted">
                     <div><small>Guid: @Model.Guid</small></div>
                     <div><small>Controller: @Model.Controller</small></div>
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form asp-controller="link" asp-action="setminutes">
+                <form asp-controller="link" asp-action="editminutes">
                     <div class="validation text-danger" asp-validation-summary="All"></div>
                     <div class="form-group mt-3">
                         <label>Update default minutes</label>

@@ -32,13 +32,12 @@ namespace StockBand.Services
             var uniqueLink = new UniqueLink()
             {
                 Guid = guid,
-                DateTimeExpire = DateTime.Now.AddMinutes(1),
                 Type = type,
                 UserId = userId,
                 Controller = controller,
                 Action = action,
-                Minutes = 1
             };
+            uniqueLink.DateTimeExpire = DateTime.Now.AddMinutes(uniqueLink.Minutes);
             await _applicationDbContext
                 .UniqueLinkDbContext
                 .AddAsync(uniqueLink);

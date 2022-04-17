@@ -6,7 +6,6 @@ using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
-using System.Diagnostics;
 
 namespace StockBand.Controllers
 {
@@ -51,17 +50,22 @@ namespace StockBand.Controllers
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
             }
             if (!_uniqueLinkService.VerifyAuthorId(link))
             {
                 TempData["Message"] = Message.Code22;
                 return RedirectToAction("customexception", "exceptions");
             }
+            if (!_uniqueLinkService.VerifyLink(link))
+            {
+                TempData["Message"] = Message.Code05;
+                return RedirectToAction("customexception", "exceptions");
+            }
             var url = await _uniqueLinkService.ShowLink(link);
             if(!String.IsNullOrEmpty(url))
                 return View("shareurl", url);
-            return RedirectToAction("badrequest", "exceptions");
+            return RedirectToAction("badrequestpage", "exceptions");
         }
         [HttpGet]
         [Route("link/deleteurl/{guid:guid}/{pNumber:int}")]
@@ -70,7 +74,7 @@ namespace StockBand.Controllers
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
             }
             if (!_uniqueLinkService.VerifyAuthorId(link))
             {
@@ -80,7 +84,7 @@ namespace StockBand.Controllers
             var result = await _uniqueLinkService.DeleteLink(link);
             if(result)
                 return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
-            return RedirectToAction("badrequest", "exceptions");
+            return RedirectToAction("badrequestpage", "exceptions");
         }
         [HttpGet]
         [Route("link/refreshurl/{guid:guid}/{pNumber:int}")]
@@ -89,7 +93,7 @@ namespace StockBand.Controllers
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
             } 
             if (!_uniqueLinkService.VerifyAuthorId(link))
             {
@@ -104,42 +108,41 @@ namespace StockBand.Controllers
             var result = await _uniqueLinkService.RefreshUrl(link);
             if (result)
                 return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
-            return RedirectToAction("badrequest", "exceptions");
+            return RedirectToAction("badrequestpage", "exceptions");
         }
         [HttpGet]
-        //TODO nie dziala route
-        [Route("link/setminutes/{guid:guid}/{returnController:string}/{returnAction:string}/{returnPage:int}")]
-        public async Task<IActionResult> SetMinutes(Guid guid, string returnController, string returnAction, int returnPage)
+        [Route("link/editminutes/{guid:guid}")]
+        public async Task<IActionResult> EditMinutes(Guid guid)
         {
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
             }
             if (!_uniqueLinkService.VerifyAuthorId(link))
             {
                 TempData["Message"] = Message.Code22;
                 return RedirectToAction("customexception", "exceptions");
             }
+            if (_uniqueLinkService.VerifyLink(link))
+            {
+                TempData["Message"] = Message.Code19;
+                return RedirectToAction("customexception", "exceptions");
+            }
             var dto = _mapper.Map<UniqueLinkMinutesDto>(link);
-            dto.ReturnAction = returnAction;
-            dto.ReturnController = returnController;
-            dto.ReturnPage = returnPage;
             return View(dto);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("link/setminutes/{guid:Guid}")]
-        public async Task<IActionResult> SetMinutes(Guid guid, UniqueLinkMinutesDto dto)
+        [Route("link/editminutes/{guid:Guid}")]
+        public async Task<IActionResult> EditMinutes(Guid guid, UniqueLinkMinutesDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);
             var status = await _uniqueLinkService.SetMinutes(guid, dto);
             if (status)
             {
-                if (dto.ReturnPage > 0)
-                    return RedirectToAction(dto.ReturnAction, dto.ReturnController, new { pageNumber = dto.ReturnPage });
-                return RedirectToAction(dto.ReturnAction, dto.ReturnController);
+                return RedirectToAction("uniquelinkpanel", "link");
             }
             return View(dto);
         }

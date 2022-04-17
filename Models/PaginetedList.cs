@@ -7,10 +7,12 @@ namespace StockBand.Models
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; set; }
+        public int TotalCount { get; set; }
         public static int MaxPageSize { get; } = int.Parse(ConfigurationHelper.config.GetSection("MaxCountOfPagination").Value);
         public PaginetedList(List<T> items, int count, int pageIndex)
         {
             PageIndex = pageIndex;
+            TotalCount = count;
             TotalPages = (int)Math.Ceiling(count / (double)MaxPageSize);
             this.AddRange(items);
         }

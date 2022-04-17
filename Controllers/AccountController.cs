@@ -59,7 +59,7 @@ namespace Stock_Band.Controllers
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
-                return RedirectToAction("badrequest", "exceptions");
+                return RedirectToAction("badrequestpage", "exceptions");
             }
             if (!_uniqueLinkService.VerifyLink(link))
             {
