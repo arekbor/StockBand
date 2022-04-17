@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
-using StockBand.Services;
 using StockBand.ViewModel;
 
 namespace Stock_Band.Controllers
@@ -16,13 +13,11 @@ namespace Stock_Band.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserLogService _userLogService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUniqueLinkService _uniqueLinkService;
-        public AccountController(IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService, IHttpContextAccessor httpContextAccessor)
+        public AccountController(IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
-            _httpContextAccessor = httpContextAccessor;
             _uniqueLinkService = uniqueLinkService;
         }
         [HttpGet]

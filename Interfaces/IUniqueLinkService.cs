@@ -7,6 +7,7 @@ namespace StockBand.Interfaces
     {
         Task<Guid> AddLink(string type, int userId, string controller, string action);
         Task<bool> DeleteLink(UniqueLink link);
+        Task<bool> DeleteLinkAutomatically(UniqueLink link);
         IQueryable<UniqueLink> GetAllLinks();
         Task<UniqueLink> GetUniqueLink(Guid guid);
         Task<bool> RefreshUrl(UniqueLink link);

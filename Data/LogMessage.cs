@@ -16,5 +16,6 @@
         public static Func<Guid, string> Code12 = x => $"Unique link removed ({x})";
         public static Func<Guid, string> Code13 = x => $"Unique link refreshed ({x})";
         public static Func<Guid,int, string> Code14 = (x,t) => $"Default lenght of unique link ({x}) time updated to {t} minutes";
+        public static Func<Guid,string> Code15 = x => $"Unique link removed automatically ({x})";
     }
 }

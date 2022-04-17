@@ -13,7 +13,6 @@ namespace StockBand.Models
         public int UserId { get; set; }
         public string Controller { get; set; }
         public string Action { get; set; }
-        //TODO nie ustawia sie na 5 minu defaultowo
         public int Minutes { get; set; } = 5;
     }
 }

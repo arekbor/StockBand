@@ -175,7 +175,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code06);
                 return false;
             }
-            if (!await _uniqueLinkService.DeleteLink(link))
+            if (!await _uniqueLinkService.DeleteLinkAutomatically(link))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
