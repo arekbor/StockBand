@@ -21,8 +21,8 @@ namespace StockBand.Services
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
         private readonly IUserContextService _userContextService;
-        
-        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, IUniqueLinkService uniqueLinkService, IUserLogService userLogService,IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+
+        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, IUniqueLinkService uniqueLinkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -55,7 +55,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> UpdateRememberMeStatus(int id,bool rememberMe)
+        public async Task<bool> UpdateRememberMeStatus(int id, bool rememberMe)
         {
             var user = await _dbContext
                 .UserDbContext
@@ -87,7 +87,7 @@ namespace StockBand.Services
             if (users is null)
                 return null;
             return users;
-        } 
+        }
         public async Task<User> GetUserAsync(int id)
         {
             var user = await _dbContext
@@ -106,20 +106,20 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
             }
-            if(userAdmin.Role != UserRoles.Roles[1])
+            if (userAdmin.Role != UserRoles.Roles[1])
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
                 return false;
             }
             var validatePwd = _passwordHasher.VerifyHashedPassword(userAdmin, userAdmin.HashPassword, model.PasswordAdmin);
-            if(validatePwd == PasswordVerificationResult.Failed)
+            if (validatePwd == PasswordVerificationResult.Failed)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code04);
                 return false;
             }
 
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
-            if(user is null)
+            if (user is null)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code09);
                 return false;
@@ -144,7 +144,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> CreateUser(Guid guid,CreateUserDto userDto)
+        public async Task<bool> CreateUser(Guid guid, CreateUserDto userDto)
         {
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
@@ -188,7 +188,7 @@ namespace StockBand.Services
 
             await _dbContext.UserDbContext.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code03,user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code03, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -202,12 +202,12 @@ namespace StockBand.Services
                 return false;
             }
             var verifyOldPwd = _passwordHasher.VerifyHashedPassword(user, user.HashPassword, userDto.OldPassword);
-            if(verifyOldPwd == PasswordVerificationResult.Failed)
+            if (verifyOldPwd == PasswordVerificationResult.Failed)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code13);
                 return false;
             }
-            if(userDto.NewPassword != userDto.ConfirmNewPassword)
+            if (userDto.NewPassword != userDto.ConfirmNewPassword)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code13);
                 return false;
@@ -216,7 +216,7 @@ namespace StockBand.Services
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code05,user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code05, user.Id);
             await LogoutUserAsync();
             _actionContext.ActionContext.ModelState.Clear();
             return true;

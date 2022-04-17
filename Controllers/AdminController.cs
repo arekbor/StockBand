@@ -19,7 +19,7 @@ namespace StockBand.Controllers
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AdminController(IUserService userService, IHttpContextAccessor httpContextAccessor,IMapper mapper,IUserLogService userLogService,IUniqueLinkService uniqueLinkService)
+        public AdminController(IUserService userService, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserLogService userLogService, IUniqueLinkService uniqueLinkService)
         {
             _userService = userService;
             _mapper = mapper;
@@ -28,9 +28,9 @@ namespace StockBand.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
-        public async Task<IActionResult> Userspanel(int pageNumber = 1,string search="")
+        public async Task<IActionResult> Userspanel(int pageNumber = 1, string search = "")
         {
-            
+
             if (pageNumber <= 0)
                 return RedirectToAction("userspanel", "admin", new { pageNumber = 1 });
             IQueryable<User> users = _userService.GetAllUsersAsync();
@@ -52,7 +52,7 @@ namespace StockBand.Controllers
                 users = _userService
                     .GetAllUsersAsync();
             }
-            
+
             if (!users.Any())
             {
                 return View();
@@ -82,7 +82,7 @@ namespace StockBand.Controllers
             if (!ModelState.IsValid)
                 return View(userDto);
             var status = await _userService.UpdateUser(id, userDto);
-            if(status)
+            if (status)
                 return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
@@ -91,17 +91,17 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
-            
+
             var uniqueLink = await _uniqueLinkService
-                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value),"account","create");
+                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
             return RedirectToAction("uniquelinkpanel", "link");
         }
         [HttpGet]
-        public async Task<IActionResult> Logs(int pageNumber=1, string search = "")
+        public async Task<IActionResult> Logs(int pageNumber = 1, string search = "")
         {
-            if(pageNumber <= 0)
+            if (pageNumber <= 0)
                 return RedirectToAction("logs", "admin", new { pageNumber = 1 });
-            
+
             var logs = _userLogService
                 .GetAllLogsAsync()
                 .Include(x => x.User)
@@ -118,17 +118,17 @@ namespace StockBand.Controllers
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("logs", "admin", new { pageNumber = paginatedList.TotalPages });
-            
-            
+
+
             return View(paginatedList);
         }
         [HttpGet]
         [Route("admin/deletelog/{id:guid}/{pNumber:int}")]
-        public async Task<IActionResult> DeleteLog(Guid id,int pNumber)
+        public async Task<IActionResult> DeleteLog(Guid id, int pNumber)
         {
             var status = await _userLogService.DeleteLogAsync(id);
-            if(status)
-                return RedirectToAction("logs", "admin", new { pageNumber = pNumber});
+            if (status)
+                return RedirectToAction("logs", "admin", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
     }

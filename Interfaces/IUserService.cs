@@ -11,7 +11,7 @@ namespace StockBand.Interfaces
         public Task<bool> LogoutUserAsync();
         public IQueryable<User> GetAllUsersAsync();
         public Task<User> GetUserAsync(int id);
-        public Task<bool> UpdateUser(int id,EditUserDto model);
+        public Task<bool> UpdateUser(int id, EditUserDto model);
         public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);
         public Task<bool> ChangePasswordUser(ChangePasswordDto userDto);
         public Task<bool> ChangeUserColor(ChangeColorDto userDto);

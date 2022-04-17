@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace StockBand.Services
 {
-    public class UserContextService: IUserContextService
+    public class UserContextService : IUserContextService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         public UserContextService(IHttpContextAccessor httpContextAccessor)

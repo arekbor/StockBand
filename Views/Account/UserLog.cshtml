@@ -20,48 +20,48 @@
 
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
-    <thead>
-        <tr>
-        <th scope="col">Guid</th>
-        <th scope="col">Date</th>
-        <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-    @{
-    if(Model is not null)
-    {
-        foreach (var log in Model)
-        {
+        <thead>
             <tr>
-                <th class="text-warning" scope="row">@log.Guid</th>
-                <td class="text-warning">@log.CreatedDate</td>
-                <td class="text-info">@log.Action</td>
+                <th scope="col">Guid</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
             </tr>
-        }       
-    }
-    }
-    </tbody>
+        </thead>
+        <tbody>
+            @{
+                if (Model is not null)
+                {
+                    foreach (var log in Model)
+                    {
+                        <tr>
+                            <th class="text-warning" scope="row">@log.Guid</th>
+                            <td class="text-warning">@log.CreatedDate</td>
+                            <td class="text-info">@log.Action</td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
     </table>
 </div>
 @{
-if(Model is not null)
-{
-    <div class="row pagginationDiv">
-        <div class="col-12">
-            <small>@Model.Count of @Model.TotalCount</small>
-            <nav class="nav justify-content-center border-top">
-                <ul class="pagination mt-2">
-                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                    @foreach (var item in Model.Pages(1))
-                    {
-                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
-                    }
-                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-                </ul>
-            </nav>
+    if (Model is not null)
+    {
+        <div class="row pagginationDiv">
+            <div class="col-12">
+                <small>@Model.Count of @Model.TotalCount</small>
+                <nav class="nav justify-content-center border-top">
+                    <ul class="pagination mt-2">
+                        <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                        @foreach (var item in Model.Pages(1))
+                        {
+                            <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
+                        }
+                        <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </div>
-}
+    }
 }
 

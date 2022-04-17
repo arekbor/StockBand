@@ -9,7 +9,7 @@ using StockBand.ViewModel;
 
 namespace StockBand.Services
 {
-    public class UniqueLinkService: IUniqueLinkService
+    public class UniqueLinkService : IUniqueLinkService
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -111,7 +111,7 @@ namespace StockBand.Services
             return true;
         }
 
-        public async Task<bool> SetMinutes(UniqueLink link,int minutes)
+        public async Task<bool> SetMinutes(UniqueLink link, int minutes)
         {
             link.Minutes = minutes;
             _applicationDbContext.Update(link);

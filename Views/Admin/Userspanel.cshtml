@@ -20,57 +20,57 @@
 
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
-    <thead>
-        <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Username</th>
-        <th scope="col">Added at</th>
-        <th scope="col">Block status</th>
-        <th scope="col">User role</th>
-        <th scope="col">Theme</th>
-        <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-    @{
-    if(Model is not null)
-    {
-        @foreach (var user in Model)
-        {
+        <thead>
             <tr>
-                <th class="text-warning" scope="row">@user.Id</th>
-                <td style="color:@user.Color;">@user.Name</td>
-                <td class="text-warning">@user.CreatedTime</td>
-                <td class="text-info">@user.Block</td>
-                <td class="text-warning">@user.Role</td>
-                <td class="text-info">@user.Theme</td>
-                <td><a asp-controller="admin" asp-action="edituser" asp-route-id="@user.Id" class="btn btn-info btn-sm">Edit</a></td>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Added at</th>
+                <th scope="col">Block status</th>
+                <th scope="col">User role</th>
+                <th scope="col">Theme</th>
+                <th scope="col">Action</th>
             </tr>
-        }
-    }
-    }
-    </tbody>
+        </thead>
+        <tbody>
+            @{
+                if (Model is not null)
+                {
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <th class="text-warning" scope="row">@user.Id</th>
+                            <td style="color:@user.Color;">@user.Name</td>
+                            <td class="text-warning">@user.CreatedTime</td>
+                            <td class="text-info">@user.Block</td>
+                            <td class="text-warning">@user.Role</td>
+                            <td class="text-info">@user.Theme</td>
+                            <td><a asp-controller="admin" asp-action="edituser" asp-route-id="@user.Id" class="btn btn-info btn-sm">Edit</a></td>
+                        </tr>
+                    }
+                }
+            }
+        </tbody>
     </table>
 </div>
 @{
-if(Model is not null)
-{
-<div class="row pagginationDiv">
-    <div class="col-12">
-        <small>@Model.Count of @Model.TotalCount</small>
-        <nav class="nav justify-content-center border-top border-white">
-            <ul class="pagination mt-2">
-                <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                @foreach (var item in Model.Pages(1))
-                {
-                    <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@item">@item</a></li>
-                }
-                <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-            </ul>
-        </nav>
-    </div>
-</div>     
-}
+    if (Model is not null)
+    {
+        <div class="row pagginationDiv">
+            <div class="col-12">
+                <small>@Model.Count of @Model.TotalCount</small>
+                <nav class="nav justify-content-center border-top border-white">
+                    <ul class="pagination mt-2">
+                        <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                        @foreach (var item in Model.Pages(1))
+                        {
+                            <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@item">@item</a></li>
+                        }
+                        <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="userspanel" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
 }
 
 

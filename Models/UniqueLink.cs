@@ -10,7 +10,7 @@ namespace StockBand.Models
         public DateTime DateTimeExpire { get; set; }
         public string Type { get; set; }
         public virtual User User { get; set; }
-        public int UserId {get;set;}
+        public int UserId { get; set; }
         public string Controller { get; set; }
         public string Action { get; set; }
         //TODO nie ustawia sie na 5 minu defaultowo

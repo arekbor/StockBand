@@ -25,7 +25,7 @@ namespace StockBand.Services
                 CreatedDate = DateTime.Now,
                 UserId = id
             };
-            
+
             await _dbContext.UserLogDbContext.AddAsync(userActivity);
             await _dbContext.SaveChangesAsync();
             return true;

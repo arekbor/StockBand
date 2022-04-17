@@ -63,13 +63,13 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var url = await _uniqueLinkService.ShowLink(link);
-            if(!String.IsNullOrEmpty(url))
+            if (!String.IsNullOrEmpty(url))
                 return View("shareurl", url);
             return RedirectToAction("badrequestpage", "exceptions");
         }
         [HttpGet]
         [Route("link/deleteurl/{guid:guid}/{pNumber:int}")]
-        public async Task<IActionResult> DeleteUrl(Guid guid,int pNumber)
+        public async Task<IActionResult> DeleteUrl(Guid guid, int pNumber)
         {
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
@@ -82,19 +82,19 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var result = await _uniqueLinkService.DeleteLink(link);
-            if(result)
+            if (result)
                 return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
         [HttpGet]
         [Route("link/refreshurl/{guid:guid}/{pNumber:int}")]
-        public async Task<IActionResult> RefreshUrl(Guid guid,int pNumber)
+        public async Task<IActionResult> RefreshUrl(Guid guid, int pNumber)
         {
             var link = await _uniqueLinkService.GetUniqueLink(guid);
             if (link is null)
             {
                 return RedirectToAction("badrequestpage", "exceptions");
-            } 
+            }
             if (!_uniqueLinkService.VerifyAuthorId(link))
             {
                 TempData["Message"] = Message.Code22;
@@ -148,7 +148,7 @@ namespace StockBand.Controllers
                 ModelState.AddModelError("", Message.Code22);
                 return View(dto);
             }
-            var status = await _uniqueLinkService.SetMinutes(link,dto.Minutes);
+            var status = await _uniqueLinkService.SetMinutes(link, dto.Minutes);
             if (status)
             {
                 return RedirectToAction("uniquelinkpanel", "link");

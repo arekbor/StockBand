@@ -3,7 +3,7 @@ using StockBand.Services;
 
 namespace StockBand.Models
 {
-    public class PaginetedList<T>: List<T>
+    public class PaginetedList<T> : List<T>
     {
         public int PageIndex { get; private set; }
         public int TotalPages { get; set; }
@@ -30,7 +30,7 @@ namespace StockBand.Models
                 return (PageIndex < TotalPages);
             }
         }
-        public static async Task<PaginetedList<T>> CreateAsync(IQueryable<T> source,int pageIndex)
+        public static async Task<PaginetedList<T>> CreateAsync(IQueryable<T> source, int pageIndex)
         {
             var count = await source.CountAsync();
             var items = await source.Skip((pageIndex - 1) * MaxPageSize).Take(MaxPageSize).ToListAsync();

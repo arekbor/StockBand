@@ -15,7 +15,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddDbContext<ApplicationDbContext>(options => 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
@@ -26,9 +26,9 @@ builder.Services.AddAuthentication("CookieUser").AddCookie("CookieUser", option 
     option.AccessDeniedPath = "/exceptions/forbidden";
     option.ReturnUrlParameter = "returnpage";
 });
-builder.Services.AddAuthorization(options => 
+builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminRolePolicy", policy => 
+    options.AddPolicy("AdminRolePolicy", policy =>
     {
         policy.RequireRole(UserRoles.Roles[1]);
     });
