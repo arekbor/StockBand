@@ -70,7 +70,7 @@ namespace StockBand.Services
         public async Task<bool> RemoveUserCookie()
         {
             await _userLogService.AddToLogsAsync(LogMessage.Code09, _userContextService.GetUserId());
-            await _httpContextAccessor.HttpContext.SignOutAsync("CookieUser");
+            await _httpContextAccessor.HttpContext.SignOutAsync(ConfigurationHelper.config.GetSection("CookieAuthenticationName").Value);
             return true;
         }
         public async Task<bool> LogoutUserAsync()
@@ -280,7 +280,7 @@ namespace StockBand.Services
                 new Claim("Theme",user.Theme),
                 new Claim("RememberMe",user.RememberMe.ToString()),
             };
-            var claimIdentity = new ClaimsIdentity(claims, "CookieUser");
+            var claimIdentity = new ClaimsIdentity(claims, ConfigurationHelper.config.GetSection("CookieAuthenticationName").Value);
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
             var authenticationProperties = new AuthenticationProperties();
 

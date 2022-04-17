@@ -19,7 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddAuthentication("CookieUser").AddCookie("CookieUser", option =>
+builder.Services.AddAuthentication(ConfigurationHelper.config.GetSection("CookieAuthenticationName").Value).AddCookie("CookieUser", option =>
 {
     option.Cookie.Name = "CookieUser";
     option.LoginPath = "/account/login";
