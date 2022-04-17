@@ -47,7 +47,7 @@ namespace Stock_Band.Controllers
         public async Task<IActionResult> LogoutAsync()
         {
             var status = await _userService.LogoutUserAsync();
-            if(status)
+            if (status)
                 return RedirectToAction("index", "home");
             return RedirectToAction("index", "home");
         }
@@ -77,7 +77,7 @@ namespace Stock_Band.Controllers
         [ValidateAntiForgeryToken]
         [Route("account/create/{guid:Guid}")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateAsync(Guid guid,CreateUserDto dto)
+        public async Task<IActionResult> CreateAsync(Guid guid, CreateUserDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);
@@ -105,7 +105,7 @@ namespace Stock_Band.Controllers
             return View(dto);
         }
         [HttpGet]
-        public async Task<IActionResult> UserLog(int pageNumber=1,string search="")
+        public async Task<IActionResult> UserLog(int pageNumber = 1, string search = "")
         {
             if (pageNumber <= 0)
                 return RedirectToAction("userlog", "account", new { pageNumber = 1 });
@@ -116,11 +116,11 @@ namespace Stock_Band.Controllers
                 || x.Guid.ToString().Contains(search)
                 || x.CreatedDate.ToString().Contains(search))
                 .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
-            
+
             if (!userLogs.Any())
             {
                 return View();
-            }  
+            }
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber);
             if (pageNumber > paginatedList.TotalPages)
                 return RedirectToAction("userlog", "account", new { pageNumber = paginatedList.TotalPages });
@@ -165,5 +165,5 @@ namespace Stock_Band.Controllers
             }
             return RedirectToAction("changetheme", "account", userDto);
         }
-    }  
+    }
 }
