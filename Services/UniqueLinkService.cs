@@ -53,17 +53,8 @@ namespace StockBand.Services
                 .UniqueLinkDbContext
                 .Remove(link);
             await _applicationDbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code12(link.Guid), _userContextService.GetUserId());
-            return true;
-        }
-        public async Task<bool> DeleteLinkAutomatically(UniqueLink link)
-        {
-            if (link is null)
-                return false;
-            _applicationDbContext
-                .UniqueLinkDbContext
-                .Remove(link);
-            await _applicationDbContext.SaveChangesAsync();
+            if(_userContextService.GetUser().Identity.IsAuthenticated)
+                await _userLogService.AddToLogsAsync(LogMessage.Code12(link.Guid), _userContextService.GetUserId());
             return true;
         }
         public IQueryable<UniqueLink> GetAllLinks()

@@ -26,13 +26,13 @@ namespace StockBand.Data
                     context.UserDbContext.Add(user);
                     context.SaveChanges();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine(SystemMessage.Code01("User"));
+                    Console.WriteLine(Message.Code24("User"));
                     Console.ResetColor();
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(SystemMessage.Code02("User"));
+                    Console.WriteLine(Message.Code25("User"));
                     Console.ResetColor();
                 }
             }

@@ -25,18 +25,19 @@
 
         public const string Code15 = "You do not have permission";
         public const string Code16 = "You do not have permission to access this page";
+
         public const string Code17 = "Empty result";
         public const string Code18 = "Color does not exist";
+
         public const string Code19 = "Settings can't be changed";
         public const string Code20 = "Theme does not exist";
+
         public const string Code21 = "Can't refresh this link";
         public const string Code22 = "Guid has expired or you do not have permission";
-        public const string Code23 = "Guid not found";
 
-    }
-    public static class SystemMessage
-    {
-        public static Func<string, string> Code01 = x => $"{x} DbContext seed successfully created";
-        public static Func<string, string> Code02 = x => $"{x} DbContext has already been created";
+        public const string Code23 = "Guid not found";
+        public static Func<string, string> Code24 = x => $"{x} DbContext seed successfully created";
+
+        public static Func<string, string> Code25 = x => $"{x} DbContext has already been created";
     }
 }

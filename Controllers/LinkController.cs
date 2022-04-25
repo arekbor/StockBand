@@ -23,8 +23,6 @@ namespace StockBand.Controllers
         [Authorize(Policy = "AdminRolePolicy")]
         public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1, string search = "")
         {
-            if (pageNumber <= 0)
-                return RedirectToAction("uniquelinkpanel", "admin", new { pageNumber = 1 });
             var links = _uniqueLinkService
                 .GetAllLinks()
                 .Include(x => x.User)
@@ -34,13 +32,11 @@ namespace StockBand.Controllers
                 || x.User.Name.Contains(search)
                 || x.User.Id.ToString().Contains(search))
                 .OrderByDescending(x => x.DateTimeExpire);
+
+            var date = links.Select(x => x.DateTimeExpire);
             if (!links.Any())
-            {
                 return View();
-            }
             var paginatedList = await PaginetedList<UniqueLink>.CreateAsync(links.AsNoTracking(), pageNumber);
-            if (pageNumber > paginatedList.TotalPages)
-                return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);
         }
         [HttpGet]

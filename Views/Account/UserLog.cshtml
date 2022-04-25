@@ -44,24 +44,5 @@
         </tbody>
     </table>
 </div>
-@{
-    if (Model is not null)
-    {
-        <div class="row pagginationDiv">
-            <div class="col-12">
-                <small>@Model.Count of @Model.TotalCount</small>
-                <nav class="nav justify-content-center border-top">
-                    <ul class="pagination mt-2">
-                        <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                        @foreach (var item in Model.Pages(1))
-                        {
-                            <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="account" asp-action="userlog" asp-route-pageNumber="@item">@item</a></li>
-                        }
-                        <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="account" asp-action="userlog" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    }
-}
+<partial name="_PaginationPartial"/>
 

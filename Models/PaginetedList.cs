@@ -32,9 +32,14 @@ namespace StockBand.Models
         }
         public static async Task<PaginetedList<T>> CreateAsync(IQueryable<T> source, int pageIndex)
         {
+            if(pageIndex <= 0)
+                pageIndex = 1;
             var count = await source.CountAsync();
+            if(pageIndex > (int)Math.Ceiling(count / (double)MaxPageSize))
+                pageIndex = (int)Math.Ceiling(count / (double)MaxPageSize);
             var items = await source.Skip((pageIndex - 1) * MaxPageSize).Take(MaxPageSize).ToListAsync();
             return new PaginetedList<T>(items, count, pageIndex);
+            
         }
         public IEnumerable<int> Pages(int range)
         {

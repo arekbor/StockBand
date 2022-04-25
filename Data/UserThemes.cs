@@ -2,7 +2,7 @@
 {
     public class UserTheme
     {
-        public static string[] Themes = 
+        public static string[] Themes =
         {
             "basic",
             "slate",

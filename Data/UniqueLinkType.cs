@@ -2,6 +2,9 @@
 {
     public static class UniqueLinkType
     {
-        public static string[] Types = {"createuser"};
+        public static string[] Types = 
+        {
+            "createuser",
+        };
     }
 }

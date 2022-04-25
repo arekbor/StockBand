@@ -2,23 +2,21 @@
     ViewData["Title"] = "All Logs";
     Layout = "_Layout";
 }
-
 @model PaginetedList<UserLog>
 
 <div class="row">
     <div class="col-sm-12 col-md-6 col-lg-3">
         <form method="get" asp-controller="admin" asp-action="logs" autocomplete="off">
             <div class="input-group mb-3">
-                <input type="text" name="search" class="form-control" placeholder="search">
+                <input id="search" type="text" name="search" class="form-control" placeholder="search">
                 <div class="input-group-prepend">
-                    <button class="btn btn-success" type="submit">Search</button>
+                    <button id="searchSubmit" class="btn btn-success" type="submit">Search</button>
                     <a asp-controller="admin" asp-action="logs" class="btn btn-warning" role="button">Clear</a>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
 <div class="table-responsive scrollable">
     <table class="table text-nowrap">
         <thead>
@@ -26,7 +24,6 @@
                 <th scope="col">Guid</th>
                 <th scope="col">Username</th>
                 <th scope="col">Date</th>
-                <th scope="col">Action desc</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -41,7 +38,6 @@
                             <td style="color:@log.User.Color;">@log.User.Name</td>
                             <td class="text-warning">@log.CreatedDate</td>
                             <td class="text-info">@log.Action</td>
-                            <td><a asp-controller="admin" asp-action="deletelog" asp-route-id="@log.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
                         </tr>
                     }
                 }
@@ -50,23 +46,4 @@
     </table>
 </div>
 
-@{
-    if (Model is not null)
-    {
-        <div class="row pagginationDiv">
-            <div class="col-12 text-nowrap">
-                <small>@Model.Count of @Model.TotalCount</small>
-                <nav class="nav justify-content-center border-top border-white">
-                    <ul class="pagination mt-2">
-                        <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="admin" asp-action="logs" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                        @foreach (var item in Model.Pages(1))
-                        {
-                            <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="admin" asp-action="logs" asp-route-pageNumber="@item">@item</a></li>
-                        }
-                        <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="admin" asp-action="logs" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    }
-}
+<partial name="_PaginationPartial"/>

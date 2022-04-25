@@ -30,14 +30,7 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> Userspanel(int pageNumber = 1, string search = "")
         {
-
-            if (pageNumber <= 0)
-                return RedirectToAction("userspanel", "admin", new { pageNumber = 1 });
-            IQueryable<User> users = _userService.GetAllUsersAsync();
-
-            if (!string.IsNullOrEmpty(search))
-            {
-                users = _userService
+           var users = _userService
                 .GetAllUsersAsync()
                 .Where(x => x.Id.ToString().Contains(search)
                 || x.Block.ToString().Contains(search)
@@ -46,20 +39,9 @@ namespace StockBand.Controllers
                 || x.CreatedTime.ToString().Contains(search)
                 || x.Theme.Contains(search)
                 || x.Role.Contains(search));
-            }
-            else
-            {
-                users = _userService
-                    .GetAllUsersAsync();
-            }
-
             if (!users.Any())
-            {
                 return View();
-            }
             var paginatedList = await PaginetedList<User>.CreateAsync(users.AsNoTracking(), pageNumber);
-            if (pageNumber > paginatedList.TotalPages)
-                return RedirectToAction("userspanel", "admin", new { pageNumber = paginatedList.TotalPages });
             return View(paginatedList);
 
         }
@@ -86,8 +68,6 @@ namespace StockBand.Controllers
                 return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
-
-        //TODO usun to i zrob jedna strone pokazujaca linki CreateLink
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
@@ -99,9 +79,6 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> Logs(int pageNumber = 1, string search = "")
         {
-            if (pageNumber <= 0)
-                return RedirectToAction("logs", "admin", new { pageNumber = 1 });
-
             var logs = _userLogService
                 .GetAllLogsAsync()
                 .Include(x => x.User)
@@ -112,24 +89,9 @@ namespace StockBand.Controllers
                 || x.CreatedDate.ToString().Contains(search))
                 .OrderByDescending(x => x.CreatedDate);
             if (!logs.Any())
-            {
                 return View();
-            }
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber);
-            if (pageNumber > paginatedList.TotalPages)
-                return RedirectToAction("logs", "admin", new { pageNumber = paginatedList.TotalPages });
-
-
             return View(paginatedList);
-        }
-        [HttpGet]
-        [Route("admin/deletelog/{id:guid}/{pNumber:int}")]
-        public async Task<IActionResult> DeleteLog(Guid id, int pNumber)
-        {
-            var status = await _userLogService.DeleteLogAsync(id);
-            if (status)
-                return RedirectToAction("logs", "admin", new { pageNumber = pNumber });
-            return RedirectToAction("badrequestpage", "exceptions");
         }
     }
 }
