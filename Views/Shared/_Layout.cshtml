@@ -43,7 +43,7 @@
                         </li>
                         <!--- upload --->
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Upload</a>
+                            <a class="nav-link" asp-controller="Upload" asp-action="Index">Upload</a>
                         </li>
                         
                     </ul>
@@ -67,6 +67,7 @@
     <script src="~/lib/datatables/datatables.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/ckeditor/ckeditor.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

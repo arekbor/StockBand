@@ -1,0 +1,43 @@
+﻿@{
+    ViewData["Title"] = "Upload";
+    Layout = "_layout";
+}
+
+
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:65vh;">
+            <div class="card-header">
+                <h5>Upload track</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-start">
+                    <form method="post" asp-controller="upload" asp-action="addtrack">
+                        <div class="validation text-danger" asp-validation-summary="All"></div>
+                        <div class="form-group mt-1">
+                            <label>Track name</label>
+                            <input type="text" class="form-control" placeholder="Track name">
+                        </div>
+                        <div class="form-group mt-1">
+                            <label>Lyrics</label>
+                            <textarea class="form-control" id="lyrics_textarea"></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    CKEDITOR.replace('lyrics_textarea',{
+        language: 'pl',
+        uiColor: '#9AB8F3'
+    });
+    CKEDITOR.config.coreStyles_underline = {
+    element: 'span',
+    attributes: { 'class': 'Underline' }
+};
+</script>
+}
