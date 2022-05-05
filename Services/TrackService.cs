@@ -38,9 +38,7 @@ namespace StockBand.Services
 
             //TODO sprwadz czy sprawdzanie wielkosc idziala poprawnie i zrob cos z tym, ze wywala 400 przy duzych plikach
             //TODO block button ''submit when uploading
-            //TODO make drag and drop
             //TODO make limit system for user
-            //TODO name file as id 
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext
@@ -58,10 +56,11 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
+            track.Id = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
             track.UserId = _userContextService.GetUserId();
 
-            var trackName = $"{track.Title}.{fileExt}";
+            var trackName = $"{track.Id}.{fileExt}";
 
             using (var fileStream = new FileStream(Path.Combine(_configuration["TrackFilePath"],trackName), FileMode.Create, FileAccess.Write))
             {

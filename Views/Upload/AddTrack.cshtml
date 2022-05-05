@@ -24,7 +24,7 @@
                         </div>
                         <div class="form-group mt-1">
                             <label asp-for="File"></label>
-                            <input asp-for="File" class="form-control" type="file">
+                            <input asp-for="File" id="dropfile" class="form-control" type="file">
                         </div>
 
                         <div class="form-check mt-3">
@@ -41,6 +41,21 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+       let target = document.documentElement;
+       let fileInput = document.querySelector('input[type=file]');
+
+       target.addEventListener('drop',(e) =>{
+           e.preventDefault();
+           fileInput.files = e.dataTransfer.files;
+       });
+
+    </script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
 
 @*@section Scripts{
 <script>
