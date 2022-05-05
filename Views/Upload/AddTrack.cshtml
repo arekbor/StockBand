@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Upload";
+    Layout = "_layout";
+}
+@model AddTrackDto
+
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:65vh;">
+            <div class="card-header">
+                <h5>Upload track</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-start">
+                    <form method="post" asp-controller="upload" asp-action="addtrack" enctype="multipart/form-data">
+                        <div class="validation text-danger" asp-validation-summary="All"></div>
+                        <div class="form-group mt-1">
+                            <label asp-for="Title"></label>
+                            <input asp-for="Title" type="text" class="form-control" placeholder="Title">
+                        </div>
+                        <div class="form-group mt-1">
+                            <label asp-for="Description"></label>
+                            <textarea asp-for="Description" class="form-control" placeholder="Description" style="resize: none;"></textarea>
+                        </div>
+                        <div class="form-group mt-1">
+                            <label asp-for="File"></label>
+                            <input asp-for="File" class="form-control" type="file">
+                        </div>
+
+                        <div class="form-check mt-3">
+                            <input asp-for="Private" type="checkbox" class="form-check-input" id="private">
+                            <label class="form-check-label" for="private">Private</label>
+                        </div>
+
+                        <div class="form-group mt-3 text-center">
+                            <button type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@section Scripts{
+<script>
+    CKEDITOR.replace( 'lyrics_textarea', {
+        customConfig: 'custom/config.js'
+    });
+</script>
+}*@

@@ -24,5 +24,6 @@
         public static Func<Guid, int, string> Code14 = (x, t) => $"Default lenght of unique link ({x}) time updated to {t} minutes";
 
         public static Func<Guid, string> Code15 = x => $"Unique link removed automatically ({x})";
+        public static Func<string, string> Code16 = x => $"Track '{x}' was uploaded";
     }
 }

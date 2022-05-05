@@ -18,14 +18,14 @@ namespace StockBand.Controllers
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        public AdminController(IUserService userService, IHttpContextAccessor httpContextAccessor, IMapper mapper, IUserLogService userLogService, IUniqueLinkService uniqueLinkService)
+        private readonly IConfiguration _configuration;
+        public AdminController(IUserService userService, IConfiguration configuration, IMapper mapper, IUserLogService userLogService, IUniqueLinkService uniqueLinkService)
         {
             _userService = userService;
             _mapper = mapper;
             _userLogService = userLogService;
             _uniqueLinkService = uniqueLinkService;
-            _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
         [HttpGet]
         public async Task<IActionResult> Userspanel(int pageNumber = 1, string search = "")
@@ -87,7 +87,8 @@ namespace StockBand.Controllers
                 || x.User.Id.ToString().Contains(search)
                 || x.Guid.ToString().Contains(search)
                 || x.CreatedDate.ToString().Contains(search))
-                .OrderByDescending(x => x.CreatedDate);
+                .OrderByDescending(x => x.CreatedDate)
+                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-int.Parse(_configuration["GetLogsOfDays"])));
             if (!logs.Any())
                 return View();
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(logs.AsNoTracking(), pageNumber);

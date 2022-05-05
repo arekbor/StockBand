@@ -14,11 +14,13 @@ namespace Stock_Band.Controllers
         private readonly IUserService _userService;
         private readonly IUserLogService _userLogService;
         private readonly IUniqueLinkService _uniqueLinkService;
-        public AccountController(IUniqueLinkService uniqueLinkService, IUserService userService, IUserLogService userLogService)
+        private readonly IConfiguration _configuration;
+        public AccountController(IUniqueLinkService uniqueLinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
             _uniqueLinkService = uniqueLinkService;
+            _configuration = configuration;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -108,7 +110,7 @@ namespace Stock_Band.Controllers
                 .Where(x => x.Action.Contains(search)
                 || x.Guid.ToString().Contains(search)
                 || x.CreatedDate.ToString().Contains(search))
-                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-7));
+                .Where(x => x.CreatedDate > DateTime.UtcNow.AddDays(-int.Parse(_configuration["GetLogsOfDays"])));
             if (!userLogs.Any())
                 return View();
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber);

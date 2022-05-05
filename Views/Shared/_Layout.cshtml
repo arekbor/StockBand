@@ -34,7 +34,7 @@
                         <partial name="_AdminNavItemsPartial"/>
                          <!--- home --->
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="index">Home
+                            <a class="nav-link" asp-controller="home" asp-action="index">Home
                             </a>
                         </li>
                         <!--- library --->
@@ -43,7 +43,7 @@
                         </li>
                         <!--- upload --->
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Upload" asp-action="Index">Upload</a>
+                            <a class="nav-link" asp-controller="upload" asp-action="addtrack">Upload</a>
                         </li>
                         
                     </ul>
@@ -68,6 +68,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/ckeditor/ckeditor.js"></script>
+    <script src="~/dropzone/dropzone.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -15,7 +15,7 @@
         public const string Code08 = "Role does not exist";
 
         public const string Code09 = "User does not exist";
-        public const string Code10 = "Than username already exists";
+        public const string Code10 = "That username already exists";
 
         public const string Code11 = "No white space and special characters allowed";
         public const string Code12 = "Password must contain: Minimum 8 characters atleast 1 Alphabet and 1 Number";
@@ -39,5 +39,7 @@
         public static Func<string, string> Code24 = x => $"{x} DbContext seed successfully created";
 
         public static Func<string, string> Code25 = x => $"{x} DbContext has already been created";
+        public const string Code26 = "Unsupported extension";
+        public const string Code27 = "That title already exists";
     }
 }
