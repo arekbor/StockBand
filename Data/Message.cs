@@ -41,5 +41,6 @@
         public static Func<string, string> Code25 = x => $"{x} DbContext has already been created";
         public const string Code26 = "Unsupported extension";
         public const string Code27 = "That title already exists";
+        public static Func<string, string> Code28 = x => $"This file is too large to be uploaded. Files larger than {x} are not supported";
     }
 }

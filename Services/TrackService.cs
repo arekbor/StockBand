@@ -27,7 +27,7 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
-
+            ProccessDirectory();
             var fileExt = Path.GetExtension(dto.File.FileName).Substring(1);
             if (!SupportedExts.Types.Contains(fileExt))
             {
@@ -36,11 +36,11 @@ namespace StockBand.Services
             }
             var track = _mapper.Map<Track>(dto);
 
-            //TODO check size of file
+            //TODO sprwadz czy sprawdzanie wielkosc idziala poprawnie i zrob cos z tym, ze wywala 400 przy duzych plikach
             //TODO block button ''submit when uploading
             //TODO make drag and drop
             //TODO make limit system for user
-            //TODO sprawdz czy folder zapisu istnieje, jezeli nie to stworz
+            //TODO name file as id 
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext
@@ -48,6 +48,14 @@ namespace StockBand.Services
             if (trackNameVerify)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code27);
+                return false;
+            }
+            if(dto.File.Length >= int.Parse(_configuration["MaxFileBytes"]))
+            {
+                decimal mb = int.Parse(_configuration["MaxFileBytes"])/1048576;
+                var roundMb = Math.Round(mb,1);
+
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
             track.DateTimeCreate = DateTime.Now;
@@ -64,6 +72,11 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code16(track.Title), track.UserId);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
+        }
+        private void ProccessDirectory()
+        {
+            if (!Directory.Exists(_configuration["TrackFilePath"]))
+                Directory.CreateDirectory(_configuration["TrackFilePath"]);
         }
     }
 }
