@@ -1,1 +1,44 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Track";
+    Layout = "_Layout";
+}
+@model Track
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 mx-sm-1 mx-md-0 text-info"><h5>@Model.Title</h5></div>
+        <div class="col-md-6 text-md-end mx-sm-1 mx-md-0 mt-md-3 text-warning"><div style="font-size:small;"><i class="bi bi-clock-history"></i> @Model.DateTimeCreate.ToString("D")</div></div>
+        <div class="col-12 mt-1 text-muted">
+            <div style="font-size:x-small;">Guid: @Model.Guid</div>
+        </div>
+        <div class="col-md-6 text-md-start mt-md-3 mt-sm-2">
+            @if(@Model.TrackAccess == TrackAccess.Inner)
+            {
+                <div style="font-size:small;"><i class="bi bi-unlock-fill"></i> Inner <i class="bi bi-play-fill">@Model.PlaysCount</i></div>
+            }else if(@Model.TrackAccess == TrackAccess.Private)
+            {
+                <div style="font-size:small;"><i class="bi bi-lock-fill"></i> Private <i class="bi bi-play-fill">@Model.PlaysCount</i></div>
+            }else if(@Model.TrackAccess == TrackAccess.Public)
+            {
+                <div style="font-size:small;"><i class="bi bi-globe"></i> Public <i class="bi bi-play-fill">@Model.PlaysCount</i></div>
+            }
+        </div>
+        <div class="col-md-6 text-md-end mt-2">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-secondary btn-sm">Edit</button>
+                <button type="button" class="btn btn-secondary btn-sm mx-1"><i class="bi bi-share"></i></button>
+                <button type="button" class="btn btn-secondary btn-sm mx-0"><i class="bi bi-link-45deg"></i></button>
+            </div>
+        </div>
+        <div class="col-12 progress mt-5" style="height: 20px;">
+            <div class="progress-bar" role="progressbar" style="width: 100%"></div>
+        </div>
+        <div class="col-12 text-center mt-3">
+             <div class="btn-group mr-2" role="group">
+                <button type="button" class="btn btn-secondary m-3"><i class="bi bi-play-fill"></i></button>
+                <button type="button" class="btn btn-secondary m-3"><i class="bi bi-stop-fill"></i></button>
+                <button type="button" class="btn btn-secondary m-3"><i class="bi bi-volume-mute-fill"></i></button>
+             </div>
+        </div>
+    </div>
+</div>

@@ -39,6 +39,7 @@ namespace StockBand.Services
             //TODO sprwadz czy sprawdzanie wielkosc idziala poprawnie i zrob cos z tym, ze wywala 400 przy duzych plikach
             //TODO block button ''submit when uploading
             //TODO make limit system for user
+            //TODO add list of all track in admin panel
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext
@@ -103,7 +104,7 @@ namespace StockBand.Services
             if (track is null)
                 return false;
             if (track.TrackAccess == TrackAccess.Public)
-                return true;
+                return true; 
             if(track.TrackAccess == TrackAccess.Inner)
                 return true;
             if (track.TrackAccess == TrackAccess.Private && VerifyAuthorTrack(track))

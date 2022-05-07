@@ -41,7 +41,7 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
-            return View();
+            return View(track);
         }
     }
 }
