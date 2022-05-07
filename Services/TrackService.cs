@@ -56,11 +56,16 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
-            track.Id = Guid.NewGuid();
+            if (dto.Private)
+                track.TrackAccess = TrackAccess.Private;
+            else
+                track.TrackAccess = TrackAccess.Public;
+
+            track.Guid = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
             track.UserId = _userContextService.GetUserId();
 
-            var trackName = $"{track.Id}.{fileExt}";
+            var trackName = $"{track.Guid}.{fileExt}";
 
             using (var fileStream = new FileStream(Path.Combine(_configuration["TrackFilePath"],trackName), FileMode.Create, FileAccess.Write))
             {
@@ -71,6 +76,47 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code16(track.Title), track.UserId);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
+        }
+        public IQueryable<Track> GetAllUserTracksAsync()
+        {
+            var id = _userContextService.GetUserId();
+            var tracks = _applicationDbContext
+                .TrackDbContext
+                .Where(x => x.UserId == id)
+                .AsQueryable();
+            if (tracks is null)
+                return null;
+            return tracks;
+        }
+        public async Task<Track> GetTrack(Guid guid)
+        {
+            var track = await _applicationDbContext
+                .TrackDbContext
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if (track is null)
+                return null;
+            return track;
+        }
+        public bool VerifyAccessTrack(Track track)
+        {
+            if (track is null)
+                return false;
+            if (track.TrackAccess == TrackAccess.Public)
+                return true;
+            if(track.TrackAccess == TrackAccess.Inner)
+                return true;
+            if (track.TrackAccess == TrackAccess.Private && VerifyAuthorTrack(track))
+                return true;
+            return false;
+        }
+        public bool VerifyAuthorTrack(Track track)
+        {
+            if(track is null)
+                return false;
+            if(track.User.Id == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+                return true;
+            return false;
         }
         private void ProccessDirectory()
         {

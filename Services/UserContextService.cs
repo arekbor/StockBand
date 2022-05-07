@@ -12,12 +12,16 @@ namespace StockBand.Services
         }
         public ClaimsPrincipal GetUser()
         {
+            if(_httpContextAccessor.HttpContext.User is null)
+            {
+                return null;
+            }
             return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
 
         public int GetUserId()
         {
-            return int.Parse(GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            return int.Parse(GetUser()?.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
         }
     }
 }
