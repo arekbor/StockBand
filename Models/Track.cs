@@ -9,6 +9,8 @@ namespace StockBand.Models
         public Guid Guid { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string Lyrics { get; set; }
+        public string Extension { get; set; }
         public DateTime DateTimeCreate { get; set; }
         public long PlaysCount { get; set; } = 0;
         public TrackAccess TrackAccess { get; set; } = TrackAccess.Inner;

@@ -60,15 +60,16 @@ namespace StockBand.Services
             if (dto.Private)
                 track.TrackAccess = TrackAccess.Private;
             else
-                track.TrackAccess = TrackAccess.Public;
+                track.TrackAccess = TrackAccess.Inner;
 
             track.Guid = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
             track.UserId = _userContextService.GetUserId();
+            track.Extension = fileExt;
 
-            var trackName = $"{track.Guid}.{fileExt}";
+            var trackName = $"{track.Guid}.{track.Extension}";
 
-            using (var fileStream = new FileStream(Path.Combine(_configuration["TrackFilePath"],trackName), FileMode.Create, FileAccess.Write))
+            using (var fileStream = new FileStream(Path.Combine(_configuration["TrackFilePath"], trackName), FileMode.Create, FileAccess.Write))
             {
                 await dto.File.CopyToAsync(fileStream);
             }
