@@ -11,9 +11,11 @@ namespace StockBand.Controllers
     public class LibraryController : Controller
     {
         private readonly ITrackService _trackService;
-        public LibraryController(ITrackService trackService)
+        private readonly IConfiguration _configuration;
+        public LibraryController(ITrackService trackService, IConfiguration configuration)
         {
             _trackService = trackService;
+            _configuration = configuration;
         }
         [HttpGet]
         public async Task<IActionResult> Tracks(int pageNumber = 1, string search = "")
@@ -29,6 +31,7 @@ namespace StockBand.Controllers
             return View(paginatedList);
         }
         [HttpGet]
+        [AllowAnonymous]
         [Route("library/track/{guid:Guid}")]
         public async Task <IActionResult> Track(Guid guid)
         {
@@ -43,6 +46,22 @@ namespace StockBand.Controllers
             }
             return View(track);
         }
-        //TODO Make audio streamer here
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("library/stream/{guid:Guid}")]
+        public async Task<IActionResult> Stream(Guid guid)
+        {
+            var track = await _trackService.GetTrack(guid);
+            if (track is null)
+            {
+                return RedirectToAction("badrequestpage", "exceptions");
+            }
+            if (!_trackService.VerifyAccessTrack(track))
+            {
+                return RedirectToAction("forbidden", "exceptions");
+            }
+            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            return File(fileStream, "audio/mp3");
+        }
     }
 }

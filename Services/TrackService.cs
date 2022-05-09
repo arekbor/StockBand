@@ -102,22 +102,19 @@ namespace StockBand.Services
         }
         public bool VerifyAccessTrack(Track track)
         {
-            if (track is null)
-                return false;
+            //TODO sprwadz to dokladnie
             if (track.TrackAccess == TrackAccess.Public)
-                return true; 
-            if(track.TrackAccess == TrackAccess.Inner)
                 return true;
-            if (track.TrackAccess == TrackAccess.Private && VerifyAuthorTrack(track))
-                return true;
-            return false;
-        }
-        public bool VerifyAuthorTrack(Track track)
-        {
-            if(track is null)
-                return false;
-            if(track.User.Id == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
-                return true;
+            if (_userContextService.GetUser().Identity.IsAuthenticated)
+            {
+                if (track.TrackAccess == TrackAccess.Inner )
+                    return true;
+                if (track.TrackAccess == TrackAccess.Private)
+                {
+                    if (track.User.Id == _userContextService.GetUserId())
+                        return true;
+                }
+            }
             return false;
         }
         private void ProccessDirectory()
@@ -125,5 +122,6 @@ namespace StockBand.Services
             if (!Directory.Exists(_configuration["TrackFilePath"]))
                 Directory.CreateDirectory(_configuration["TrackFilePath"]);
         }
+         
     }
 }

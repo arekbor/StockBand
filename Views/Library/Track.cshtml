@@ -1,82 +1,94 @@
-﻿@{
-    ViewData["Title"] = "Track";
-    Layout = "_Layout";
-}
-@model Track
+﻿@model Track
+@{
 
-<div class="container mt-5 background-player" style="height:450px;">
-    <div class="row mt-2">
-        <div class="col-md-6 text-center"><h5>@Model.Title</h5></div>
-        <div class="col-md-6 text-center">
+    ViewData["Title"] = @Model.Title;
+    if (User.Identity.IsAuthenticated)
+    {
+        Layout = "_Layout";
+    }
+    else
+    {
+        Layout = "_SimpleLayout";
+    }
+
+    var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
+}
+
+<div class="container mt-4 ">
+    <div class="row">
+        <div class="col-12 text-center" >
+            <h5>@Model.Title</h5>
+        </div>
+
+        <div class="col-12 text-center mt-2">
             <div class="btn-group" role="group">
                 <button id="button_play_pause" type="button" class="btn btn-secondary mx-2"><i class="bi bi-play-fill"></i></button>
                 <button id="button_stop" type="button" class="btn btn-secondary mx-2"><i class="bi bi-stop-fill"></i></button>
                 <button id="button_mute_unmute" type="button" class="btn btn-secondary mx-2"><i class="bi bi-volume-mute-fill"></i></button>
-                <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
-                <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-link-45deg"></i></button>
-                <button type="button" class="btn btn-secondary mx-2">Edit</button>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
+                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-link-45deg"></i></button>
+                    <button type="button" class="btn btn-secondary mx-2">Edit</button>
+                }
              </div>
         </div>
-        @{
-            string classTextarea = string.Empty;
-            if (!string.IsNullOrEmpty(@Model.Lyrics))
-                classTextarea = "col-md-4 text-center mt-3";
-            else
-               classTextarea = "col-12 text-center mt-3"; 
-        }
-        <div class="@classTextarea">
-        <div class="text-start" style="font-size:small">Info:</div>
-            <textarea id="info_textarea" readonly class="background-player" style="width: 100%;padding: 12px 20px; font-size: 16px; resize: none; color:white;">
-                <p>Author: @Model.User.Name</p>
-                <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
-                <p>Guid: @Model.Guid</p>
-                    @if(@Model.TrackAccess == TrackAccess.Inner){
-                    <p>Access: Inner</p>}
-                    else if(@Model.TrackAccess == TrackAccess.Private){
-                    <p>Access: Private</p>}
-                    else if(@Model.TrackAccess == TrackAccess.Public){
-                    <p>Access: Public</p>}
-                <p>Plays: @Model.PlaysCount</p>
-                @if (!string.IsNullOrEmpty(@Model.Description)){
-                    <p>Description: @Model.Description</p>}
-            </textarea>
+
+        <div id="duration_dynamic" class="col-2 col-lg-1 mt-4 mb-3 text-end">00:00</div>
+        <div class="col-8 col-lg-10">
+            <div id="duration_container" class="w3-progress-container mt-4 mb-3 ">
+                <div id="duration_progress" class="w3-progressbar"></div>
+            </div>
         </div>
-        @if (!string.IsNullOrEmpty(@Model.Lyrics))
+        <div id="duration_length" class="col-2 col-lg-1 mt-4 mb-3  text-start"></div>
+
+        <div class="col-12 mt-4">
+            <div class="text-start p-1 text-muted" style="font-size:small; border-bottom: 1px solid red; border-color: gray;">
+                <div>Author: @Model.User.Name</div>
+                <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div>Guid: @Model.Guid</div>
+                    if(@Model.TrackAccess == TrackAccess.Inner)
+                    {
+                        <div>Access: Inner</div>
+                    }
+                    else if(@Model.TrackAccess == TrackAccess.Private)
+                    {
+                        <div>Access: Private</div>
+                    }
+                    else if(@Model.TrackAccess == TrackAccess.Public)
+                    {
+                        <div>Access: Public</div>
+                    }
+                    if (!string.IsNullOrEmpty(@Model.Description))
+                    {
+                        <div>Description: @Model.Description</div>
+                    }
+                }
+            </div>
+        </div>
+        @if (User.Identity.IsAuthenticated)
         {
-            <div class="col-md-8 text-center mt-3">
-            <div class="text-start" style="font-size:small">Lyrics:</div>
-                <textarea id="lyrics_textarea" readonly class="background-player" style="width: 100%;padding: 12px 20px; font-size: 25px; resize: none; color:white;">
-                    <p>@Model.Lyrics</p>
-                </textarea>
-            </div>
+            if (!string.IsNullOrEmpty(@Model.Lyrics))
+            {
+                <div class="col-12 mt-4">
+                    <div class="p-1 text-white" style="font-size:medium; border-bottom: 1px solid red; border-color: gray;">
+                        <p>Lyrics:</p>
+                        <p>@Model.Lyrics</p>
+                        <p>@Model.Lyrics</p>
+                    </div> 
+                </div>
+            }
         }
-        <div id="duration_dynamic" class="col-2 mt-5 text-end">00:00</div>
-        <div class="col-8">
-            <div class="w3-progress-container mt-5">
-                <div class="w3-progressbar" style="width:10%"></div>
-            </div>
-        </div>
-        <div id="duration_length" class="col-2 mt-5 text-start"></div>
+        
     </div>
 </div>
-
 @section Scripts{
+
 <script>
-    
-    const audio = new Audio("@Context.Request.Scheme://@Context.Request.Host/"+"audio/@Model.Guid"+".@Model.Extension");
-
-
-    CKEDITOR.replace( 'info_textarea', {
-        customConfig: 'custom/info.js'
-    });
-    CKEDITOR.addCss(".cke_editable{background-color: #D3D3D3}");
-
-    if(document.getElementById("lyrics_textarea")){
-        CKEDITOR.replace( 'lyrics_textarea', {
-            customConfig: 'custom/info.js'
-        });
-        CKEDITOR.addCss(".cke_editable{background-color: #D3D3D3}");
-    }
+    //TODO nie dziala przewijanie
+    const audio = new Audio("@urlTrack");
 
     const button_play_pause = document.getElementById("button_play_pause");
     button_play_pause.addEventListener("click",function(){
@@ -123,10 +135,26 @@
     });
 
     const duration_dynamic = document.getElementById("duration_dynamic");
+    const duration_progress = document.getElementById("duration_progress");
+    const duration_container = document.getElementById("duration_container");
+
     function UploadCurrentTime(){
         const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
         duration_dynamic.innerHTML = result;
+
+        
+        let percent = Math.round((audio.currentTime*100)/audio.duration);
+        duration_progress.style.width = percent+"%";
     }
 
+    duration_container.addEventListener("click",function(e){
+        let percent_bar = e.offsetX / this.offsetWidth;
+        audio.currentTime = percent_bar*audio.duration;
+        duration_progress.style.width = Math.round(percent_bar*100)+"%";
+
+        const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
+        duration_dynamic.innerHTML = result;
+
+    });
 </script>
 }
