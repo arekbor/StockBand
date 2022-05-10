@@ -26,7 +26,11 @@
                 @if(User.Identity.IsAuthenticated)
                 {
                     <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
-                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-cloud-arrow-down-fill"></i></button>
+                    @if (Model.IsDownloadle)
+                    {
+                        <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-cloud-arrow-down-fill"></i></button>
+                    }
+                    
                     <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-pencil-square"></i></button>
                 }
              </div>
@@ -44,32 +48,33 @@
         </div>
         <div id="duration_length" class="col-2 col-lg-1 mt-4 mb-3 text-start px-0" style="padding-left:3px !important;"></div>
 
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
-                        <div class="col-6 text-end"><button type="button" class="btn btn-outline-light">Show</button></div>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
+                            <div class="col-6 text-end"><button id="info_body_button" type="button" class="btn btn-outline-light">Show</button></div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    @if (User.Identity.IsAuthenticated)
-                    {
+                    <div class="card-body" id="info_body">
+
                         <div class="col-12">
                             <div class="text-start p-1 text-muted" style="font-size:small;">
-                                <p>Author: @Model.User.Name</p>
+                                <p>Author: <i style="color:@Model.User.Color;">@Model.User.Name</i></p>
                                 <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
                                 <p>Guid: @Model.Guid</p>
                                 @{
-                                    if(Model.TrackAccess == TrackAccess.Inner)
+                                    if (Model.TrackAccess == TrackAccess.Inner)
                                     {
                                         <p>Access: Inner</p>
                                     }
-                                    else if(@Model.TrackAccess == TrackAccess.Private)
+                                    else if (@Model.TrackAccess == TrackAccess.Private)
                                     {
                                         <p>Access: Private</p>
                                     }
-                                    else if(@Model.TrackAccess == TrackAccess.Public)
+                                    else if (@Model.TrackAccess == TrackAccess.Public)
                                     {
                                         <p>Access: Public</p>
                                     }
@@ -78,24 +83,24 @@
                                         <p>Description: @Model.Description</p>
                                     }
                                 }
-                    
+
                             </div>
                         </div>
-                    }
+                    </div>
                 </div>
             </div>
-        </div>
+        }
         @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(@Model.Lyrics))
         {
-            <div class="col-12">
+            <div class="col-12 mt-2">
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
-                            <div class="col-6 text-end"><button type="button" class="btn btn-outline-light">Show</button></div>
+                            <div class="col-6 text-start"><i class="bi bi-card-text"></i></div>
+                            <div class="col-6 text-end"><button id="lyrics_body_button" type="button" class="btn btn-outline-light">Show</button></div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="lyrics_body">
                         <div class="col-12">
                             <div class="text-start p-1 text-muted" style="font-size:small;">
                                 <p>Lyrics:</p>
@@ -112,11 +117,41 @@
 @section Scripts{
 
 <script>
-    //TODO nie dziala przewijanie
-    let audio = new Audio("@urlTrack");
+    const audio = new Audio("@urlTrack");
     const button_play_pause = document.getElementById("button_play_pause");
     const duration_dynamic = document.getElementById("duration_dynamic");
     const duration_container = document.getElementById("duration_container");
+    const info_body_button = document.getElementById("info_body_button");
+    const info_body = document.getElementById("info_body");
+    const lyrics_body = document.getElementById("lyrics_body");
+    const lyrics_body_button = document.getElementById("lyrics_body_button");
+
+    if(lyrics_body_button){
+        lyrics_body.style.display = 'none';
+        lyrics_body_button.addEventListener("click",function(){
+            if(window.getComputedStyle(lyrics_body, null).getPropertyValue('display') === 'none'){
+                lyrics_body.style.display = '';
+                lyrics_body_button.innerHTML = "Hide";
+            }
+            else{
+                lyrics_body.style.display = 'none';
+                lyrics_body_button.innerHTML = "Show";
+            }
+        });
+    }
+    if(info_body_button){
+        info_body.style.display = 'none';
+        info_body_button.addEventListener("click",function(){
+            if(window.getComputedStyle(info_body, null).getPropertyValue('display') === 'none'){
+                info_body.style.display = '';
+                info_body_button.innerHTML = "Hide";
+            }
+            else{
+                info_body.style.display = 'none';
+                info_body_button.innerHTML = "Show";
+            }
+        });
+    }
 
     duration_dynamic.innerHTML = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
 
@@ -125,7 +160,8 @@
             audio.play();
             interval = setInterval(UploadCurrentTime, 1000);
             button_play_pause.innerHTML = '<i class="bi bi-pause-fill"></i>';
-        }else{
+        }
+        else{
             audio.pause();
             button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
         }
