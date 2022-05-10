@@ -10,7 +10,6 @@
     {
         Layout = "_SimpleLayout";
     }
-
     var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
 }
 
@@ -24,82 +23,111 @@
             <div class="btn-group" role="group">
                 <button id="button_play_pause" type="button" class="btn btn-secondary mx-2"><i class="bi bi-play-fill"></i></button>
                 <button id="button_stop" type="button" class="btn btn-secondary mx-2"><i class="bi bi-stop-fill"></i></button>
-                <button id="button_mute_unmute" type="button" class="btn btn-secondary mx-2"><i class="bi bi-volume-mute-fill"></i></button>
-                @if (User.Identity.IsAuthenticated)
+                @if(User.Identity.IsAuthenticated)
                 {
                     <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
-                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-link-45deg"></i></button>
-                    <button type="button" class="btn btn-secondary mx-2">Edit</button>
+                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-cloud-arrow-down-fill"></i></button>
+                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-pencil-square"></i></button>
                 }
              </div>
         </div>
+        <div class="col-12 text-center mt-3">
+            <input type="range" class="form-range" id="volumeRange" value="100" style="width:150px;"> 
+        </div>
 
-        <div id="duration_dynamic" class="col-2 col-lg-1 mt-4 mb-3 text-end">00:00</div>
-        <div class="col-8 col-lg-10">
-            <div id="duration_container" class="w3-progress-container mt-4 mb-3 ">
+        <div id="duration_dynamic" class="col-2 col-lg-1 mt-4 mb-3 text-end px-0" style="padding-right:3px !important;"></div>
+
+        <div class="col-8 col-lg-10 px-0">
+            <div id="duration_container" class="w3-progress-container mt-4 mb-3">
                 <div id="duration_progress" class="w3-progressbar"></div>
             </div>
         </div>
-        <div id="duration_length" class="col-2 col-lg-1 mt-4 mb-3  text-start"></div>
+        <div id="duration_length" class="col-2 col-lg-1 mt-4 mb-3 text-start px-0" style="padding-left:3px !important;"></div>
 
-        <div class="col-12 mt-4">
-            <div class="text-start p-1 text-muted" style="font-size:small; border-bottom: 1px solid red; border-color: gray;">
-                <div>Author: @Model.User.Name</div>
-                <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div>Guid: @Model.Guid</div>
-                    if(@Model.TrackAccess == TrackAccess.Inner)
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
+                        <div class="col-6 text-end"><button type="button" class="btn btn-outline-light">Show</button></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (User.Identity.IsAuthenticated)
                     {
-                        <div>Access: Inner</div>
+                        <div class="col-12">
+                            <div class="text-start p-1 text-muted" style="font-size:small;">
+                                <p>Author: @Model.User.Name</p>
+                                <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
+                                <p>Guid: @Model.Guid</p>
+                                @{
+                                    if(Model.TrackAccess == TrackAccess.Inner)
+                                    {
+                                        <p>Access: Inner</p>
+                                    }
+                                    else if(@Model.TrackAccess == TrackAccess.Private)
+                                    {
+                                        <p>Access: Private</p>
+                                    }
+                                    else if(@Model.TrackAccess == TrackAccess.Public)
+                                    {
+                                        <p>Access: Public</p>
+                                    }
+                                    if (!string.IsNullOrEmpty(@Model.Description))
+                                    {
+                                        <p>Description: @Model.Description</p>
+                                    }
+                                }
+                    
+                            </div>
+                        </div>
                     }
-                    else if(@Model.TrackAccess == TrackAccess.Private)
-                    {
-                        <div>Access: Private</div>
-                    }
-                    else if(@Model.TrackAccess == TrackAccess.Public)
-                    {
-                        <div>Access: Public</div>
-                    }
-                    if (!string.IsNullOrEmpty(@Model.Description))
-                    {
-                        <div>Description: @Model.Description</div>
-                    }
-                }
+                </div>
             </div>
         </div>
-        @if (User.Identity.IsAuthenticated)
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(@Model.Lyrics))
         {
-            if (!string.IsNullOrEmpty(@Model.Lyrics))
-            {
-                <div class="col-12 mt-4">
-                    <div class="p-1 text-white" style="font-size:medium; border-bottom: 1px solid red; border-color: gray;">
-                        <p>Lyrics:</p>
-                        <p>@Model.Lyrics</p>
-                        <p>@Model.Lyrics</p>
-                    </div> 
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
+                            <div class="col-6 text-end"><button type="button" class="btn btn-outline-light">Show</button></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            <div class="text-start p-1 text-muted" style="font-size:small;">
+                                <p>Lyrics:</p>
+                                <p>@Model.Lyrics</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            }
+            </div>
         }
-        
+
     </div>
 </div>
 @section Scripts{
 
 <script>
     //TODO nie dziala przewijanie
-    const audio = new Audio("@urlTrack");
-
+    let audio = new Audio("@urlTrack");
     const button_play_pause = document.getElementById("button_play_pause");
+    const duration_dynamic = document.getElementById("duration_dynamic");
+    const duration_container = document.getElementById("duration_container");
+
+    duration_dynamic.innerHTML = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
+
     button_play_pause.addEventListener("click",function(){
         if(audio.paused && audio.duration > 0 && !audio.ended){
             audio.play();
-            const interval = setInterval(UploadCurrentTime, 1000);
+            interval = setInterval(UploadCurrentTime, 1000);
             button_play_pause.innerHTML = '<i class="bi bi-pause-fill"></i>';
         }else{
             audio.pause();
             button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-            clearInterval(interval);
         }
     });
     const button_stop = document.getElementById("button_stop");
@@ -108,24 +136,11 @@
             audio.pause();
             audio.currentTime=0;
             button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-            clearInterval(interval);
-        }
-    });
-    const button_mute_unmute = document.getElementById("button_mute_unmute");
-    button_mute_unmute.addEventListener("click",function(){
-        if(audio.volume > 0){
-            audio.volume = 0;
-            button_mute_unmute.innerHTML = '<i class="bi bi-volume-down-fill"></i>';
-        }else{
-            audio.volume = 1;
-            button_mute_unmute.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
         }
     });
     audio.addEventListener("ended",function(){
         audio.currentTime = 0;
-        button_mute_unmute.innerHTML = '<i class="bi bi-volume-mute-fill"></i>';
         button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-        clearInterval(interval);
     });
 
     const duration_length = document.getElementById("duration_length");
@@ -133,28 +148,26 @@
         const result = new Date(audio.duration * 1000).toISOString().slice(14, 19);
         duration_length.innerHTML = result;
     });
-
-    const duration_dynamic = document.getElementById("duration_dynamic");
     const duration_progress = document.getElementById("duration_progress");
-    const duration_container = document.getElementById("duration_container");
+    const volumeRange = document.getElementById("volumeRange");
 
     function UploadCurrentTime(){
         const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
         duration_dynamic.innerHTML = result;
-
-        
         let percent = Math.round((audio.currentTime*100)/audio.duration);
         duration_progress.style.width = percent+"%";
     }
 
     duration_container.addEventListener("click",function(e){
         let percent_bar = e.offsetX / this.offsetWidth;
-        audio.currentTime = percent_bar*audio.duration;
+        audio.currentTime = Math.round(percent_bar*audio.duration);
         duration_progress.style.width = Math.round(percent_bar*100)+"%";
-
         const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
         duration_dynamic.innerHTML = result;
-
     });
+    volumeRange.addEventListener("change",function(e){
+        audio.volume = (e.target.value/100);
+    });
+
 </script>
 }

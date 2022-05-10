@@ -60,6 +60,8 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
+            Response.Headers.Remove("Cache-Control");
+            Response.Headers.Add("Accept-Ranges", "bytes");
             var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, "audio/mp3");
         }
