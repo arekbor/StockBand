@@ -298,5 +298,14 @@ namespace StockBand.Services
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
             return true;
         }
+        public async Task<User> GetUserByName(string name)
+        {
+            var user = await _dbContext
+                .UserDbContext
+                .FirstOrDefaultAsync(x => x.Name == name);
+            if (user is null)
+                return null;
+            return user;
+        } 
     }
 }

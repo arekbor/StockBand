@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
@@ -15,12 +16,26 @@ namespace Stock_Band.Controllers
         private readonly IUserLogService _userLogService;
         private readonly ILinkService _linkService;
         private readonly IConfiguration _configuration;
-        public AccountController(ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly IMapper _mapper;
+        public AccountController(IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
             _linkService = LinkService;
             _configuration = configuration;
+            _mapper = mapper;
+        }
+        [HttpGet]
+        [Route("account/profile/{name}")]
+        public async Task<IActionResult> Profile(string name)
+        {
+            var user = await _userService.GetUserByName(name);
+            if(user is null)
+            {
+                return RedirectToAction("notfoundpage", "exceptions");
+            }
+            var userDto = _mapper.Map<UserDto>(user);
+            return View(userDto);
         }
         [HttpGet]
         [AllowAnonymous]

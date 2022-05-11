@@ -12,6 +12,7 @@ namespace StockBand.Data
             CreateMap<CreateUserDto, User>();
             CreateMap<Link, UniqueLinkMinutesDto>();
             CreateMap<AddTrackDto, Track>();
+            CreateMap<User, UserDto> ();
         }
     }
 }

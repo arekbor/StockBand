@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "404 Not Found";
+    Layout = "_SimpleLayout";
+    //TODO replace in exceptions messages with class Message
+}
+<div class="row" style="margin-top:10vh;">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width:50vh;">
+            <div class="card-header">
+                <h5>Server error</h5>
+            </div>
+            <div class="card-body">
+                <h2 class="text-danger">400</h2>
+                <h6>@Message.Code29</h6>
+                <a class="btn-primary btn btn-primary mt-4" asp-controller="Home" asp-action="Index">Go to home</a>
+            </div>
+        </div>
+    </div>
+</div>
