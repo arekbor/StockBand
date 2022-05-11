@@ -60,7 +60,7 @@ namespace StockBand.Services
             if (dto.Private)
                 track.TrackAccess = TrackAccess.Private;
             else
-                track.TrackAccess = TrackAccess.Inner;
+                track.TrackAccess = TrackAccess.Internal;
 
             track.Guid = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
@@ -107,7 +107,7 @@ namespace StockBand.Services
                 return true;
             if (_userContextService.GetUser().Identity.IsAuthenticated)
             {
-                if (track.TrackAccess == TrackAccess.Inner )
+                if (track.TrackAccess == TrackAccess.Internal)
                     return true;
                 if (track.TrackAccess == TrackAccess.Private)
                 {

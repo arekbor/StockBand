@@ -14,7 +14,7 @@ namespace StockBand.Models
         public string Extension { get; set; }
         public DateTime DateTimeCreate { get; set; }
         public long PlaysCount { get; set; } = 0;
-        public TrackAccess TrackAccess { get; set; } = TrackAccess.Inner;
+        public TrackAccess TrackAccess { get; set; } = TrackAccess.Internal;
         public int UserId { get; set; }
         public virtual User User { get; set; }
         public bool IsDownloadle { get; set; }

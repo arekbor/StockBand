@@ -9,7 +9,7 @@ using StockBand.ViewModel;
 
 namespace StockBand.Services
 {
-    public class UniqueLinkService : IUniqueLinkService
+    public class LinkService : ILinkService
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -17,7 +17,7 @@ namespace StockBand.Services
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IUserContextService _userContextService;
-        public UniqueLinkService(ApplicationDbContext applicationDbContext, IHttpContextAccessor httpContextAccessor, IUserLogService userLogService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IUserContextService userContextService)
+        public LinkService(ApplicationDbContext applicationDbContext, IHttpContextAccessor httpContextAccessor, IUserLogService userLogService, IUrlHelperFactory urlHelperFactory, IActionContextAccessor actionContextAccessor, IUserContextService userContextService)
         {
             _applicationDbContext = applicationDbContext;
             _urlHelperFactory = urlHelperFactory;
@@ -29,7 +29,7 @@ namespace StockBand.Services
         public async Task<Guid> AddLink(string type, int userId, string controller, string action)
         {
             var guid = Guid.NewGuid();
-            var uniqueLink = new UniqueLink()
+            var uniqueLink = new Link()
             {
                 Guid = guid,
                 Type = type,
@@ -45,7 +45,7 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code06(guid), _userContextService.GetUserId());
             return uniqueLink.Guid;
         }
-        public async Task<bool> DeleteLink(UniqueLink link)
+        public async Task<bool> DeleteLink(Link link)
         {
             if (link is null)
                 return false;
@@ -57,7 +57,7 @@ namespace StockBand.Services
                 await _userLogService.AddToLogsAsync(LogMessage.Code12(link.Guid), _userContextService.GetUserId());
             return true;
         }
-        public IQueryable<UniqueLink> GetAllLinks()
+        public IQueryable<Link> GetAllLinks()
         {
             var uniqueLinks = _applicationDbContext
                 .UniqueLinkDbContext
@@ -66,7 +66,7 @@ namespace StockBand.Services
                 return null;
             return uniqueLinks;
         }
-        public async Task<UniqueLink> GetUniqueLink(Guid guid)
+        public async Task<Link> GetUniqueLink(Guid guid)
         {
             var uniqueLink = await _applicationDbContext
                 .UniqueLinkDbContext
@@ -76,7 +76,7 @@ namespace StockBand.Services
                 return null;
             return uniqueLink;
         }
-        public async Task<string> ShowLink(UniqueLink link)
+        public async Task<string> ShowLink(Link link)
         {
             if (link is null)
                 return string.Empty;
@@ -85,7 +85,7 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code11(url), _userContextService.GetUserId());
             return url;
         }
-        public bool VerifyLink(UniqueLink link)
+        public bool VerifyLink(Link link)
         {
             if (link == null)
                 return false;
@@ -93,7 +93,7 @@ namespace StockBand.Services
                 return true;
             return false;
         }
-        public bool VerifyAuthorId(UniqueLink link)
+        public bool VerifyAuthorId(Link link)
         {
             if (link == null)
                 return false;
@@ -101,7 +101,7 @@ namespace StockBand.Services
                 return true;
             return false;
         }
-        public async Task<bool> RefreshUrl(UniqueLink link)
+        public async Task<bool> RefreshUrl(Link link)
         {
             if (link is null)
                 return false;
@@ -112,7 +112,7 @@ namespace StockBand.Services
             return true;
         }
 
-        public async Task<bool> SetMinutes(UniqueLink link, int minutes)
+        public async Task<bool> SetMinutes(Link link, int minutes)
         {
             link.Minutes = minutes;
             _applicationDbContext.Update(link);

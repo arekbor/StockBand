@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
+using StockBand.ViewModel;
 
 namespace StockBand.Controllers
 {
@@ -16,6 +17,22 @@ namespace StockBand.Controllers
         {
             _trackService = trackService;
             _configuration = configuration;
+        }
+        [HttpGet]
+        public IActionResult AddTrack()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTrack(AddTrackDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+            var status = await _trackService.AddTrack(dto);
+            if (status)
+                return RedirectToAction("index", "home");
+            return View(dto);
         }
         [HttpGet]
         public async Task<IActionResult> Tracks(int pageNumber = 1, string search = "")

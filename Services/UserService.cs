@@ -19,10 +19,10 @@ namespace StockBand.Services
         private readonly IActionContextAccessor _actionContext;
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
-        private readonly IUniqueLinkService _uniqueLinkService;
+        private readonly ILinkService _linkService;
         private readonly IUserContextService _userContextService;
 
-        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, IUniqueLinkService uniqueLinkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -30,7 +30,7 @@ namespace StockBand.Services
             _actionContext = actionContext;
             _mapper = mapper;
             _userLogService = userLogService;
-            _uniqueLinkService = uniqueLinkService;
+            _linkService = linkService;
             _userContextService = userContextService;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
@@ -146,13 +146,13 @@ namespace StockBand.Services
         }
         public async Task<bool> CreateUser(Guid guid, CreateUserDto userDto)
         {
-            var link = await _uniqueLinkService.GetUniqueLink(guid);
+            var link = await _linkService.GetUniqueLink(guid);
             if (link is null)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code23);
                 return false;
             }
-            if (!_uniqueLinkService.VerifyLink(link))
+            if (!_linkService.VerifyLink(link))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;
@@ -175,7 +175,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code06);
                 return false;
             }
-            if (!await _uniqueLinkService.DeleteLink(link))
+            if (!await _linkService.DeleteLink(link))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code05);
                 return false;

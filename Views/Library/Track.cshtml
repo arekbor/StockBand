@@ -65,25 +65,17 @@
                                 <p>Author: <i style="color:@Model.User.Color;">@Model.User.Name</i></p>
                                 <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
                                 <p>Guid: @Model.Guid</p>
-                                @{
-                                    if (Model.TrackAccess == TrackAccess.Inner)
-                                    {
-                                        <p>Access: Inner</p>
-                                    }
-                                    else if (@Model.TrackAccess == TrackAccess.Private)
-                                    {
-                                        <p>Access: Private</p>
-                                    }
-                                    else if (@Model.TrackAccess == TrackAccess.Public)
-                                    {
-                                        <p>Access: Public</p>
-                                    }
-                                    if (!string.IsNullOrEmpty(@Model.Description))
-                                    {
-                                        <p>Description: @Model.Description</p>
-                                    }
+                                @if(Model.TrackAccess == TrackAccess.Internal)
+                                {
+                                    <p>Access: @nameof(TrackAccess.Internal)</p>
+                                    
+                                }else if(Model.TrackAccess == TrackAccess.Private)
+                                {
+                                    <p>Access: @nameof(TrackAccess.Private)</p>
+                                }else if(Model.TrackAccess == TrackAccess.Public)
+                                {
+                                    <p>Access: @nameof(TrackAccess.Public)</p>
                                 }
-
                             </div>
                         </div>
                     </div>

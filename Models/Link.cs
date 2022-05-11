@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.Models
 {
-    public class UniqueLink
+    public class Link
     {
         [Key]
         public Guid Guid { get; set; }

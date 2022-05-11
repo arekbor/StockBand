@@ -13,13 +13,13 @@ namespace Stock_Band.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserLogService _userLogService;
-        private readonly IUniqueLinkService _uniqueLinkService;
+        private readonly ILinkService _linkService;
         private readonly IConfiguration _configuration;
-        public AccountController(IUniqueLinkService uniqueLinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        public AccountController(ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
-            _uniqueLinkService = uniqueLinkService;
+            _linkService = LinkService;
             _configuration = configuration;
         }
         [HttpGet]
@@ -53,12 +53,12 @@ namespace Stock_Band.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Create(Guid guid)
         {
-            var link = await _uniqueLinkService.GetUniqueLink(guid);
+            var link = await _linkService.GetUniqueLink(guid);
             if (link is null)
             {
                 return RedirectToAction("badrequestpage", "exceptions");
             }
-            if (!_uniqueLinkService.VerifyLink(link))
+            if (!_linkService.VerifyLink(link))
             {
                 TempData["Message"] = Message.Code01;
                 return RedirectToAction("customexception", "exceptions");

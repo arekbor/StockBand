@@ -17,14 +17,14 @@ namespace StockBand.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
-        private readonly IUniqueLinkService _uniqueLinkService;
+        private readonly ILinkService _linkService;
         private readonly IConfiguration _configuration;
-        public AdminController(IUserService userService, IConfiguration configuration, IMapper mapper, IUserLogService userLogService, IUniqueLinkService uniqueLinkService)
+        public AdminController(IUserService userService, IConfiguration configuration, IMapper mapper, IUserLogService userLogService, ILinkService linkService)
         {
             _userService = userService;
             _mapper = mapper;
             _userLogService = userLogService;
-            _uniqueLinkService = uniqueLinkService;
+            _linkService = linkService;
             _configuration = configuration;
         }
         [HttpGet]
@@ -71,9 +71,8 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
-
-            var uniqueLink = await _uniqueLinkService
-                .AddLink(UniqueLinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
+            var uniqueLink = await _linkService
+                .AddLink(LinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
             return RedirectToAction("uniquelinkpanel", "link");
         }
         [HttpGet]

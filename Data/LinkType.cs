@@ -1,6 +1,6 @@
 ﻿namespace StockBand.Data
 {
-    public static class UniqueLinkType
+    public static class LinkType
     {
         public static string[] Types = 
         {
