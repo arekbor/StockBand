@@ -22,7 +22,6 @@
         <thead>
             <tr>
                 <th scope="col">Track</th>
-                <th scope="col">Plays</th>
                 <th scope="col">Posted</th>
                 <th scope="col">Access</th>
             </tr>
@@ -35,7 +34,6 @@
                     {
                         <tr>
                             <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0 ">@track.Title</a></td>
-                            <th class="text-info" scope="row"><i class="bi bi-caret-right-fill"></i> @track.PlaysCount</th>
                             <th class="text-warning" scope="row">@track.DateTimeCreate</th>
                             @if(track.TrackAccess == TrackAccess.Internal)
                             {

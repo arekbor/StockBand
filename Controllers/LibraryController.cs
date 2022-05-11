@@ -24,7 +24,6 @@ namespace StockBand.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTrack(AddTrackDto dto)
         {
             if (!ModelState.IsValid)
@@ -40,8 +39,8 @@ namespace StockBand.Controllers
             var tracks = _trackService
                 .GetAllUserTracksAsync()
                 .OrderByDescending(x => x.DateTimeCreate)
-                .Where(x => x.Title.Contains(search)
-                || x.PlaysCount.ToString().Contains(search));
+                .Where(x => x.Title.Contains(search));
+
             if (!tracks.Any())
                 return View();
             var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);

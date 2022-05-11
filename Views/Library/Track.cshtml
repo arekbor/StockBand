@@ -1,4 +1,5 @@
 ﻿@model Track
+@inject ITrackService TrackService
 @{
 
     ViewData["Title"] = @Model.Title;
@@ -148,6 +149,7 @@
     duration_dynamic.innerHTML = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
 
     button_play_pause.addEventListener("click",function(){
+        
         if(audio.paused && audio.duration > 0 && !audio.ended){
             audio.play();
             interval = setInterval(UploadCurrentTime, 1000);

@@ -35,8 +35,6 @@ namespace StockBand.Services
                 return false;
             }
             var track = _mapper.Map<Track>(dto);
-
-            //TODO sprwadz czy sprawdzanie wielkosc idziala poprawnie i zrob cos z tym, ze wywala 400 przy duzych plikach
             //TODO block button ''submit when uploading
             //TODO make limit system for user
             //TODO add list of all track in admin panel

@@ -34,9 +34,14 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole(UserRoles.Roles[1]);
     });
 });
+
+
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
+    options.Limits.MaxConcurrentConnections = 10;
     options.Limits.MaxRequestBodySize = int.Parse(builder.Configuration["MaxRequestBodySize"]);
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(100);
+    
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
