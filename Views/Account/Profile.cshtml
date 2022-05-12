@@ -28,52 +28,56 @@
              </div>
         </div>
     </div>
+</div>
 
+<div class="container mt-2">
     <div class="col-sm-12 col-md-6 col-lg-3 mt-3 ">
-        <form method="get" asp-controller="library" asp-action="tracks" autocomplete="off">
+        <form method="get" asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" autocomplete="off">
             <div class="input-group mb-3">
                 <input type="text" name="search" class="form-control" placeholder="search">
                 <div class="input-group-prepend">
                     <button class="btn btn-success" type="submit">Search</button>
-                    <a asp-controller="library" asp-action="tracks" class="btn btn-warning" role="button">Clear</a>
+                    <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" class="btn btn-warning" role="button">Clear</a>
                 </div>
             </div>
         </form>
     </div>
-    <div class="table-responsive scrollable">
-    <table class="table text-nowrap">
-        <thead>
-            <tr>
-                <th scope="col">Track</th>
-                <th scope="col">Posted</th>
-                <th scope="col">Access</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                if (Model.Tracks is not null)
-                {
-                    foreach (var track in Model.Tracks)
+     <div class="col-12" >
+        <div class="table-responsive scrollable">
+        <table class="table text-nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Track</th>
+                    <th scope="col">Access</th>
+                    <th class="text-end" scope="col">Posted</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    if (Model.Tracks is not null)
                     {
-                        <tr>
-                            <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0 ">@track.Title</a></td>
-                            <th class="text-warning" scope="row">@track.DateTimeCreate</th>
-                            @if(track.TrackAccess == TrackAccess.Internal)
-                            {
-                                <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
-                            }else if(track.TrackAccess == TrackAccess.Private)
-                            {
-                                <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
-                            }else if(track.TrackAccess == TrackAccess.Public)
-                            {
-                                <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
-                            }
-                        </tr>
+                           foreach (var track in Model.Tracks)
+                        {
+                            <tr>
+                                <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0 ">@track.Title</a></td>
+                                @if(track.TrackAccess == TrackAccess.Internal)
+                                {
+                                    <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
+                                }else if(track.TrackAccess == TrackAccess.Private)
+                                {
+                                    <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
+                                }else if(track.TrackAccess == TrackAccess.Public)
+                                {
+                                    <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
+                                }
+                                <th class="text-warning text-end" scope="row">@track.DateTimeCreate</th>
+                            </tr>
+                        }
                     }
                 }
-            }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

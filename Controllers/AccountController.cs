@@ -29,7 +29,7 @@ namespace Stock_Band.Controllers
         }
         [HttpGet]
         [Route("account/profile/{name}")]
-        public async Task<IActionResult> Profile(string name)
+        public async Task<IActionResult> Profile(string name, string search = "")
         {
             var user = await _userService.GetUserByName(name);
             if (user is null)
@@ -40,7 +40,9 @@ namespace Stock_Band.Controllers
 
             userDto.Tracks = await _trackService
                 .GetAllUserTracksAsync(user.Id)
+                .Where(x => x.Title.Contains(search))
                 .ToListAsync();
+                
             return View(userDto);
         }
         [HttpGet]

@@ -36,19 +36,6 @@ namespace StockBand.Controllers
             return View(dto);
         }
         [HttpGet]
-        public async Task<IActionResult> Tracks(int pageNumber = 1, string search = "")
-        {
-            var tracks = _trackService
-                .GetAllUserTracksAsync(_userContextService.GetUserId())
-                .OrderByDescending(x => x.DateTimeCreate)
-                .Where(x => x.Title.Contains(search));
-
-            if (!tracks.Any())
-                return View();
-            var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);
-            return View(paginatedList);
-        }
-        [HttpGet]
         [AllowAnonymous]
         [Route("library/track/{guid:Guid}")]
         public async Task <IActionResult> Track(Guid guid)

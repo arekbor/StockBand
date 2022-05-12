@@ -65,7 +65,6 @@
                             <div class="text-start p-1 text-muted" style="font-size:small;">
                                 <p>Author: <i style="color:@Model.User.Color;">@Model.User.Name</i></p>
                                 <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
-                                <p>Guid: @Model.Guid</p>
                                 @if(Model.TrackAccess == TrackAccess.Internal)
                                 {
                                     <p>Access: @nameof(TrackAccess.Internal)</p>
@@ -77,6 +76,11 @@
                                 {
                                     <p>Access: @nameof(TrackAccess.Public)</p>
                                 }
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    <p>Description: @Model.Description</p>
+                                }
+                                <p>Guid: @Model.Guid</p>
                             </div>
                         </div>
                     </div>
