@@ -2,21 +2,32 @@
     if (Model is not null)
     {
         var urlActionContext = Url.ActionContext;
+        dynamic mod;
+        if(urlActionContext.RouteData.Values["action"].ToString() == "Profile")
+        {
+            mod = Model.Tracks;
+        }
+        else
+        {
+            mod = Model;
+        }
+
+        
         var urlQuery = urlActionContext.HttpContext.Request;
         var acionName = urlActionContext.RouteData.Values["action"].ToString();
         var controllerName = urlActionContext.RouteData.Values["controller"].ToString();
 
         <div class="row pagginationDiv">
             <div class="col-12 text-nowrap">
-                <small>@Model.Count of @Model.TotalCount</small>
+                <small>@mod.Count of @mod.TotalCount</small>
                 <nav class="nav justify-content-center border-top border-white">
                     <ul class="pagination mt-2">
-                        <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
-                        @foreach (var item in Model.Pages(1))
+                        <li class="page-item mod.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(mod.PageIndex-1)">Previous</a></li>
+                        @foreach (var item in mod.Pages(1))
                         {
-                            <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                            <li class="page-item mod.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
                         }
-                        <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                        <li class="page-item mod.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(mod.PageIndex+1)">Next</a></li>
                     </ul>
                 </nav>
             </div>

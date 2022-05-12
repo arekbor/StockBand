@@ -77,9 +77,8 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public IQueryable<Track> GetAllUserTracksAsync()
+        public IQueryable<Track> GetAllUserTracksAsync(int id)
         {
-            var id = _userContextService.GetUserId();
             var tracks = _applicationDbContext
                 .TrackDbContext
                 .Where(x => x.UserId == id)

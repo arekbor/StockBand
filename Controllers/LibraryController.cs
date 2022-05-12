@@ -13,10 +13,12 @@ namespace StockBand.Controllers
     {
         private readonly ITrackService _trackService;
         private readonly IConfiguration _configuration;
-        public LibraryController(ITrackService trackService, IConfiguration configuration)
+        private readonly IUserContextService _userContextService;
+        public LibraryController(ITrackService trackService, IUserContextService userContextService, IConfiguration configuration)
         {
             _trackService = trackService;
             _configuration = configuration;
+            _userContextService = userContextService;
         }
         [HttpGet]
         public IActionResult AddTrack()
@@ -37,7 +39,7 @@ namespace StockBand.Controllers
         public async Task<IActionResult> Tracks(int pageNumber = 1, string search = "")
         {
             var tracks = _trackService
-                .GetAllUserTracksAsync()
+                .GetAllUserTracksAsync(_userContextService.GetUserId())
                 .OrderByDescending(x => x.DateTimeCreate)
                 .Where(x => x.Title.Contains(search));
 

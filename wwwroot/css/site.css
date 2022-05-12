@@ -56,12 +56,12 @@
     }
 }
 
-.background-player {
+.background-header-profile {
     background: rgb(67,65,98);
-    background: linear-gradient(14deg, rgba(67,65,98,0.773546918767507) 0%, rgba(82,112,147,0.21332282913165268) 36%, rgba(82,70,179,0.4066001400560224) 100%);
-    border-radius: 5px;
-    padding:5px;
+    background: linear-gradient(14deg, rgba(67,65,98,0.773546918767507) 0%, rgba(74,72,103,0.43461134453781514) 58%, rgba(119,119,139,1) 99%, rgba(82,70,179,0.4066001400560224) 100%);
 }
+
+
 
 
 

@@ -4,10 +4,77 @@
     Layout = "_Layout";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-12" style="background-image:src("https://image.shutterstock.com/image-vector/dark-violet-golden-abstract-tech-260nw-2040754121.jpg");">
-            adw
+<div class="container mt-2">
+    <div class="row bg-secondary">
+        <div class="col-md-2 col-12 p-4 text-center">
+            <label for="formChangeAvatar" style="cursor: pointer; object-fit:cover;">
+                <img class="rounded-circle" src="https://www.wykop.pl/cdn/c3201142/comment_dYwgPq03e90QvvakJ1DK3w0L0Hl536BF.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
+            </label>
+            <form style="display: none;">
+                <input type="file" id="formChangeAvatar"/>
+                <input type="submit" value="Submit">
+            </form>
         </div>
     </div>
+
+    <div class="row mt-2">
+        <div class="col-md-2 col-12 text-center">
+            <strong style="color:@Model.Color;">@Model.Name</strong>
+        </div>
+         <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-secondary mx-2 btn-sm btn-info"><i class="bi bi-share-fill"></i> Share</button>
+                <button type="button" class="btn btn-secondary mx-2 btn-sm btn-info"><i class="bi bi-pencil-square"></i> Edit</button>
+             </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-3 ">
+        <form method="get" asp-controller="library" asp-action="tracks" autocomplete="off">
+            <div class="input-group mb-3">
+                <input type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="library" asp-action="tracks" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive scrollable">
+    <table class="table text-nowrap">
+        <thead>
+            <tr>
+                <th scope="col">Track</th>
+                <th scope="col">Posted</th>
+                <th scope="col">Access</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model.Tracks is not null)
+                {
+                    foreach (var track in Model.Tracks)
+                    {
+                        <tr>
+                            <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0 ">@track.Title</a></td>
+                            <th class="text-warning" scope="row">@track.DateTimeCreate</th>
+                            @if(track.TrackAccess == TrackAccess.Internal)
+                            {
+                                <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
+                            }else if(track.TrackAccess == TrackAccess.Private)
+                            {
+                                <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
+                            }else if(track.TrackAccess == TrackAccess.Public)
+                            {
+                                <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
+                            }
+                        </tr>
+                    }
+                }
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
+
+

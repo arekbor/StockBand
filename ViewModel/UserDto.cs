@@ -1,4 +1,6 @@
-﻿namespace StockBand.ViewModel
+﻿using StockBand.Models;
+
+namespace StockBand.ViewModel
 {
     public class UserDto
     {
@@ -10,5 +12,6 @@
         public int TotalTracks { get; set; }
         public string PathAvatar { get; set; }
         public string PathHeader { get; set; }
+        public IEnumerable<Track> Tracks { get; set; }
     }
 }

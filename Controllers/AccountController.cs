@@ -17,24 +17,30 @@ namespace Stock_Band.Controllers
         private readonly ILinkService _linkService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public AccountController(IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly ITrackService _trackService;
+        public AccountController(IMapper mapper, ITrackService trackService, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
             _linkService = LinkService;
             _configuration = configuration;
             _mapper = mapper;
+            _trackService = trackService;
         }
         [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name)
         {
             var user = await _userService.GetUserByName(name);
-            if(user is null)
+            if (user is null)
             {
                 return RedirectToAction("notfoundpage", "exceptions");
             }
             var userDto = _mapper.Map<UserDto>(user);
+
+            userDto.Tracks = await _trackService
+                .GetAllUserTracksAsync(user.Id)
+                .ToListAsync();
             return View(userDto);
         }
         [HttpGet]
