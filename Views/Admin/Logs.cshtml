@@ -17,33 +17,34 @@
         </form>
     </div>
 </div>
-<div class="table-responsive scrollable">
-    <table class="table text-nowrap">
-        <thead>
-            <tr>
-                <th scope="col">Guid</th>
-                <th scope="col">Username</th>
-                <th scope="col">Date</th>
-                <th scope="col">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                if (Model is not null)
-                {
-                    foreach (var log in Model)
-                    {
-                        <tr>
-                            <th class="text-warning" scope="row">@log.Guid</th>
-                            <td style="color:@log.User.Color;">@log.User.Name</td>
-                            <td class="text-warning">@log.CreatedDate</td>
-                            <td class="text-info">@log.Action</td>
-                        </tr>
-                    }
-                }
+@if(Model is not null)
+{
+    <div class="table-responsive scrollable">
+        <table class="table text-nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Guid</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td class="text-warning" scope="row">@log.Guid</td>
+                    <td><a style="text-decoration: none;" asp-controller="account" asp-action="profile" asp-route-name="@log.User.Name" class="btn btn-link btn-sm">@log.User.Name</a></td>
+                    <td class="text-warning">@log.CreatedDate</td>
+                    <td class="text-info">@log.Action</td>
+                </tr>
             }
-        </tbody>
-    </table>
-</div>
-
-<partial name="_PaginationPartial"/>
+            </tbody>
+        </table>
+    </div>
+    <partial name="_PaginationPartial"/>
+}
+else
+{
+    <partial name="_NoResultPartial"/>
+}

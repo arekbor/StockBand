@@ -25,6 +25,23 @@ namespace StockBand.Services
             _userContextService = userContextService;
             _userLogService = userLogService;
         }
+        public async Task<string> GetLastUploadTrackNameByUserId(int id)
+        {
+            var lastTrackName = await _applicationDbContext
+                .TrackDbContext
+                .GroupBy(x => x.UserId == id)
+                .Select(x => x.OrderByDescending(c => c.DateTimeCreate).First())
+                .SingleOrDefaultAsync();
+            return lastTrackName.Title;
+        }
+        public async Task<int> GetUserTracksAmount(int id)
+        {
+            var amount = await _applicationDbContext
+                .TrackDbContext
+                .Where(x => x.UserId == id)
+                .CountAsync();
+            return amount;
+        }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
             ProccessDirectory();
@@ -108,11 +125,22 @@ namespace StockBand.Services
                     return true;
                 if (track.TrackAccess == TrackAccess.Private)
                 {
-                    if (track.User.Id == _userContextService.GetUserId())
+                    if (track.User.Id == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
                         return true;
                 }
             }
             return false;
+        }
+        public async Task<Guid> GetGuidTrackByTitle(string title)
+        {
+            if (string.IsNullOrEmpty(title))
+                return Guid.Empty;
+            var track = await _applicationDbContext
+                .TrackDbContext
+                .FirstOrDefaultAsync(x => x.Title == title);
+            if(track is null)
+                return Guid.Empty;
+            return track.Guid;
         }
         private void ProccessDirectory()
         {

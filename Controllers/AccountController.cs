@@ -18,7 +18,7 @@ namespace Stock_Band.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ITrackService _trackService;
-        public AccountController(IMapper mapper, ITrackService trackService, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        public AccountController(ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
@@ -29,7 +29,7 @@ namespace Stock_Band.Controllers
         }
         [HttpGet]
         [Route("account/profile/{name}")]
-        public async Task<IActionResult> Profile(string name, string search = "")
+        public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")
         {
             var user = await _userService.GetUserByName(name);
             if (user is null)
@@ -37,12 +37,22 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("notfoundpage", "exceptions");
             }
             var userDto = _mapper.Map<UserDto>(user);
+            userDto.TotalTracks = await _trackService
+                .GetUserTracksAmount(user.Id);
 
-            userDto.Tracks = await _trackService
+            var tracks = _trackService
                 .GetAllUserTracksAsync(user.Id)
-                .Where(x => x.Title.Contains(search))
-                .ToListAsync();
-                
+                .Where(x => x.Title.Contains(search));
+
+            userDto.TotalTracks = await _trackService.GetUserTracksAmount(user.Id);
+            userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
+            
+            if (!tracks.Any())
+                return View(userDto);
+            var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);
+
+            
+            userDto.Tracks = paginatedList;
             return View(userDto);
         }
         [HttpGet]
@@ -60,7 +70,7 @@ namespace Stock_Band.Controllers
                 return View(user);
             var status = await _userService.LoginUserAsync(user);
             if (status)
-                return RedirectToAction("index", "home");
+                return RedirectToAction("profile", "account", new {name=user.Name});
             return View(user);
         }
         [HttpGet]

@@ -4,6 +4,7 @@ namespace StockBand.ViewModel
 {
     public class AddTrackDto
     {
+
         [Required]
         [MaxLength(30)]
         public string Title { get; set; }

@@ -9,5 +9,8 @@ namespace StockBand.Interfaces
         public IQueryable<Track> GetAllUserTracksAsync(int id);
         public Task<Track> GetTrack(Guid guid);
         public bool VerifyAccessTrack(Track track);
+        public Task<Guid> GetGuidTrackByTitle(string title);
+        public Task<int> GetUserTracksAmount(int id);
+        public Task<string> GetLastUploadTrackNameByUserId(int id);
     }
 }

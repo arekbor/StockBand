@@ -13,12 +13,10 @@ namespace StockBand.Controllers
     {
         private readonly ITrackService _trackService;
         private readonly IConfiguration _configuration;
-        private readonly IUserContextService _userContextService;
-        public LibraryController(ITrackService trackService, IUserContextService userContextService, IConfiguration configuration)
+        public LibraryController(ITrackService trackService, IConfiguration configuration)
         {
             _trackService = trackService;
             _configuration = configuration;
-            _userContextService = userContextService;
         }
         [HttpGet]
         public IActionResult AddTrack()
@@ -32,7 +30,7 @@ namespace StockBand.Controllers
                 return View(dto);
             var status = await _trackService.AddTrack(dto);
             if (status)
-                return RedirectToAction("index", "home");
+                return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title) });
             return View(dto);
         }
         [HttpGet]

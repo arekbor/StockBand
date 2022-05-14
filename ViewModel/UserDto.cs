@@ -12,6 +12,7 @@ namespace StockBand.ViewModel
         public int TotalTracks { get; set; }
         public string PathAvatar { get; set; }
         public string PathHeader { get; set; }
-        public IEnumerable<Track> Tracks { get; set; }
+        public PaginetedList<Track> Tracks { get; set; }
+        public string LastUpload { get; set; }
     }
 }

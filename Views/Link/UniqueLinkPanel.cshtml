@@ -20,55 +20,58 @@
     </div>
 </div>
 
-<div class="table-responsive scrollable">
-    <table class="table text-nowrap">
-        <thead>
-            <tr>
-                <th scope="col">Guid</th>
-                <th scope="col">DateTimeExpire</th>
-                <th scope="col">Minutes</th>
-                <th scope="col">Type</th>
-                <th scope="col">Author Id</th>
-                <th scope="col">Author Name</th>
-                <th scope="col">Action</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                if (Model is not null)
-                {
-                    foreach (var link in Model)
-                    {
-                        <tr>
-                            @{
-                                string colorDateTimeExpire;
-                                if (link.DateTimeExpire >= DateTime.Now)
-                                {
-                                    colorDateTimeExpire = "text-success";
-                                }
-                                else
-                                {
-                                    colorDateTimeExpire = "text-danger";
-                                }
-                            }
-                            <th class="text-warning" scope="row">@link.Guid</th>
-                            <td class="@colorDateTimeExpire">@link.DateTimeExpire</td>
-                            <td class="text-info">@link.Minutes</td>
-                            <th class="text-warning" scope="row">@link.Type</th>
-                            <th class="text-info" scope="row">@link.User.Id</th>
-                            <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
-                            <td><a asp-controller="link" asp-action="deleteurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
-                            <td><a asp-controller="link" asp-action="refreshurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
-                            <td><a asp-controller="link" asp-action="shareurl" asp-route-guid="@link.Guid" class="btn btn-success btn-sm">Copy link</a></td>
-                            <td><a asp-controller="link" asp-action="editminutes" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Set minutes</a></td>
-                        </tr>
+@if (Model is not null)
+{
+    <div class="table-responsive scrollable">
+        <table class="table text-nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Guid</th>
+                    <th scope="col">DateTimeExpire</th>
+                    <th scope="col">Minutes</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Author Id</th>
+                    <th scope="col">Author Name</th>
+                    <th scope="col">Action</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var link in Model)
+            {
+                <tr>
+                    @{
+                        string colorDateTimeExpire;
+                        if (link.DateTimeExpire >= DateTime.Now)
+                        {
+                            colorDateTimeExpire = "text-success";
+                        }
+                        else
+                        {
+                            colorDateTimeExpire = "text-danger";
+                        }
                     }
-                }
+                    <th class="text-warning" scope="row">@link.Guid</th>
+                    <td class="@colorDateTimeExpire">@link.DateTimeExpire</td>
+                    <td class="text-info">@link.Minutes</td>
+                    <th class="text-warning" scope="row">@link.Type</th>
+                    <th class="text-info" scope="row">@link.User.Id</th>
+                    <th style="color:@link.User.Color" scope="row">@link.User.Name</th>
+                    <td><a asp-controller="link" asp-action="deleteurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-danger btn-sm">Delete</a></td>
+                    <td><a asp-controller="link" asp-action="refreshurl" asp-route-guid="@link.Guid" asp-route-pNumber="@Model.PageIndex" class="btn btn-warning btn-sm">Refresh</a></td>
+                    <td><a asp-controller="link" asp-action="shareurl" asp-route-guid="@link.Guid" class="btn btn-success btn-sm">Copy link</a></td>
+                    <td><a asp-controller="link" asp-action="editminutes" asp-route-guid="@link.Guid" class="btn btn-warning btn-sm">Set minutes</a></td>
+                </tr>
             }
-        </tbody>
-    </table>
-</div>
-<partial name="_PaginationPartial" />
+            </tbody>
+        </table>
+    </div>
+    <partial name="_PaginationPartial" />
+}
+else
+{
+    <partial name="_NoResultPartial"/>
+}
+
 
