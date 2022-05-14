@@ -42,7 +42,8 @@ namespace Stock_Band.Controllers
 
             var tracks = _trackService
                 .GetAllUserTracksAsync(user.Id)
-                .Where(x => x.Title.Contains(search));
+                .Where(x => x.Title.Contains(search))
+                .OrderByDescending(x => x.DateTimeCreate);
 
             userDto.TotalTracks = await _trackService.GetUserTracksAmount(user.Id);
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
@@ -190,3 +191,4 @@ namespace Stock_Band.Controllers
         }
     }
 }
+//TODO center the search form on profile view
