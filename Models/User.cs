@@ -14,7 +14,6 @@ namespace StockBand.Models
         public string Color { get; set; } = UserColor.Colors[0];
         public string Theme { get; set; } = UserTheme.Themes[0];
         public bool RememberMe { get; set; } = false;
-        public int LimitTracks { get; set; }
         public int TotalTracks { get; set; }
         public string PathAvatar { get; set; }
         public string PathHeader { get; set; }

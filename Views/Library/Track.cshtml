@@ -14,7 +14,7 @@
     var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
 }
 
-<div class="container mt-4 ">
+<div class="container mt-4">
     <div class="row">
         <div class="col-12 text-center" >
             <h5>@Model.Title</h5>
@@ -81,6 +81,7 @@
                                     <p>Description: @Model.Description</p>
                                 }
                                 <p>Guid: @Model.Guid</p>
+                                <p>Size: @Model.Size MB</p>
                             </div>
                         </div>
                     </div>

@@ -25,6 +25,20 @@ namespace StockBand.Services
             _userContextService = userContextService;
             _userLogService = userLogService;
         }
+        public async Task<double> GetTotalSizeOfTracksByUserId(int id)
+        {
+            double totalSize = 0;
+            var tracks = await _applicationDbContext
+                .TrackDbContext
+                .Where(x => x.UserId == id)
+                .Select(x => x.Size)
+                .ToListAsync();
+            if(tracks is null)
+                totalSize = 0;
+            foreach (var item in tracks)
+                totalSize += item;
+            return totalSize;
+        }
         public async Task<string> GetLastUploadTrackNameByUserId(int id)
         {
             var lastTrackName = await _applicationDbContext
@@ -72,6 +86,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
+            track.Size = Math.Round((float.Parse(dto.File.Length.ToString())/1048576),2);
             if (dto.Private)
                 track.TrackAccess = TrackAccess.Private;
             else

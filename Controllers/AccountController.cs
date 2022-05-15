@@ -47,6 +47,7 @@ namespace Stock_Band.Controllers
 
             userDto.TotalTracks = await _trackService.GetUserTracksAmount(user.Id);
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
+            userDto.TotalSizeOfTracks = await _trackService.GetTotalSizeOfTracksByUserId(user.Id);
             
             if (!tracks.Any())
                 return View(userDto);

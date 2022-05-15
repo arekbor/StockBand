@@ -8,7 +8,7 @@ namespace StockBand.ViewModel
         public DateTime CreatedTime { get; set; }
         public string Color { get; set; }
         public string Theme { get; set; }
-        public int LimitTracks { get; set; }
+        public double TotalSizeOfTracks { get; set; }
         public int TotalTracks { get; set; }
         public string PathAvatar { get; set; }
         public string PathHeader { get; set; }

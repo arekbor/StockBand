@@ -19,5 +19,6 @@ namespace StockBand.Models
         public bool IsDownloadle { get; set; }
         //TODO implement this
         public int DownloadCount { get; set; }
+        public double Size { get; set; }
     }
 }
