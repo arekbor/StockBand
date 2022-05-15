@@ -46,6 +46,8 @@ namespace StockBand.Services
                 .GroupBy(x => x.UserId == id)
                 .Select(x => x.OrderByDescending(c => c.DateTimeCreate).First())
                 .SingleOrDefaultAsync();
+            if (lastTrackName is null)
+                return "No result";
             return lastTrackName.Title;
         }
         public async Task<int> GetUserTracksAmount(int id)
