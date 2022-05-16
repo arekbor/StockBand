@@ -2,6 +2,10 @@
 @{
     ViewData["Title"] = @Model.Name;
     Layout = "_Layout";
+    var urlActionContext = Url.ActionContext;
+    var urlQuery = urlActionContext.HttpContext.Request;
+    var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
+    var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
 }
 
 <div class="row bg-secondary">
@@ -42,68 +46,85 @@
         <span><i class="bi bi-cloud-plus-fill"></i> Last upload: @Model.LastUpload</span>
     </div>
 </div>
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-3">
+        <form method="get" asp-controller="@controllerName" asp-action="@acionName" asp-route-name="@Model.Name" autocomplete="off">
+            <div class="input-group mb-3">
+                <input id="search" type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button id="searchSubmit" class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="@controllerName" asp-action="@acionName" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-@if(Model.TotalTracks > 0)
+@if(Model.Tracks is not null)
 {
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-3 mt-3">
-            <form method="get" asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" autocomplete="off">
-                <div class="input-group mb-3">
-                    <input id="search" type="text" name="search" class="form-control" placeholder="search">
-                    <div class="input-group-prepend">
-                        <button id="searchSubmit" class="btn btn-success" type="submit">Search</button>
-                        <a asp-controller="account" asp-action="profile" class="btn btn-warning" role="button">Clear</a>
-                    </div>
-                </div>
-            </form>
-        </div>
         @if(Model.Tracks is not null)
         {
-             <div class="col-12" >
+            <div class="col-12" >
                 <div class="table-responsive scrollable">
-                <table class="table text-nowrap">
-                    <thead>
-                        <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Posted</th>
-                            <th scope="col">Access</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Size</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @if (Model.Tracks is not null)
-                    {
-                        @foreach (var track in Model.Tracks)
-                        {
+                    <table class="table text-nowrap">
+                        <thead>
                             <tr>
-                                <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>
-                                        
-                                <th class="text-warning" scope="row">@track.DateTimeCreate</th>
-                                        
-                                @if(track.TrackAccess == TrackAccess.Internal)
-                                {
-                                    <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
-                                }else if(track.TrackAccess == TrackAccess.Private)
-                                {
-                                    <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
-                                }else if(track.TrackAccess == TrackAccess.Public)
-                                {
-                                    <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
-                                }
-                                <th class="text-warning" scope="row">@track.Extension</th>
-                                <th class="text-warning" scope="row">@track.Size MB</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Posted</th>
+                                <th scope="col">Access</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Size</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                        @if (Model.Tracks is not null)
+                        {
+                            @foreach (var track in Model.Tracks)
+                            {
+                                <tr>
+                                    <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>
+                                        
+                                    <th class="text-warning" scope="row">@track.DateTimeCreate</th>
+                                        
+                                    @if(track.TrackAccess == TrackAccess.Internal)
+                                    {
+                                        <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
+                                    }else if(track.TrackAccess == TrackAccess.Private)
+                                    {
+                                        <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
+                                    }else if(track.TrackAccess == TrackAccess.Public)
+                                    {
+                                        <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
+                                    }
+                                    <th class="text-warning" scope="row">@track.Extension</th>
+                                    <th class="text-warning" scope="row">@track.Size MB</th>
+                                </tr>
+                            }
                         }
-                    }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    }
-        else
-        {
-            <partial name="_NoResultPartial"/>
         }
     </div>
+    <div class="row pagginationDiv">
+        <div class="col-12 text-nowrap">
+            <small>@Model.Tracks.Count of @Model.Tracks.TotalCount</small>
+            <nav class="nav justify-content-center border-top border-white">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.Tracks.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Tracks.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Tracks.Pages(1))
+                    {
+                        <li class="page-item @Model.Tracks.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.Tracks.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Tracks.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+}
+else
+{
+    <partial name="_NoResultPartial"/>
 }

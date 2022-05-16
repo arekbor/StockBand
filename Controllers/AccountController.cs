@@ -38,14 +38,14 @@ namespace Stock_Band.Controllers
             }
             var userDto = _mapper.Map<UserDto>(user);
             userDto.TotalTracks = await _trackService
-                .GetUserTracksAmount(user.Id);
+                .GetTracksCountByUserId(user.Id);
 
             var tracks = _trackService
                 .GetAllUserTracksAsync(user.Id)
                 .Where(x => x.Title.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
 
-            userDto.TotalTracks = await _trackService.GetUserTracksAmount(user.Id);
+            userDto.TotalTracks = await _trackService.GetTracksCountByUserId(user.Id);
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
             userDto.TotalSizeOfTracks = await _trackService.GetTotalSizeOfTracksByUserId(user.Id);
             

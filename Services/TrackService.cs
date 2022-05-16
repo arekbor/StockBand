@@ -43,14 +43,14 @@ namespace StockBand.Services
         {
             var lastTrackName = await _applicationDbContext
                 .TrackDbContext
-                .GroupBy(x => x.UserId == id)
-                .Select(x => x.OrderByDescending(c => c.DateTimeCreate).First())
-                .SingleOrDefaultAsync();
+                .Where(x => x.UserId == id)
+                .OrderByDescending(x => x.DateTimeCreate).FirstOrDefaultAsync();
+
             if (lastTrackName is null)
                 return "No result";
             return lastTrackName.Title;
         }
-        public async Task<int> GetUserTracksAmount(int id)
+        public async Task<int> GetTracksCountByUserId(int id)
         {
             var amount = await _applicationDbContext
                 .TrackDbContext
@@ -60,7 +60,17 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
+            //TODO Test this function
+
             ProccessDirectory();
+            //TODO sprwadz to potem!!!
+            var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId());
+            if (totalSize < Math.Round((float.Parse(_configuration["SizeTracksLimit"]) / 1048576), 2))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code30);
+                return false;
+            }
+
             var fileExt = Path.GetExtension(dto.File.FileName).Substring(1);
             if (!SupportedExts.Types.Contains(fileExt))
             {
@@ -88,7 +98,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
-            track.Size = Math.Round((float.Parse(dto.File.Length.ToString())/1048576),2);
+            track.Size = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             if (dto.Private)
                 track.TrackAccess = TrackAccess.Private;
             else

@@ -43,5 +43,7 @@
         public const string Code27 = "That title already exists";
         public static Func<string, string> Code28 = x => $"This file is too large to be uploaded. Files larger than {x} are not supported";
         public static string Code29 = "Page not found";
+        public static string Code30 = "You don't have enough space for uplouding this track";
+
     }
 }

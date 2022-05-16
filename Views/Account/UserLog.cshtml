@@ -1,16 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Logs";
     Layout = "_Layout";
+    var urlActionContext = Url.ActionContext;
+    var urlQuery = urlActionContext.HttpContext.Request;
+    var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
+    var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
 }
 @model PaginetedList<UserLog>
 <div class="row">
     <div class="col-sm-12 col-md-6 col-lg-3">
-        <form method="get" asp-controller="account" asp-action="userlog" autocomplete="off">
+        <form method="get" asp-controller="@controllerName" asp-action="@acionName" autocomplete="off">
             <div class="input-group mb-3">
                 <input type="text" name="search" class="form-control" placeholder="search">
                 <div class="input-group-prepend">
                     <button class="btn btn-success" type="submit">Search</button>
-                    <a asp-controller="account" asp-action="userlog" class="btn btn-warning" role="button">Clear</a>
+                    <a asp-controller="@controllerName" asp-action="@acionName" class="btn btn-warning" role="button">Clear</a>
                 </div>
             </div>
         </form>
@@ -37,6 +41,21 @@
             }
             </tbody>
         </table>
+    </div>
+    <div class="row pagginationDiv">
+        <div class="col-12 text-nowrap">
+            <small>@Model.Count of @Model.TotalCount</small>
+            <nav class="nav justify-content-center border-top border-white">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Pages(1))
+                    {
+                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
 }
 else
