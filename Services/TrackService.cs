@@ -60,17 +60,16 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
-            //TODO Test this function
-
+            //TODO make test whole funcion
             ProccessDirectory();
-            //TODO sprwadz to potem!!!
-            var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId());
-            if (totalSize < Math.Round((float.Parse(_configuration["SizeTracksLimit"]) / 1048576), 2))
+            var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
+            var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
+            var limit = Math.Round(float.Parse(_configuration["SizeTracksLimit"]));
+            if (totalSize >= limit)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code30);
                 return false;
             }
-
             var fileExt = Path.GetExtension(dto.File.FileName).Substring(1);
             if (!SupportedExts.Types.Contains(fileExt))
             {
@@ -79,7 +78,6 @@ namespace StockBand.Services
             }
             var track = _mapper.Map<Track>(dto);
             //TODO block button ''submit when uploading
-            //TODO make limit system for user
             //TODO add list of all track in admin panel
 
             var trackNameVerify = await _applicationDbContext
@@ -98,7 +96,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
                 return false;
             }
-            track.Size = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
+            track.Size = fileSize;
             if (dto.Private)
                 track.TrackAccess = TrackAccess.Private;
             else

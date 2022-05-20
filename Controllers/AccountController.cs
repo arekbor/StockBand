@@ -192,4 +192,3 @@ namespace Stock_Band.Controllers
         }
     }
 }
-//TODO center the search form on profile view
