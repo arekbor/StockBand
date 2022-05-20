@@ -6,6 +6,7 @@ using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
+using System.Security.Claims;
 
 namespace Stock_Band.Controllers
 {
@@ -18,7 +19,8 @@ namespace Stock_Band.Controllers
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly ITrackService _trackService;
-        public AccountController(ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly IUserContextService _userContextService;
+        public AccountController(IUserContextService userContextService,  ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
@@ -26,7 +28,30 @@ namespace Stock_Band.Controllers
             _configuration = configuration;
             _mapper = mapper;
             _trackService = trackService;
+            _userContextService = userContextService;
         }
+        [HttpGet]
+        public IActionResult Avatar()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Avatar(UserAvatarDto avatarDto)
+        {
+            if (!ModelState.IsValid)
+                return View(avatarDto);
+            var result = await _userService.ChangeUserAvatar(avatarDto);
+            //verify if avatar file is img
+            //verify size of img
+
+            //make user folder automatically with user stuff
+            //update pathavatar user
+            if (result)
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value });
+            return View(avatarDto);
+        }
+
         [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")

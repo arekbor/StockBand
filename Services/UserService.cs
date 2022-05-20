@@ -21,8 +21,9 @@ namespace StockBand.Services
         private readonly IUserLogService _userLogService;
         private readonly ILinkService _linkService;
         private readonly IUserContextService _userContextService;
+        private readonly IConfiguration _configuration;
 
-        public UserService(ApplicationDbContext dbContext, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        public UserService(IConfiguration configuration, ApplicationDbContext dbContext, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -32,6 +33,7 @@ namespace StockBand.Services
             _userLogService = userLogService;
             _linkService = linkService;
             _userContextService = userContextService;
+            _configuration = configuration;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -267,6 +269,34 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        public async Task<bool> ChangeUserAvatar(UserAvatarDto userDto)
+        {
+            var id = _userContextService.GetUserId();
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
+                return false;
+            }
+            ProccessUserDirectory(_userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value, 
+                _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+
+            var fileSize = Math.Round((float.Parse(userDto.AvatarFile.Length.ToString()) / 1048576), 2);
+            var limit = Math.Round(float.Parse(_configuration["AvatarSizeImgLimit"]));
+            if (fileSize >= limit)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code31(limit.ToString()));
+                return false;
+            }
+            var fileExt = Path.GetExtension(userDto.AvatarFile.FileName).Substring(1).ToLower();
+            if (!SupportedExtsImg.Types.Contains(fileExt))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
+                return false;
+            }
+            return true;
+
+        }
         private async Task<bool> Cookie(User user)
         {
             string msg = String.Empty;
@@ -306,6 +336,12 @@ namespace StockBand.Services
             if (user is null)
                 return null;
             return user;
-        } 
+        }
+        private void ProccessUserDirectory(string name, string id)
+        {
+            var folderName = $"{_configuration["UserProfilePrefixFolder"]}{id}{name}";
+            if (!Directory.Exists($"{_configuration["UserProfileContentPath"]}{folderName}"))
+                Directory.CreateDirectory($"{_configuration["UserProfileContentPath"]}{folderName}");
+        }
     }
 }

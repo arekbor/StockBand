@@ -70,7 +70,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code30);
                 return false;
             }
-            var fileExt = Path.GetExtension(dto.File.FileName).Substring(1);
+            var fileExt = Path.GetExtension(dto.File.FileName).Substring(1).ToLower();
             if (!SupportedExts.Types.Contains(fileExt))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
@@ -93,7 +93,7 @@ namespace StockBand.Services
                 decimal mb = int.Parse(_configuration["MaxFileBytes"])/1048576;
                 var roundMb = Math.Round(mb,1);
 
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28($"{mb} MB"));
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28(mb.ToString()));
                 return false;
             }
             track.Size = fileSize;
