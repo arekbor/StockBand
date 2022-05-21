@@ -8,7 +8,7 @@ namespace StockBand.Data
     {
         public ApplicationProfile()
         {
-            CreateMap<User, EditUserDto>();
+            CreateMap<User, SettingsUserDto>();
             CreateMap<CreateUserDto, User>();
             CreateMap<Link, UniqueLinkMinutesDto>();
             CreateMap<AddTrackDto, Track>();

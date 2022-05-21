@@ -11,8 +11,7 @@ namespace StockBand.ViewModel
         public string Theme { get; set; }
         public double TotalSizeOfTracks { get; set; }
         public int TotalTracks { get; set; }
-        public string PathAvatar { get; set; }
-        public string PathHeader { get; set; }
+        public bool IsAvatarUploaded { get; set; }
         public PaginetedList<Track> Tracks { get; set; }
         public string LastUpload { get; set; }
     }

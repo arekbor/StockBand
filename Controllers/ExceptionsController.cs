@@ -12,5 +12,7 @@ namespace StockBand.Controllers
         public IActionResult InternalServerError() => View();
         [HttpGet]
         public IActionResult CustomException() => View();
+        [HttpGet]
+        public IActionResult NotFoundPage() => View();
     }
 }

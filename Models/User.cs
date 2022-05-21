@@ -15,7 +15,7 @@ namespace StockBand.Models
         public string Theme { get; set; } = UserTheme.Themes[0];
         public bool RememberMe { get; set; } = false;
         public int TotalTracks { get; set; }
-        public string PathAvatar { get; set; }
-        public string PathHeader { get; set; }
+        public bool IsAvatarUploaded { get; set; } = false;
+        public string AvatarType { get; set; }
     }
 }

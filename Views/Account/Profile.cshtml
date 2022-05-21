@@ -8,12 +8,21 @@
     var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
     var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value) || User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
-}
+    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name})}";
+} 
 
 <div class="row bg-secondary">
     <div class="col-md-2 col-12 p-4 text-center">
         <div style="object-fit:cover;">
-            <img class="rounded-circle" src="https://www.wykop.pl/cdn/c3201142/comment_dYwgPq03e90QvvakJ1DK3w0L0Hl536BF.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
+            @if(!Model.IsAvatarUploaded)
+            {
+                <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
+            }
+            else
+            {
+                <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
+            }
+            
         </div>
     </div>
 </div>
@@ -27,7 +36,7 @@
             <button type="button" class="btn btn-secondary mx-2 btn-sm btn-info"><i class="bi bi-share-fill"></i> Share</button>
             @if (isAuthorized)
             {
-                <button type="button" class="btn btn-secondary mx-2 btn-sm btn-info"><i class="bi bi-pencil-square"></i> Edit</button>
+                <a style="text-decoration: none;" asp-controller="account" asp-action="edit" class="btn btn-secondary mx-2 btn-sm btn-info text-start" role="button"><i class="bi bi-pencil-square"></i> Edit</a>
             }
         </div>
     </div>

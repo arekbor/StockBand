@@ -25,5 +25,7 @@
 
         public static Func<Guid, string> Code15 = x => $"Unique link removed automatically ({x})";
         public static Func<string, string> Code16 = x => $"Track '{x}' was uploaded";
+
+        public const string Code17 = "Avatar updated";
     }
 }

@@ -11,7 +11,7 @@ namespace StockBand.Interfaces
         public Task<bool> LogoutUserAsync();
         public IQueryable<User> GetAllUsersAsync();
         public Task<User> GetUserAsync(int id);
-        public Task<bool> UpdateUser(int id, EditUserDto model);
+        public Task<bool> UpdateUser(int id, SettingsUserDto model);
         public Task<bool> CreateUser(Guid guid, CreateUserDto userDto);
         public Task<bool> ChangePasswordUser(ChangePasswordDto userDto);
         public Task<bool> ChangeUserColor(ChangeColorDto userDto);
@@ -19,6 +19,6 @@ namespace StockBand.Interfaces
         public Task<bool> RemoveUserCookie();
         public Task<bool> UpdateRememberMeStatus(int id, bool rememberMe);
         public Task<User> GetUserByName(string name);
-        public Task<bool> ChangeUserAvatar(UserAvatarDto userDto);
+        public Task<bool> ChangeUserAvatar(EditUserDto userDto);
     }
 }

@@ -99,7 +99,7 @@ namespace StockBand.Services
                 return null;
             return user;
         }
-        public async Task<bool> UpdateUser(int id, EditUserDto model)
+        public async Task<bool> UpdateUser(int id, SettingsUserDto model)
         {
             var adminId = _userContextService.GetUserId();
             var userAdmin = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == adminId);
@@ -269,7 +269,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> ChangeUserAvatar(UserAvatarDto userDto)
+        public async Task<bool> ChangeUserAvatar(EditUserDto userDto)
         {
             var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
@@ -278,11 +278,14 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
             }
+            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
+
             ProccessUserDirectory(_userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value, 
                 _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
             var fileSize = Math.Round((float.Parse(userDto.AvatarFile.Length.ToString()) / 1048576), 2);
             var limit = Math.Round(float.Parse(_configuration["AvatarSizeImgLimit"]));
+
             if (fileSize >= limit)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code31(limit.ToString()));
@@ -294,8 +297,31 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
                 return false;
             }
-            return true;
+            if (user.IsAvatarUploaded)
+            {
+                string[] Files = Directory.GetFiles(path); 
+                foreach (string file in Files)
+                {
+                    if (file.ToUpper().Contains(_configuration["UserProfileFileName"].ToUpper()))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+            user.AvatarType = fileExt;
+            user.IsAvatarUploaded = true;
 
+            var avatar = $"{_configuration["UserProfileFileName"]}.{user.AvatarType}";
+
+            using (var fileStream = new FileStream(Path.Combine(path, avatar), FileMode.Create, FileAccess.Write))
+            {
+                await userDto.AvatarFile.CopyToAsync(fileStream);
+            }
+            _dbContext.UserDbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code17,user.Id);
+            _actionContext.ActionContext.ModelState.Clear();
+            return true;
         }
         private async Task<bool> Cookie(User user)
         {

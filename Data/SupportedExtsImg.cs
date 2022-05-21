@@ -4,7 +4,7 @@
     {
         public static string[] Types =
         {
-            "jpeg","gif","png"
+            "jpeg","gif","png","jpg"
         };
-    }
+    } 
 }

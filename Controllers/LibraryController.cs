@@ -30,7 +30,7 @@ namespace StockBand.Controllers
                 return View(dto);
             var status = await _trackService.AddTrack(dto);
             if (status)
-                return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title) });
+                return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title)});
             return View(dto);
         }
         [HttpGet]

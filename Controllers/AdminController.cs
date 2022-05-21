@@ -53,13 +53,13 @@ namespace StockBand.Controllers
             if (user is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
-            var viewModel = _mapper.Map<EditUserDto>(user);
+            var viewModel = _mapper.Map<SettingsUserDto>(user);
             return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("admin/edituser/{id:int}")]
-        public async Task<IActionResult> EditUser(int id, EditUserDto userDto)
+        public async Task<IActionResult> EditUser(int id, SettingsUserDto userDto)
         {
             if (!ModelState.IsValid)
                 return View(userDto);

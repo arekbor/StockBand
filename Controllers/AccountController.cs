@@ -31,17 +31,34 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
         }
         [HttpGet]
-        public IActionResult Avatar()
+        [Route("account/streamavatar/{name}")]
+        public async Task<IActionResult> StreamAvatar(string name)
+        {
+            var user = await _userService.GetUserByName(name);
+            if (user is null)
+            {
+                return RedirectToAction("badrequestpage", "exceptions");
+            }
+            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
+            var avatar = $"{_configuration["UserProfileFileName"]}.{user.AvatarType}";
+            Response.Headers.Remove("Cache-Control");
+            Response.Headers.Add("Accept-Ranges", "bytes");
+            var fileStream = new FileStream($"{path}/{avatar}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            return File(fileStream, $"image/{user.AvatarType}");
+        }
+
+        [HttpGet]
+        public IActionResult Edit()
         {
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Avatar(UserAvatarDto avatarDto)
+        public async Task<IActionResult> Avatar(EditUserDto userDto)
         {
             if (!ModelState.IsValid)
-                return View(avatarDto);
-            var result = await _userService.ChangeUserAvatar(avatarDto);
+                return View("edit", userDto);
+            var result = await _userService.ChangeUserAvatar(userDto);
             //verify if avatar file is img
             //verify size of img
 
@@ -49,7 +66,7 @@ namespace Stock_Band.Controllers
             //update pathavatar user
             if (result)
                 return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value });
-            return View(avatarDto);
+            return View("edit", userDto);
         }
 
         [HttpGet]
