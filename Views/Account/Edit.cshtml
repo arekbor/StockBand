@@ -3,8 +3,23 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "_layout";
-    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Avatar})}";
-    var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Header})}";
+
+    var isHeaderUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsHeaderUploaded").Value);
+    var isAvatarUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsAvatarUploaded").Value);
+
+    string urlAvatar = string.Empty;
+    string urlHeader = string.Empty;
+
+    if (isAvatarUploaded)
+    {
+        urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Avatar})}";
+    }
+    if (isHeaderUploaded)
+    {
+        urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Header})}";
+    }
+
+    
 }
 
 <div class="row mt-5">
@@ -17,31 +32,56 @@
                 <div class="row text-start">
 
                     <div class="validation text-danger" style="text-decoration: none !important;" asp-validation-summary="All"></div>
-                    <label class="text-center bg-secondary p-1 mt-2">Change avatar</label>
+                    <label class="text-center bg-secondary p-1 mt-0">Change avatar</label>
                     <form class="mt-2" method="post" asp-controller="account" asp-action="updateimage" asp-route-type="@UserProfileImagesTypes.Avatar" enctype="multipart/form-data">
                         <div class="form-group mt-1 col-12 text-center">
                             <label for="avatar-upload" id="imgstoreavatar">
-                                <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">
+                                @if (isAvatarUploaded)
+                                {
+                                    <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">
+                                }
+                                else
+                                {
+                                    <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">
+                                }
+
                             </label>
                             <input asp-for="Image" id="avatar-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
                         </div>
-                        <div class="form-group mt-3 text-end">
-                            <button type="submit" class="btn btn-success">Upload avatar</button>
+                        <div class="col-12 text-center">
+                            <div class="btn-group mr-2 mt-3" role="group">
+                                <button type="submit" class="btn btn-success">Upload avatar</button>
+                                <a href="#" class="btn btn-danger" role="button" aria-disabled="true">Remove avatar</a>
+                            </div>
                         </div>
                     </form>
 
                     <label class="text-center bg-secondary p-1 mt-2">Change header</label>
                     <form class="mt-2" method="post" asp-controller="account" asp-action="updateimage" asp-route-type="@UserProfileImagesTypes.Header" enctype="multipart/form-data">
                         <div class="form-group mt-1 col-12 text-center">
-                            <label for="avatar-upload" id="imgstoreavatar">
-                                <img src="@urlHeader" alt="Avatar Profile" style="height: 200px; width: 100%; object-fit: contain">
+                            <label for="header-upload" id="imgstoreheader">
+                                @if (isHeaderUploaded)
+                                {
+                                    <img src="@urlHeader" alt="Avatar Profile" style="width: 100%; height: 100%; aspect-ratio: 6; object-fit: cover; cursor: pointer;">
+                                }
+                                else
+                                {
+                                    <div style="cursor: pointer;">
+                                        Click to select header
+                                    </div>
+                                }
+
                             </label>
-                            <input asp-for="Image" id="avatar-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
+                            <input asp-for="Image" id="header-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
                         </div>
-                        <div class="form-group mt-3 text-end">
-                            <button type="submit" class="btn btn-success">Upload header</button>
+                        <div class="col-12 text-center">
+                            <div class="btn-group mr-2 mt-3" role="group">
+                                <button type="submit" class="btn btn-success">Upload header</button>
+                                <a href="#" class="btn btn-danger" role="button" aria-disabled="true">Remove header</a>
+                            </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -50,22 +90,28 @@
 
 @section Scripts{
     <script>
-        const image = document.getElementById("avatar-upload");
-        image.addEventListener('change',loadimage,false);
-
-        function loadimage(e1)
-        {
-            var filename = e1.target.files[0]; 
+        const avatar = document.getElementById("avatar-upload");
+        avatar.addEventListener('change',function(e){
+            var filename = e.target.files[0]; 
             var fr = new FileReader();
-            fr.onload = imageHandler;  
-            fr.readAsDataURL(filename); 
-            
-        }
-        function imageHandler(e2) 
-        { 
-            console.log(e2.target.result);
-            const store = document.getElementById('imgstoreavatar');
-            store.innerHTML='<img class="rounded-circle" id="imgstoreavatar" src="'+ e2.target.result +'" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">';
-        }
+            fr.onload = function(e2){
+                const storeAvatar = document.getElementById('imgstoreavatar');
+                storeAvatar.innerHTML='<img class="rounded-circle" id="imgstoreavatar" src="'+ e2.target.result +'" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">';
+            };
+            fr.readAsDataURL(filename);
+        });
+
+        const header = document.getElementById("header-upload");
+        header.addEventListener('change',function(e){
+            console.log("test");
+            var filename = e.target.files[0]; 
+            var fr = new FileReader();
+            fr.onload = function(e2){
+                const storeHeader = document.getElementById('imgstoreheader');
+                storeHeader.innerHTML='<img src="'+ e2.target.result +'" alt="Avatar Profile" style="width: 100%; height: 100%; aspect-ratio: 6; object-fit: cover; cursor: pointer;">';
+            };
+            fr.readAsDataURL(filename);
+        });
+
     </script>
 }

@@ -27,5 +27,6 @@
         public static Func<string, string> Code16 = x => $"Track '{x}' was uploaded";
 
         public const string Code17 = "Avatar updated";
+        public const string Code18 = "Header updated";
     }
 }

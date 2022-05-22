@@ -325,8 +325,17 @@ namespace StockBand.Services
             }
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code17,user.Id);
+            if(type == UserProfileImagesTypes.Avatar)
+            {
+                await _userLogService.AddToLogsAsync(LogMessage.Code17, user.Id);
+            }
+            else
+            {
+                await _userLogService.AddToLogsAsync(LogMessage.Code18, user.Id);
+            }
+            
             _actionContext.ActionContext.ModelState.Clear();
+            await Cookie(user);
             return true;
         }
         private async Task<bool> Cookie(User user)
@@ -341,6 +350,8 @@ namespace StockBand.Services
                 new Claim("Color",user.Color),
                 new Claim("Theme",user.Theme),
                 new Claim("RememberMe",user.RememberMe.ToString()),
+                new Claim("IsAvatarUploaded",user.IsAvatarUploaded.ToString()),
+                new Claim("IsHeaderUploaded",user.IsHeaderUploaded.ToString())
             };
             var claimIdentity = new ClaimsIdentity(claims, ConfigurationHelper.config.GetSection("CookieAuthenticationName").Value);
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
