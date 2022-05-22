@@ -4,8 +4,7 @@ namespace StockBand.ViewModel
 {
     public class EditUserDto
     {
-        [Display(Name = "Avatar")]
         [Required]
-        public IFormFile AvatarFile { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

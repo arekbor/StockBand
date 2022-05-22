@@ -19,6 +19,6 @@ namespace StockBand.Interfaces
         public Task<bool> RemoveUserCookie();
         public Task<bool> UpdateRememberMeStatus(int id, bool rememberMe);
         public Task<User> GetUserByName(string name);
-        public Task<bool> ChangeUserAvatar(EditUserDto userDto);
+        public Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type);
     }
 }

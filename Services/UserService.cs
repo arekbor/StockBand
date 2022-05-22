@@ -269,7 +269,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public async Task<bool> ChangeUserAvatar(EditUserDto userDto)
+        public async Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type)
         {
             var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
@@ -283,39 +283,45 @@ namespace StockBand.Services
             ProccessUserDirectory(_userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value, 
                 _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-            var fileSize = Math.Round((float.Parse(userDto.AvatarFile.Length.ToString()) / 1048576), 2);
-            var limit = Math.Round(float.Parse(_configuration["AvatarSizeImgLimit"]));
+            var fileSize = Math.Round((float.Parse(userDto.Image.Length.ToString()) / 1048576), 2);
+            var limit = Math.Round(float.Parse(_configuration["SizeImgLimit"]));
 
             if (fileSize >= limit)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code31(limit.ToString()));
                 return false;
             }
-            var fileExt = Path.GetExtension(userDto.AvatarFile.FileName).Substring(1).ToLower();
+            var fileExt = Path.GetExtension(userDto.Image.FileName).Substring(1).ToLower();
             if (!SupportedExtsImg.Types.Contains(fileExt))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
                 return false;
             }
-            if (user.IsAvatarUploaded)
+            var fileNameType = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+            string[] Files = Directory.GetFiles(path);
+            foreach (string file in Files)
             {
-                string[] Files = Directory.GetFiles(path); 
-                foreach (string file in Files)
+                if (file.ToUpper().Contains(_configuration[fileNameType].ToUpper()))
                 {
-                    if (file.ToUpper().Contains(_configuration["UserProfileFileName"].ToUpper()))
-                    {
-                        File.Delete(file);
-                    }
+                    File.Delete(file);
                 }
             }
-            user.AvatarType = fileExt;
-            user.IsAvatarUploaded = true;
-
-            var avatar = $"{_configuration["UserProfileFileName"]}.{user.AvatarType}";
-
-            using (var fileStream = new FileStream(Path.Combine(path, avatar), FileMode.Create, FileAccess.Write))
+            string fileName = String.Empty;
+            if(type == UserProfileImagesTypes.Avatar)
             {
-                await userDto.AvatarFile.CopyToAsync(fileStream);
+                user.AvatarType = fileExt;
+                user.IsAvatarUploaded = true;
+                fileName = $"{_configuration["UserProfileFileNameAvatar"]}.{user.AvatarType}";
+            }
+            else if (type == UserProfileImagesTypes.Header)
+            {
+                user.HeaderType = fileExt;
+                user.IsHeaderUploaded = true;
+                fileName = $"{_configuration["UserProfileFileNameHeader"]}.{user.HeaderType}";
+            }
+            using (var fileStream = new FileStream(Path.Combine(path, fileName), FileMode.Create, FileAccess.Write))
+            {
+                await userDto.Image.CopyToAsync(fileStream);
             }
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();

@@ -8,10 +8,13 @@
     var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
     var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value) || User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
-    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name})}";
+    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
+    var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
+    var styleString = Model.IsHeaderUploaded == true ? $"background-image: url({urlHeader}); background-size: cover; background-repeat: no-repeat; background-position: center;": "background:#444444;";
 } 
 
-<div class="row bg-secondary">
+
+<div class="row" style="@styleString">
     <div class="col-md-2 col-12 p-4 text-center">
         <div style="object-fit:cover;">
             @if(!Model.IsAvatarUploaded)

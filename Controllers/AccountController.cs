@@ -31,8 +31,8 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
         }
         [HttpGet]
-        [Route("account/streamavatar/{name}")]
-        public async Task<IActionResult> StreamAvatar(string name)
+        [Route("account/streamavatar/{name}/{type}")]
+        public async Task<IActionResult> StreamAvatar(string name, UserProfileImagesTypes type)
         {
             var user = await _userService.GetUserByName(name);
             if (user is null)
@@ -40,11 +40,17 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("badrequestpage", "exceptions");
             }
             var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
-            var avatar = $"{_configuration["UserProfileFileName"]}.{user.AvatarType}";
+
+            var fileName = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+
+            var extFile = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
+
+            var image = $"{_configuration[fileName]}.{extFile}";
+
             Response.Headers.Remove("Cache-Control");
             Response.Headers.Add("Accept-Ranges", "bytes");
-            var fileStream = new FileStream($"{path}/{avatar}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            return File(fileStream, $"image/{user.AvatarType}");
+            var fileStream = new FileStream($"{path}/{image}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            return File(fileStream, $"image/{extFile}");
         }
 
         [HttpGet]
@@ -54,18 +60,15 @@ namespace Stock_Band.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Avatar(EditUserDto userDto)
+        [Route("account/updateimage/{type}")]
+
+        public async Task<IActionResult> UpdateImage(EditUserDto userDto,UserProfileImagesTypes type)
         {
             if (!ModelState.IsValid)
                 return View("edit", userDto);
-            var result = await _userService.ChangeUserAvatar(userDto);
-            //verify if avatar file is img
-            //verify size of img
-
-            //make user folder automatically with user stuff
-            //update pathavatar user
+            var result = await _userService.UpdateUserImages(userDto, type);
             if (result)
-                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value });
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value});
             return View("edit", userDto);
         }
 

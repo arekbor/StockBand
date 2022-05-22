@@ -1,8 +1,11 @@
-﻿@{
+﻿@model EditUserDto
+
+@{
     ViewData["Title"] = "Edit";
     Layout = "_layout";
+    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Avatar})}";
+    var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Header})}";
 }
-@model EditUserDto
 
 <div class="row mt-5">
     <div class="d-flex justify-content-center">
@@ -12,15 +15,31 @@
             </div>
             <div class="card-body">
                 <div class="row text-start">
-                    <form method="post" asp-controller="account" asp-action="avatar" enctype="multipart/form-data">
-                        <div class="validation text-danger" asp-validation-summary="All"></div>
-                        <div class="form-group mt-1">
-                            <label>Update avatar</label>
-                            <input asp-for="AvatarFile" id="dropfile" class="form-control" type="file">
+
+                    <div class="validation text-danger" style="text-decoration: none !important;" asp-validation-summary="All"></div>
+                    <label class="text-center bg-secondary p-1 mt-2">Change avatar</label>
+                    <form class="mt-2" method="post" asp-controller="account" asp-action="updateimage" asp-route-type="@UserProfileImagesTypes.Avatar" enctype="multipart/form-data">
+                        <div class="form-group mt-1 col-12 text-center">
+                            <label for="avatar-upload" id="imgstoreavatar">
+                                <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">
+                            </label>
+                            <input asp-for="Image" id="avatar-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
                         </div>
-                    
-                        <div class="form-group mt-3 text-center">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                        <div class="form-group mt-3 text-end">
+                            <button type="submit" class="btn btn-success">Upload avatar</button>
+                        </div>
+                    </form>
+
+                    <label class="text-center bg-secondary p-1 mt-2">Change header</label>
+                    <form class="mt-2" method="post" asp-controller="account" asp-action="updateimage" asp-route-type="@UserProfileImagesTypes.Header" enctype="multipart/form-data">
+                        <div class="form-group mt-1 col-12 text-center">
+                            <label for="avatar-upload" id="imgstoreavatar">
+                                <img src="@urlHeader" alt="Avatar Profile" style="height: 200px; width: 100%; object-fit: contain">
+                            </label>
+                            <input asp-for="Image" id="avatar-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
+                        </div>
+                        <div class="form-group mt-3 text-end">
+                            <button type="submit" class="btn btn-success">Upload header</button>
                         </div>
                     </form>
                 </div>
@@ -29,8 +48,24 @@
     </div>
 </div>
 
-@section scripts{
+@section Scripts{
+    <script>
+        const image = document.getElementById("avatar-upload");
+        image.addEventListener('change',loadimage,false);
 
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+        function loadimage(e1)
+        {
+            var filename = e1.target.files[0]; 
+            var fr = new FileReader();
+            fr.onload = imageHandler;  
+            fr.readAsDataURL(filename); 
+            
+        }
+        function imageHandler(e2) 
+        { 
+            console.log(e2.target.result);
+            const store = document.getElementById('imgstoreavatar');
+            store.innerHTML='<img class="rounded-circle" id="imgstoreavatar" src="'+ e2.target.result +'" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">';
+        }
+    </script>
 }
