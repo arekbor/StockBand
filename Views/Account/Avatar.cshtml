@@ -7,10 +7,16 @@
     var isAvatarUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsAvatarUploaded").Value);
 
     string urlAvatar = string.Empty;
+    string buttonRemoveAvatarClass = string.Empty;
 
     if (isAvatarUploaded)
     {
         urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Avatar})}";
+        buttonRemoveAvatarClass = "btn btn-danger mx-2";
+    }
+    else
+    {
+        buttonRemoveAvatarClass = "btn btn-danger mx-2 disabled";
     }
 }
 <div class="row mt-5">
@@ -40,8 +46,9 @@
                         </div>
                         <div class="col-12 text-center">
                             <div class="btn-group mr-2 mt-3" role="group">
-                                <button type="submit" class="btn btn-success">Upload avatar</button>
-                                <a href="#" class="btn btn-danger mx-2" role="button" aria-disabled="true">Remove avatar</a>
+                                <button id="uploadButton" type="submit" class="btn btn-success disabled">Upload avatar</button>
+                                <a asp-controller="account" asp-action="removeimage" asp-route-type="@UserProfileImagesTypes.Avatar" class="@buttonRemoveAvatarClass" role="button" aria-disabled="true">Remove avatar</a>
+                                <a asp-controller="account" asp-action="edit" class="btn btn-warning" role="button">Back</a>
                             </div>
                         </div>
                     </form>
@@ -60,6 +67,8 @@
             var fr = new FileReader();
             fr.onload = function(e2){
                 const storeAvatar = document.getElementById('imgstoreavatar');
+                const uploadButton = document.getElementById('uploadButton');
+                uploadButton.classList.remove('disabled');
                 storeAvatar.innerHTML='<img class="rounded-circle" id="imgstoreavatar" src="'+ e2.target.result +'" alt="Avatar Profile" style="width:120px; height:120px; cursor: pointer;">';
             };
             fr.readAsDataURL(filename);

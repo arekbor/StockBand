@@ -31,12 +31,13 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
         }
         [HttpGet]
-        public async Task<IActionResult> RemoveAvatar()
+        [Route("account/removeimage/{type}")]
+        public async Task<IActionResult> RemoveImage(UserProfileImagesTypes type)
         {
-            var result = await _userService.RemoveUserImage(UserProfileImagesTypes.Avatar);
+            var result = await _userService.RemoveUserImage(type);
             if(result)
-                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
-            return RedirectToAction("badrequestpage", "exceptions");
+                return RedirectToAction("profile", "account", new {name = _userContextService.GetUser().Identity.Name});
+            return View("avatar");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

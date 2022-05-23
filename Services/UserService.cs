@@ -275,24 +275,44 @@ namespace StockBand.Services
             var id = _userContextService.GetUserId();
             var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
             if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
+            }
+            if(type == UserProfileImagesTypes.Avatar && !user.IsAvatarUploaded)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code32);
+                return false;
+            }
+            if (type == UserProfileImagesTypes.Header && !user.IsHeaderUploaded)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code33);
+                return false;
+            }
+
             var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
-            var file = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+            var file = type == UserProfileImagesTypes.Avatar ? _configuration["UserProfileFileNameAvatar"] : _configuration["UserProfileFileNameHeader"];
             var fileType = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
             var filePath = $"{path}/{file}.{fileType}";
             if (!File.Exists(filePath))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code34);
                 return false;
+            }
+                
             File.Delete(filePath);
             if(type == UserProfileImagesTypes.Avatar)
             {
                 user.AvatarType = String.Empty;
                 user.IsAvatarUploaded = false;
             }
-            else if (type == UserProfileImagesTypes.Avatar)
+            if (type == UserProfileImagesTypes.Header)
             {
                 user.HeaderType = String.Empty;
                 user.IsHeaderUploaded = false;
             }
+            _actionContext.ActionContext.ModelState.Clear();
+            await Cookie(user);
             return true;
         }
         public async Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type)
