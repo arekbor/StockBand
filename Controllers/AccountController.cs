@@ -31,6 +31,46 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
         }
         [HttpGet]
+        public async Task<IActionResult> RemoveAvatar()
+        {
+            var result = await _userService.RemoveUserImage(UserProfileImagesTypes.Avatar);
+            if(result)
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+            return RedirectToAction("badrequestpage", "exceptions");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Avatar(EditUserDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+            var result = await _userService.UpdateUserImages(dto, UserProfileImagesTypes.Avatar);
+            if (result)
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+            return View(dto);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Header(EditUserDto dto)
+        {
+            if (!ModelState.IsValid)
+                return View(dto);
+            var result = await _userService.UpdateUserImages(dto, UserProfileImagesTypes.Header);
+            if (result)
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+            return View(dto);
+        }
+        [HttpGet]
+        public IActionResult Avatar()
+        {
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Header()
+        {
+            return View();
+        }
+        [HttpGet]
         [Route("account/streamavatar/{name}/{type}")]
         public async Task<IActionResult> StreamAvatar(string name, UserProfileImagesTypes type)
         {
@@ -52,26 +92,12 @@ namespace Stock_Band.Controllers
             var fileStream = new FileStream($"{path}/{image}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, $"image/{extFile}");
         }
-
         [HttpGet]
         public IActionResult Edit()
         {
             return View();
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Route("account/updateimage/{type}")]
-
-        public async Task<IActionResult> UpdateImage(EditUserDto userDto,UserProfileImagesTypes type)
-        {
-            if (!ModelState.IsValid)
-                return View("edit", userDto);
-            var result = await _userService.UpdateUserImages(userDto, type);
-            if (result)
-                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value});
-            return View("edit", userDto);
-        }
-
+        
         [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")

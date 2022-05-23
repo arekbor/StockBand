@@ -1,0 +1,69 @@
+﻿@model EditUserDto
+
+@{
+    ViewData["Title"] = "Edit header";
+    Layout = "_layout";
+
+    var isHeaderUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsHeaderUploaded").Value);
+
+    string urlHeader = string.Empty;
+
+    if (isHeaderUploaded)
+    {
+        urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Header})}";
+    }
+}
+<div class="row mt-2">
+    <div class="d-flex justify-content-center">
+        <div class="card formBox"> 
+            <div class="card-header">
+                <h5>Edit header</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-start">
+                    <form class="mt-2" method="post" asp-controller="account" asp-action="header" enctype="multipart/form-data">
+                        <div class="validation text-danger" style="text-decoration: none !important;" asp-validation-summary="All"></div>
+                        <div class="form-group mt-1 col-12 text-center">
+                            <label for="header-upload" id="imgstoreheader">
+                                @if (isHeaderUploaded)
+                                {
+                                    <img src="@urlHeader" alt="Avatar Profile" style="width: 100%; height: 100%; aspect-ratio: 6; object-fit: cover; cursor: pointer;">
+                                }
+                                else
+                                {
+                                    <div style="cursor: pointer;">
+                                        Click to select header
+                                    </div>
+                                }
+
+                            </label>
+                            <input asp-for="Image" id="header-upload" class="form-control" type="file" style="visibility:hidden; width:0; height:0;" accept=".png, .jpg, .jpeg">
+                        </div>
+                        <div class="col-12 text-center">
+                            <div class="btn-group mr-2 mt-3" role="group">
+                                <button type="submit" class="btn btn-success">Upload header</button>
+                                <a href="#" class="btn btn-danger mx-2" role="button" aria-disabled="true">Remove header</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        const header = document.getElementById("header-upload");
+        header.addEventListener('change',function(e){
+            console.log("test");
+            var filename = e.target.files[0]; 
+            var fr = new FileReader();
+            fr.onload = function(e2){
+                const storeHeader = document.getElementById('imgstoreheader');
+                storeHeader.innerHTML='<img src="'+ e2.target.result +'" alt="Avatar Profile" style="width: 100%; height: 100%; aspect-ratio: 6; object-fit: cover; cursor: pointer;">';
+            };
+            fr.readAsDataURL(filename);
+        });
+    </script>
+}

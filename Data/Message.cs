@@ -45,6 +45,7 @@
         public static string Code29 = "Page not found";
         public static string Code30 = "You don't have enough space for uplouding this file";
         public static Func<string, string> Code31 = x => $"This image is too large to be uploaded. Images larger than {x} MB are not supported";
+        public static string Code32 = "File doesn't exists";
 
     }
 }

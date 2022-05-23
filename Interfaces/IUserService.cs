@@ -20,5 +20,6 @@ namespace StockBand.Interfaces
         public Task<bool> UpdateRememberMeStatus(int id, bool rememberMe);
         public Task<User> GetUserByName(string name);
         public Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type);
+        public Task<bool> RemoveUserImage(UserProfileImagesTypes type);
     }
 }

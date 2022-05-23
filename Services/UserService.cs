@@ -269,6 +269,32 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        //TODO check this funcion
+        public async Task<bool> RemoveUserImage(UserProfileImagesTypes type)
+        {
+            var id = _userContextService.GetUserId();
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null)
+                return false;
+            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
+            var file = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+            var fileType = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
+            var filePath = $"{path}/{file}.{fileType}";
+            if (!File.Exists(filePath))
+                return false;
+            File.Delete(filePath);
+            if(type == UserProfileImagesTypes.Avatar)
+            {
+                user.AvatarType = String.Empty;
+                user.IsAvatarUploaded = false;
+            }
+            else if (type == UserProfileImagesTypes.Avatar)
+            {
+                user.HeaderType = String.Empty;
+                user.IsHeaderUploaded = false;
+            }
+            return true;
+        }
         public async Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type)
         {
             var id = _userContextService.GetUserId();
