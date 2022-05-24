@@ -144,7 +144,7 @@ namespace Stock_Band.Controllers
                 return View(user);
             var status = await _userService.LoginUserAsync(user);
             if (status)
-                return RedirectToAction("profile", "account", new {name=user.Name});
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             return View(user);
         }
         [HttpGet]
@@ -204,7 +204,7 @@ namespace Stock_Band.Controllers
             var status = await _userService.ChangePasswordUser(dto);
             if (status)
             {
-                return RedirectToAction("index", "home");
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             }
             return View(dto);
         }
@@ -241,7 +241,7 @@ namespace Stock_Band.Controllers
             var status = await _userService.ChangeUserColor(userDto);
             if (status)
             {
-                return RedirectToAction("index", "home");
+                return RedirectToAction("profile", "account", new {name=_userContextService.GetUser().Identity.Name});
             }
             return RedirectToAction("changecolor", "account", userDto);
         }
@@ -258,7 +258,7 @@ namespace Stock_Band.Controllers
             var status = await _userService.ChangeUserTheme(userDto);
             if (status)
             {
-                return RedirectToAction("index", "home");
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             }
             return RedirectToAction("changetheme", "account", userDto);
         }

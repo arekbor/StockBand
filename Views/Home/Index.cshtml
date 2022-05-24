@@ -1,6 +1,28 @@
 ﻿@{
     ViewData["Title"] = "Home";
     Layout = "_Layout";
+
+
+    //new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+    //new Claim(ClaimTypes.Name,user.Name),
+    //new Claim(ClaimTypes.Role,user.Role),
+    //new Claim("Block",user.Block.ToString()),
+    //new Claim("Color",user.Color),
+    //new Claim("Theme",user.Theme),
+    //new Claim("RememberMe",user.RememberMe.ToString()),
+    //new Claim("IsAvatarUploaded",user.IsAvatarUploaded.ToString()),
+    //new Claim("IsHeaderUploaded",user.IsHeaderUploaded.ToString())
 }
+<div>NameIdentifier: @User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value</div>
+<div>Name: @User.FindFirst(x => x.Type == ClaimTypes.Name).Value</div>
+<div>Role: @User.FindFirst(x => x.Type == ClaimTypes.Role).Value</div>
+<div>Block: @User.FindFirst(x => x.Type == "Block").Value</div>
+<div>Color: @User.FindFirst(x => x.Type == "Color").Value</div>
+<div>Theme: @User.FindFirst(x => x.Type == "Theme").Value</div>
+<div>RememberMe: @User.FindFirst(x => x.Type == "RememberMe").Value</div>
+<div>IsAvatarUploaded: @User.FindFirst(x => x.Type == "IsAvatarUploaded").Value</div>
+<div>IsHeaderUploaded: @User.FindFirst(x => x.Type == "IsHeaderUploaded").Value</div>
+
+
 
 

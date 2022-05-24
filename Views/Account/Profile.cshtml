@@ -13,7 +13,6 @@
     var styleString = Model.IsHeaderUploaded == true ? $"background-image: url({urlHeader}); background-size: cover; background-repeat: no-repeat; background-position: center;": "background:#444444;";
 } 
 
-
 <div class="row" style="@styleString">
     <div class="col-md-2 col-12 p-4 text-center">
         <div style="object-fit:cover;">
@@ -36,7 +35,6 @@
     </div>
         <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-secondary mx-2 btn-sm btn-info"><i class="bi bi-share-fill"></i> Share</button>
             @if (isAuthorized)
             {
                 <a style="text-decoration: none;" asp-controller="account" asp-action="edit" class="btn btn-secondary mx-2 btn-sm btn-info text-start" role="button"><i class="bi bi-pencil-square"></i> Edit</a>
