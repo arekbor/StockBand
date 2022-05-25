@@ -44,7 +44,8 @@ namespace StockBand.Services
             var lastTrackName = await _applicationDbContext
                 .TrackDbContext
                 .Where(x => x.UserId == id)
-                .OrderByDescending(x => x.DateTimeCreate).FirstOrDefaultAsync();
+                .OrderByDescending(x => x.DateTimeCreate).FirstOrDefaultAsync(x => !x.TrackAccess.Equals(TrackAccess.Access[0]) 
+                || x.UserId == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]));
 
             if (lastTrackName is null)
                 return "No result";
@@ -97,11 +98,7 @@ namespace StockBand.Services
                 return false;
             }
             track.Size = fileSize;
-            if (dto.Private)
-                track.TrackAccess = TrackAccess.Private;
-            else
-                track.TrackAccess = TrackAccess.Internal;
-
+            track.TrackAccess = dto.TrackAccess;
             track.Guid = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
             track.UserId = _userContextService.GetUserId();
@@ -142,13 +139,13 @@ namespace StockBand.Services
         public bool VerifyAccessTrack(Track track)
         {
             //TODO sprwadz to dokladnie
-            if (track.TrackAccess == TrackAccess.Public)
+            if (track.TrackAccess.Equals(TrackAccess.Access[2]))
                 return true;
             if (_userContextService.GetUser().Identity.IsAuthenticated)
             {
-                if (track.TrackAccess == TrackAccess.Internal)
+                if (track.TrackAccess.Equals(TrackAccess.Access[1]))
                     return true;
-                if (track.TrackAccess == TrackAccess.Private)
+                if (track.TrackAccess.Equals(TrackAccess.Access[0]))
                 {
                     if (track.User.Id == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
                         return true;

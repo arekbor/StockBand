@@ -65,21 +65,7 @@
                             <div class="text-start p-1 text-muted" style="font-size:small;">
                                 <p>Author: <i style="color:@Model.User.Color;">@Model.User.Name</i></p>
                                 <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
-                                @if(Model.TrackAccess == TrackAccess.Internal)
-                                {
-                                    <p>Access: @nameof(TrackAccess.Internal)</p>
-                                    
-                                }else if(Model.TrackAccess == TrackAccess.Private)
-                                {
-                                    <p>Access: @nameof(TrackAccess.Private)</p>
-                                }else if(Model.TrackAccess == TrackAccess.Public)
-                                {
-                                    <p>Access: @nameof(TrackAccess.Public)</p>
-                                }
-                                @if (!string.IsNullOrEmpty(Model.Description))
-                                {
-                                    <p>Description: @Model.Description</p>
-                                }
+                                <p>Access: @Model.TrackAccess</p>
                                 <p>Size: @Model.Size MB</p>
                                 <p>Type: @Model.Extension</p>
                                 <p>Guid: @Model.Guid</p>

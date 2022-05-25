@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StockBand.Data;
 using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.Models
@@ -13,12 +12,11 @@ namespace StockBand.Models
         public string Lyrics { get; set; }
         public string Extension { get; set; }
         public DateTime DateTimeCreate { get; set; }
-        public TrackAccess TrackAccess { get; set; } = TrackAccess.Internal;
+        public string TrackAccess { get; set; } = Data.TrackAccess.Access[1];
         public int UserId { get; set; }
         public virtual User User { get; set; }
-        public bool IsDownloadle { get; set; }
         //TODO implement this
-        public int DownloadCount { get; set; }
+        public bool IsDownloadle { get; set; }
         public double Size { get; set; }
     }
 }

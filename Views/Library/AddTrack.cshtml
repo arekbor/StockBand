@@ -27,9 +27,14 @@
                             <input asp-for="File" id="dropfile" class="form-control" type="file">
                         </div>
 
-                        <div class="form-check mt-3">
-                            <input asp-for="Private" type="checkbox" class="form-check-input" id="private">
-                            <label class="form-check-label" for="private">Private</label>
+                        <div class="form-group mt-3">
+                            <label>Access</label>
+                            <select asp-for="TrackAccess" class="form-control">
+                                @foreach (var item in TrackAccess.Access)
+                                {
+                                    <option>@item</option>
+                                }
+                            </select>
                         </div>
 
                         <div class="form-check mt-3">

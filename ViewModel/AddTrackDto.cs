@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StockBand.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
@@ -10,7 +11,7 @@ namespace StockBand.ViewModel
         public string Title { get; set; }
         [MaxLength(200)]
         public string Description { get; set; }
-        public bool Private { get; set; }
+        public string TrackAccess { get; set; }
         public bool IsDownloadle { get; set; }
         [Required]
         public IFormFile File { get; set; }

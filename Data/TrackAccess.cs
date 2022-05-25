@@ -1,9 +1,12 @@
 ﻿namespace StockBand.Data
 {
-    public enum TrackAccess
+    public static class TrackAccess
     {
-        Private = 0,
-        Internal = 1,
-        Public = 2,
+        public static string[] Access =
+        {
+            "private",
+            "internal",
+            "public",
+        };
     }
 }

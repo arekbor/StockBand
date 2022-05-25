@@ -6,7 +6,8 @@
     var urlActionContext = Url.ActionContext;
     var urlQuery = urlActionContext.HttpContext.Request;
     var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
-    var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value) || User.IsInRole(UserRoles.Roles[1]);
+    var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+    var isAdmin = User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
     var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
@@ -14,7 +15,7 @@
 } 
 
 <div class="row" style="@styleString">
-    <div class="col-md-2 col-12 p-4 text-center">
+    <div class="col-md-2 col-12 p-5 text-center">
         <div style="object-fit:cover;">
             @if(!Model.IsAvatarUploaded)
             {
@@ -93,21 +94,23 @@
                         {
                             @foreach (var track in Model.Tracks)
                             {
-                                    if(track.TrackAccess == TrackAccess.Private && !isAuthorized){continue;}
-                                    <tr>
+                                if(track.TrackAccess.Equals(TrackAccess.Access[0]) && !isAuthorized && !isAdmin){continue;}
+                                <tr>
                                     <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>
                                         
                                     <th class="text-warning" scope="row">@track.DateTimeCreate</th>
-                                        
-                                    @if(track.TrackAccess == TrackAccess.Internal)
+                                       
+                                    @if (track.TrackAccess.Equals(TrackAccess.Access[0]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @nameof(TrackAccess.Internal)</th>
-                                    }else if(track.TrackAccess == TrackAccess.Private)
+                                        <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @TrackAccess.Access[0]</th>
+                                    }
+                                    else if (track.TrackAccess.Equals(TrackAccess.Access[1]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @nameof(TrackAccess.Private)</th>
-                                    }else if(track.TrackAccess == TrackAccess.Public)
+                                        <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @TrackAccess.Access[1]</th>
+                                    }
+                                    else if(track.TrackAccess.Equals(TrackAccess.Access[2]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-globe"></i> @nameof(TrackAccess.Public)</th>
+                                        <th class="text-info" scope="row"><i class="bi bi-globe"></i> @TrackAccess.Access[2]</th>
                                     }
                                     <th class="text-warning" scope="row">@track.Extension</th>
                                     <th class="text-warning" scope="row">@Math.Round(track.Size,2) MB</th>

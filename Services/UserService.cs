@@ -37,6 +37,7 @@ namespace StockBand.Services
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
+
             var user = await _dbContext
                 .UserDbContext
                 .FirstOrDefaultAsync(x => x.Name.Equals(userDto.Name));

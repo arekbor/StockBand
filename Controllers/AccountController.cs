@@ -20,7 +20,8 @@ namespace Stock_Band.Controllers
         private readonly IMapper _mapper;
         private readonly ITrackService _trackService;
         private readonly IUserContextService _userContextService;
-        public AccountController(IUserContextService userContextService,  ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly IHttpContextAccessor _HttpContextAccessor;
+        public AccountController(IUserContextService userContextService, IHttpContextAccessor httpContextAccessor, ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
@@ -29,6 +30,7 @@ namespace Stock_Band.Controllers
             _mapper = mapper;
             _trackService = trackService;
             _userContextService = userContextService;
+            _HttpContextAccessor = httpContextAccessor;
         }
         [HttpGet]
         [Route("account/removeimage/{type}")]
@@ -138,13 +140,18 @@ namespace Stock_Band.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<IActionResult> LoginAsync(UserLoginDto user)
+        public async Task<IActionResult> LoginAsync(UserLoginDto user,string returnpage)
         {
             if (!ModelState.IsValid)
                 return View(user);
             var status = await _userService.LoginUserAsync(user);
+            if (status && returnpage is not null)
+            {
+                if(Uri.IsWellFormedUriString(returnpage,UriKind.Relative))
+                    return Redirect(returnpage);
+            }
             if (status)
-                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+                return RedirectToAction("profile", "account", new { name = user.Name });
             return View(user);
         }
         [HttpGet]
