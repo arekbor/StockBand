@@ -11,10 +11,33 @@
     {
         Layout = "_SimpleLayout";
     }
-    var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
+    var urlStream = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
+    var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("track","library",new {guid=Model.Guid})}";
 }
 
 <div class="container mt-4">
+    
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="shareModalLabel">Share @Model.Title</h5>
+            <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
+                </div>
+                <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlTrack">
+            </div>
+            <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <div class="row">
         <div class="col-12 text-center" >
             <h5>@Model.Title</h5>
@@ -26,7 +49,7 @@
                 <button id="button_stop" type="button" class="btn btn-secondary mx-2"><i class="bi bi-stop-fill"></i></button>
                 @if(User.Identity.IsAuthenticated)
                 {
-                    <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
                     @if (Model.IsDownloadle)
                     {
                         <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-cloud-arrow-down-fill"></i></button>
@@ -102,7 +125,19 @@
 @section Scripts{
 
 <script>
-    const audio = new Audio("@urlTrack");
+    function copyText(){
+        const text = document.getElementById("copyFuncion");
+        text.select();
+        text.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(text.value);
+        document.getElementById("textCopied").style = "display:block";
+        setTimeout(function(){
+            document.getElementById("textCopied").style = "display:none";
+        },3500);
+    }
+
+
+    const audio = new Audio("@urlStream");
     const button_play_pause = document.getElementById("button_play_pause");
     const duration_dynamic = document.getElementById("duration_dynamic");
     const duration_container = document.getElementById("duration_container");

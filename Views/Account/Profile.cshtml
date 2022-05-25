@@ -11,6 +11,8 @@
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
     var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
+    var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
+    
     var styleString = Model.IsHeaderUploaded == true ? $"background-image: url({urlHeader}); background-size: cover; background-repeat: no-repeat; background-position: center;": "background:#444444;";
 } 
 
@@ -38,6 +40,7 @@
         <div class="btn-group" role="group">
             @if (isAuthorized)
             {
+                <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
                 <a style="text-decoration: none;" asp-controller="account" asp-action="edit" class="btn btn-secondary mx-2 btn-sm btn-info text-start" role="button"><i class="bi bi-pencil-square"></i> Edit</a>
             }
         </div>
@@ -45,6 +48,29 @@
 </div>
 
 <div class="row bg-secondary mt-3 p-2">
+
+    @if (isAuthorized)
+    {
+        <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shareModalLabel">Share @Model.Name profile</h5>
+                        <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
+                            </div>
+                            <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlProfile">
+                        </div>
+                    <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
         <span><i class="bi bi-file-music-fill"></i> Tracks: @Model.TotalTracks</span>
     </div>
@@ -142,4 +168,19 @@
 else
 {
     <partial name="_NoResultPartial"/>
+}
+
+@section Scripts{
+    <script>
+    function copyText(){
+        const text = document.getElementById("copyFuncion");
+        text.select();
+        text.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(text.value);
+        document.getElementById("textCopied").style = "display:block";
+        setTimeout(function(){
+            document.getElementById("textCopied").style = "display:none";
+        },3500);
+    }
+    </script>
 }
