@@ -143,7 +143,7 @@ namespace StockBand.Services
 
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code04, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code04, adminId);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -191,7 +191,7 @@ namespace StockBand.Services
 
             await _dbContext.UserDbContext.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code03, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code03, _userContextService.GetUserId());
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -219,7 +219,7 @@ namespace StockBand.Services
             user.HashPassword = hashNewPassword;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code05, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code05, id);
             await LogoutUserAsync();
             _actionContext.ActionContext.ModelState.Clear();
             return true;
@@ -241,7 +241,7 @@ namespace StockBand.Services
             user.Color = userDto.Color;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code08, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code08, id);
             await RemoveUserCookie();
             await Cookie(user);
             _actionContext.ActionContext.ModelState.Clear();
@@ -264,7 +264,7 @@ namespace StockBand.Services
             user.Theme = userDto.Theme;
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code10, user.Id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code10, id);
             await RemoveUserCookie();
             await Cookie(user);
             _actionContext.ActionContext.ModelState.Clear();
@@ -374,11 +374,11 @@ namespace StockBand.Services
             await _dbContext.SaveChangesAsync();
             if(type == UserProfileImagesTypes.Avatar)
             {
-                await _userLogService.AddToLogsAsync(LogMessage.Code17, user.Id);
+                await _userLogService.AddToLogsAsync(LogMessage.Code17, id);
             }
             else
             {
-                await _userLogService.AddToLogsAsync(LogMessage.Code18, user.Id);
+                await _userLogService.AddToLogsAsync(LogMessage.Code18, id);
             }
             
             _actionContext.ActionContext.ModelState.Clear();

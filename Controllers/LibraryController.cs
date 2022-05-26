@@ -15,11 +15,13 @@ namespace StockBand.Controllers
         private readonly ITrackService _trackService;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public LibraryController(ITrackService trackService, IConfiguration configuration, IMapper mapper)
+        private readonly IUserContextService _userContextService;
+        public LibraryController(ITrackService trackService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
         {
             _trackService = trackService;
             _configuration = configuration;
             _mapper = mapper;
+            _userContextService = userContextService;
         }
         [HttpGet]
         [Route("library/downloadtrack/{guid:Guid}")]
@@ -47,20 +49,24 @@ namespace StockBand.Controllers
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
+            if (track.UserId != _userContextService.GetUserId() && !_userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+                return RedirectToAction("forbidden", "exceptions");
+
             var viewModel = _mapper.Map<EditTrackDto>(track);
             return View(viewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("library/edittrack/{guid:Guid}")]
-        public async Task<IActionResult> EditTrack(Guid guid, EditTrackDto track)
+        public async Task<IActionResult> EditTrack(Guid guid, EditTrackDto trackDto)
         {
             if (!ModelState.IsValid)
-                return View(track);
-            var status = await _trackService.EditTrack(guid, track);
+                return View(trackDto);
+
+            var status = await _trackService.EditTrack(guid, trackDto);
             if(status)
                 return RedirectToAction("track", "library", new { guid = guid });
-            return View("track", track);
+            return View(trackDto);
         }
 
         [HttpGet]

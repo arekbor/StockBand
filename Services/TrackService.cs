@@ -35,13 +35,19 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code35);
                 return false;
             }
+            var id = _userContextService.GetUserId();
+            if (track.UserId != id && !_userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
+                return false;
+            }
             track.Title = trackDto.Title;
             track.Description = trackDto.Description;
             track.TrackAccess = trackDto.TrackAccess;
 
             _applicationDbContext.TrackDbContext.Update(track);
             await _applicationDbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code19(track.Title), track.UserId);
+            await _userLogService.AddToLogsAsync(LogMessage.Code19(track.Title), id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -117,11 +123,12 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28(mb.ToString()));
                 return false;
             }
+            var id = _userContextService.GetUserId();
             track.Size = fileSize;
             track.TrackAccess = dto.TrackAccess;
             track.Guid = Guid.NewGuid();
             track.DateTimeCreate = DateTime.Now;
-            track.UserId = _userContextService.GetUserId();
+            track.UserId = id;
             track.Extension = fileExt;
 
             var trackName = $"{track.Guid}.{track.Extension}";
@@ -132,7 +139,7 @@ namespace StockBand.Services
             }
             await _applicationDbContext.TrackDbContext.AddAsync(track);
             await _applicationDbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code16(track.Title), track.UserId);
+            await _userLogService.AddToLogsAsync(LogMessage.Code16(track.Title), id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
