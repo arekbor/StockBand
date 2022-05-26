@@ -22,6 +22,24 @@ namespace StockBand.Controllers
             _mapper = mapper;
         }
         [HttpGet]
+        [Route("library/downloadtrack/{guid:Guid}")]
+        public async Task<IActionResult> DownloadTrack(Guid guid)
+        {
+            var track = await _trackService.GetTrack(guid);
+            if (track is null)
+                return RedirectToAction("badrequestpage", "exceptions");
+
+            if (!_trackService.VerifyAccessTrack(track))
+                return RedirectToAction("forbidden", "exceptions");
+
+            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+                return RedirectToAction("notfoundpage", "exceptions");
+
+            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            
+            return File(fileStream, "application/force-download", $"{track.Title}.{track.Extension}");
+        }
+        [HttpGet]
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid)
         {
@@ -74,6 +92,9 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
+            //TODO if not exists delete object of track
+            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+                return RedirectToAction("notfoundpage", "exceptions");
             return View(track);
         }
         [HttpGet]
@@ -90,9 +111,14 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
+
+            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+                return RedirectToAction("notfoundpage", "exceptions");
+
+            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            
             Response.Headers.Remove("Cache-Control");
             Response.Headers.Add("Accept-Ranges", "bytes");
-            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, "audio/mp3");
         }
     }

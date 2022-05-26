@@ -35,7 +35,6 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code35);
                 return false;
             }
-            track.IsDownloadle = trackDto.IsDownloadle;
             track.Title = trackDto.Title;
             track.Description = trackDto.Description;
             track.TrackAccess = trackDto.TrackAccess;

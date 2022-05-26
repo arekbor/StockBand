@@ -50,10 +50,7 @@
                 @if(User.Identity.IsAuthenticated)
                 {
                     <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
-                    @if (Model.IsDownloadle)
-                    {
-                        <button type="button" class="btn btn-secondary mx-2"><i class="bi bi-cloud-arrow-down-fill"></i></button>
-                    }
+                    <a asp-action="downloadtrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-file-earmark-arrow-down-fill"></i></a>
                     <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-pencil-square"></i></a>
                 }
              </div>
@@ -90,6 +87,10 @@
                                 <p>Access: @Model.TrackAccess</p>
                                 <p>Size: @Model.Size MB</p>
                                 <p>Type: @Model.Extension</p>
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    <p>Description: @Model.Description</p>
+                                }
                                 <p>Guid: @Model.Guid</p>
                             </div>
                         </div>

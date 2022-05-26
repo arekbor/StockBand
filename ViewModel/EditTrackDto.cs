@@ -14,8 +14,5 @@ namespace StockBand.ViewModel
         [Required]
         public string TrackAccess { get; set; }
         public int UserId { get; set; }
-        [Display(Name = "Downloadle")]
-        //TODO implement this
-        public bool IsDownloadle { get; set; }
     }
 }
