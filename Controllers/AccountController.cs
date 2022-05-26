@@ -96,12 +96,6 @@ namespace Stock_Band.Controllers
             return File(fileStream, $"image/{extFile}");
         }
         [HttpGet]
-        public IActionResult Edit()
-        {
-            return View();
-        }
-        
-        [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")
         {

@@ -13,5 +13,6 @@ namespace StockBand.Interfaces
         public Task<int> GetTracksCountByUserId(int id);
         public Task<string> GetLastUploadTrackNameByUserId(int id);
         public Task<double> GetTotalSizeOfTracksByUserId(int id);
+        public Task<bool> EditTrack(Guid guid, EditTrackDto track);
     }
 }

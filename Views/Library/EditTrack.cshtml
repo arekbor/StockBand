@@ -1,0 +1,50 @@
+﻿@model EditTrackDto
+@{
+    ViewData["Title"] = "Edit " + Model.Title;
+    Layout = "_Layout";
+}
+
+<div class="row mt-5">
+    <div class="d-flex justify-content-center">
+        <div class="card formBox">
+            <div class="card-header">
+                <h5>Edit user</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" asp-controller="library" asp-action="edittrack" asp-route-guid="@Model.Guid">
+                    <div class="validation text-danger" asp-validation-summary="All"></div>
+                    <div class="form-group mt-1">
+                        <label asp-for="Title"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Update title">
+                    </div>
+                    <div class="form-group mt-1">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label asp-for="TrackAccess"></label>
+                        <select asp-for="TrackAccess" class="form-control">
+                        @foreach (var item in TrackAccess.Access)
+                        {
+                            <option>@item</option>
+                        }
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input asp-for="IsDownloadle" type="checkbox" class="form-check-input" id="blockcheckbox">
+                        <label class="form-check-label" for="blockcheckbox">Downloadle</label>
+                    </div>
+                    <div class="form-group mt-3 text-center">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

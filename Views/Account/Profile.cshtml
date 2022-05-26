@@ -1,5 +1,6 @@
 ﻿@model UserDto
 @inject IConfiguration _configuration
+@inject ITrackService _trackService
 @{
     ViewData["Title"] = @Model.Name;
     Layout = "_Layout";
@@ -19,15 +20,14 @@
 <div class="row" style="@styleString">
     <div class="col-md-2 col-12 p-5 text-center">
         <div style="object-fit:cover;">
-            @if(!Model.IsAvatarUploaded)
-            {
-                <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
-            }
-            else
-            {
-                <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
-            }
-            
+        @if(!Model.IsAvatarUploaded)
+        {
+            <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
+        }
+        else
+        {
+            <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
+        }
         </div>
     </div>
 </div>
@@ -38,11 +38,11 @@
     </div>
         <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
         <div class="btn-group" role="group">
-            @if (isAuthorized)
-            {
-                <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
-                <a style="text-decoration: none;" asp-controller="account" asp-action="edit" class="btn btn-secondary mx-2 btn-sm btn-info text-start" role="button"><i class="bi bi-pencil-square"></i> Edit</a>
-            }
+        @if (isAuthorized)
+        {
+            <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-pencil-square"></i> Edit</button>
+        }
         </div>
     </div>
 </div>
@@ -51,11 +51,31 @@
 
     @if (isAuthorized)
     {
-        <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="shareModalLabel">Share @Model.Name profile</h5>
+                        <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                        <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12 mt-2">
+                            <i class="bi bi-person-bounding-box"></i>
+                            <a style="text-decoration: none;" asp-controller="account" asp-action="avatar" class="btn btn-link text-start" role="button">Avatar</a>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <i class="bi bi-image-alt"></i>
+                            <a style="text-decoration: none;" asp-controller="account" asp-action="header" class="btn btn-link text-start" role="button">Header</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shareModalLabel">Share</h5>
                         <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
                     </div>
                     <div class="modal-body">
@@ -81,9 +101,12 @@
         <span><i class="bi bi-hdd-rack-fill"></i> @Math.Round(Model.TotalSizeOfTracks,2) MB free of @float.Parse(_configuration["SizeTracksLimit"]) MB</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
-        <span><i class="bi bi-cloud-plus-fill"></i> Last upload: @Model.LastUpload</span>
+        <a asp-action="track" asp-controller="library" asp-route-guid="@_trackService.GetGuidTrackByTitle(Model.LastUpload).GetAwaiter().GetResult().ToString()" style="text-decoration: none;">
+            <i class="bi bi-cloud-plus-fill"></i> Last upload: @Model.LastUpload
+        </a>
     </div>
 </div>
+
 <div class="row">
     <div class="col-sm-12 col-md-6 col-lg-3 mt-3">
         <form method="get" asp-controller="@controllerName" asp-action="@acionName" asp-route-name="@Model.Name" autocomplete="off">

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
@@ -13,11 +14,37 @@ namespace StockBand.Controllers
     {
         private readonly ITrackService _trackService;
         private readonly IConfiguration _configuration;
-        public LibraryController(ITrackService trackService, IConfiguration configuration)
+        private readonly IMapper _mapper;
+        public LibraryController(ITrackService trackService, IConfiguration configuration, IMapper mapper)
         {
             _trackService = trackService;
             _configuration = configuration;
+            _mapper = mapper;
         }
+        [HttpGet]
+        [Route("library/edittrack/{guid:Guid}")]
+        public async Task<IActionResult> EditTrack(Guid guid)
+        {
+            var track = await _trackService.GetTrack(guid);
+            if (track is null)
+                return RedirectToAction("badrequestpage", "exceptions");
+
+            var viewModel = _mapper.Map<EditTrackDto>(track);
+            return View(viewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("library/edittrack/{guid:Guid}")]
+        public async Task<IActionResult> EditTrack(Guid guid, EditTrackDto track)
+        {
+            if (!ModelState.IsValid)
+                return View(track);
+            var status = await _trackService.EditTrack(guid, track);
+            if(status)
+                return RedirectToAction("track", "library", new { guid = guid });
+            return View("track", track);
+        }
+
         [HttpGet]
         public IActionResult AddTrack()
         {

@@ -25,6 +25,27 @@ namespace StockBand.Services
             _userContextService = userContextService;
             _userLogService = userLogService;
         }
+        public async Task<bool> EditTrack(Guid guid, EditTrackDto trackDto)
+        {
+            var track = await _applicationDbContext
+                .TrackDbContext
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if (track is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code35);
+                return false;
+            }
+            track.IsDownloadle = trackDto.IsDownloadle;
+            track.Title = trackDto.Title;
+            track.Description = trackDto.Description;
+            track.TrackAccess = trackDto.TrackAccess;
+
+            _applicationDbContext.TrackDbContext.Update(track);
+            await _applicationDbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code19(track.Title), track.UserId);
+            _actionContext.ActionContext.ModelState.Clear();
+            return true;
+        }
         public async Task<double> GetTotalSizeOfTracksByUserId(int id)
         {
             double totalSize = 0;

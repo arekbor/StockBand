@@ -48,6 +48,7 @@
         public static string Code32 = "Avatar doesn't exists";
         public static string Code33 = "Header doesn't exists";
         public static string Code34 = "File doesn't exists";
+        public static string Code35 = "Track doesn't exists";
 
     }
 }

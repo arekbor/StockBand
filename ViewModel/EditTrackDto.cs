@@ -1,11 +1,10 @@
-﻿using StockBand.Data;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
-    //TODO do dynamic variables DataAnnotations in appsettings
-    public class AddTrackDto
+    public class EditTrackDto
     {
+        public Guid Guid { get; set; }
         [Required]
         [MaxLength(50)]
         [MinLength(5)]
@@ -14,8 +13,9 @@ namespace StockBand.ViewModel
         public string Description { get; set; }
         [Required]
         public string TrackAccess { get; set; }
+        public int UserId { get; set; }
+        [Display(Name = "Downloadle")]
+        //TODO implement this
         public bool IsDownloadle { get; set; }
-        [Required]
-        public IFormFile File { get; set; }
     }
 }

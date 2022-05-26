@@ -49,7 +49,7 @@
                             <div class="btn-group mr-2 mt-3" role="group">
                                 <button id="uploadButton" type="submit" class="btn btn-success disabled">Upload header</button>
                                 <a asp-controller="account" asp-action="removeimage" asp-route-type="@UserProfileImagesTypes.Header" class="@buttonRemoveHeaderClass" role="button">Remove header</a>
-                                <a asp-controller="account" asp-action="edit" class="btn btn-warning" role="button">Back</a>
+                                <a asp-controller="account" asp-action="profile" asp-route-name="@User.Identity.Name" class="btn btn-warning" role="button">Back</a>
                             </div>
                         </div>
                     </form>
