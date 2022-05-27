@@ -191,7 +191,7 @@ namespace StockBand.Services
 
             await _dbContext.UserDbContext.AddAsync(user);
             await _dbContext.SaveChangesAsync();
-            await _userLogService.AddToLogsAsync(LogMessage.Code03, _userContextService.GetUserId());
+            await _userLogService.AddToLogsAsync(LogMessage.Code03, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
@@ -400,6 +400,7 @@ namespace StockBand.Services
                 new Claim("IsAvatarUploaded",user.IsAvatarUploaded.ToString()),
                 new Claim("IsHeaderUploaded",user.IsHeaderUploaded.ToString())
             };
+
             var claimIdentity = new ClaimsIdentity(claims, ConfigurationHelper.config.GetSection("CookieAuthenticationName").Value);
             var claimPrincipal = new ClaimsPrincipal(claimIdentity);
             var authenticationProperties = new AuthenticationProperties();
@@ -417,6 +418,18 @@ namespace StockBand.Services
             }
             await _httpContextAccessor.HttpContext.SignInAsync(claimPrincipal, authenticationProperties);
             return true;
+        }
+        public async Task<bool> IsUserImageExists(int id, UserProfileImagesTypes type)
+        {
+            var user = await _dbContext.UserDbContext.FirstOrDefaultAsync(x => x.Id == id);
+            if (user is null) 
+                return false;
+            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
+            var fileNameType = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+            var fileType = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
+            if (File.Exists($"{path}/{_configuration[fileNameType]}.{fileType}"))
+                return true;
+            return false;
         }
         public async Task<User> GetUserByName(string name)
         {

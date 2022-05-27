@@ -14,7 +14,6 @@ namespace StockBand.ViewModel
         public string Description { get; set; }
         [Required]
         public string TrackAccess { get; set; }
-        public bool IsDownloadle { get; set; }
         [Required]
         public IFormFile File { get; set; }
     }

@@ -74,8 +74,8 @@ namespace Stock_Band.Controllers
             return View();
         }
         [HttpGet]
-        [Route("account/streamavatar/{name}/{type}")]
-        public async Task<IActionResult> StreamAvatar(string name, UserProfileImagesTypes type)
+        [Route("account/streamimage/{name}/{type}")]
+        public async Task<IActionResult> StreamImage(string name, UserProfileImagesTypes type)
         {
             var user = await _userService.GetUserByName(name);
             if (user is null)

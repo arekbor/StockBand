@@ -10,8 +10,8 @@
     var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
     var isAdmin = User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
-    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
-    var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamavatar","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
+    var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
+    var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
     var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
     
     var styleString = Model.IsHeaderUploaded == true ? $"background-image: url({urlHeader}); background-size: cover; background-repeat: no-repeat; background-position: center;": "background:#444444;";
@@ -20,13 +20,13 @@
 <div class="row" style="@styleString">
     <div class="col-md-2 col-12 p-5 text-center">
         <div style="object-fit:cover;">
-        @if(!Model.IsAvatarUploaded)
+        @if(Model.IsAvatarUploaded)
         {
-            <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
+            <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
         }
         else
         {
-            <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
+            <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
         }
         </div>
     </div>

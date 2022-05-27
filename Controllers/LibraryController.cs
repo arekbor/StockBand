@@ -57,6 +57,15 @@ namespace StockBand.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("library/deletetrack/{guid:Guid}")]
+        public async Task<IActionResult> DeleteTrack(Guid guid)
+        {
+            //TODO make function
+            return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name});
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid, EditTrackDto trackDto)
         {
@@ -68,7 +77,6 @@ namespace StockBand.Controllers
                 return RedirectToAction("track", "library", new { guid = guid });
             return View(trackDto);
         }
-
         [HttpGet]
         public IActionResult AddTrack()
         {

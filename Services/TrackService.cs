@@ -87,7 +87,6 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
-            //TODO make test whole funcion
             ProccessDirectory();
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
@@ -165,7 +164,6 @@ namespace StockBand.Services
         }
         public bool VerifyAccessTrack(Track track)
         {
-            //TODO sprwadz to dokladnie
             if (track.TrackAccess.Equals(TrackAccess.Access[2]))
                 return true;
             if (_userContextService.GetUser().Identity.IsAuthenticated)
