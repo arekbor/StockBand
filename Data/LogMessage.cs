@@ -29,5 +29,7 @@
         public const string Code17 = "Avatar updated";
         public const string Code18 = "Header updated";
         public static Func<string, string> Code19 = x => $"Track '{x}' was updated";
+        public static Func<string, string> Code20 = x => $"Track '{x}' was deleted";
+        public static Func<string, string> Code21 = x => $"Track '{x}' was converted";
     }
 }

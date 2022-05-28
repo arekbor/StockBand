@@ -23,6 +23,28 @@ namespace StockBand.Controllers
             _mapper = mapper;
             _userContextService = userContextService;
         }
+
+        [Authorize(Policy = "AdminRolePolicy")]
+        [HttpGet]
+        public async Task<IActionResult> AllTracks(int pageNumber = 1, string search = "")
+        {
+            var tracks = _trackService
+                .GetAllTracks()
+                .Include(x => x.User)
+                .Where(x => x.Guid.ToString().Contains(search)
+                || x.Description.Contains(search)
+                || x.Extension.Contains(search)
+                || x.User.Name.Contains(search)
+                || x.TrackAccess.Contains(search)
+                || x.User.Id.ToString().Contains(search))
+                .OrderByDescending(x => x.DateTimeCreate);
+
+            if (!tracks.Any())
+                return View();
+            var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);
+            return View(paginatedList);
+        }
+
         [HttpGet]
         [Route("library/downloadtrack/{guid:Guid}")]
         public async Task<IActionResult> DownloadTrack(Guid guid)
@@ -34,11 +56,13 @@ namespace StockBand.Controllers
             if (!_trackService.VerifyAccessTrack(track))
                 return RedirectToAction("forbidden", "exceptions");
 
-            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
-                return RedirectToAction("notfoundpage", "exceptions");
+            if (!_trackService.IsTrackFileExists(track))
+            {
+                TempData["Message"] = Message.Code34;
+                return RedirectToAction("customexception", "exceptions");
+            }
 
             var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            
             return File(fileStream, "application/force-download", $"{track.Title}.{track.Extension}");
         }
         [HttpGet]
@@ -49,7 +73,7 @@ namespace StockBand.Controllers
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
-            if (track.UserId != _userContextService.GetUserId() && !_userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+            if(!_trackService.IsAuthorOrAdmin(track, _userContextService.GetUserId()))
                 return RedirectToAction("forbidden", "exceptions");
 
             var viewModel = _mapper.Map<EditTrackDto>(track);
@@ -57,11 +81,46 @@ namespace StockBand.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("library/wavtomp3/{guid:Guid}")]
+        public async Task<IActionResult> WavToMp3(Guid guid)
+        {
+            var track = await _trackService.GetTrack(guid);
+            if (track is null)
+                return RedirectToAction("notfoundpage", "exceptions");
+
+            if (!_trackService.IsAuthorOrAdmin(track, _userContextService.GetUserId()))
+                return RedirectToAction("forbidden", "exceptions");
+
+            if (!_trackService.IsTrackFileExists(track))
+            {
+                TempData["Message"] = Message.Code34;
+                return RedirectToAction("customexception", "exceptions");
+            }
+
+            if (!_trackService.IsTrackExtWav(track))
+            {
+                TempData["Message"] = Message.Code26;
+                return RedirectToAction("customexception", "exceptions");
+            }
+
+            if (await _trackService.WavToMp3(track))
+                return RedirectToAction("track", "library", new { guid = track.Guid });
+
+            return RedirectToAction("badrequestpage", "exceptions");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("library/deletetrack/{guid:Guid}")]
         public async Task<IActionResult> DeleteTrack(Guid guid)
         {
-            //TODO make function
-            return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name});
+            var track = await _trackService.GetTrack(guid);
+            if(track is null)
+                return RedirectToAction("notfoundpage", "exceptions");
+            if(!_trackService.IsAuthorOrAdmin(track,_userContextService.GetUserId()))
+                return RedirectToAction("forbidden", "exceptions");
+            if(await _trackService.DeleteTrack(track))
+                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+            return RedirectToAction("badrequestpage", "exceptions");
         }
 
         [HttpPost]
@@ -72,8 +131,7 @@ namespace StockBand.Controllers
             if (!ModelState.IsValid)
                 return View(trackDto);
 
-            var status = await _trackService.EditTrack(guid, trackDto);
-            if(status)
+            if(await _trackService.EditTrack(guid, trackDto))
                 return RedirectToAction("track", "library", new { guid = guid });
             return View(trackDto);
         }
@@ -87,8 +145,8 @@ namespace StockBand.Controllers
         {
             if (!ModelState.IsValid)
                 return View(dto);
-            var status = await _trackService.AddTrack(dto);
-            if (status)
+
+            if (await _trackService.AddTrack(dto))
                 return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title)});
             return View(dto);
         }
@@ -106,9 +164,11 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
-            //TODO if not exists delete object of track
-            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
-                return RedirectToAction("notfoundpage", "exceptions");
+            if (!_trackService.IsTrackFileExists(track))
+            {
+                TempData["Message"] = Message.Code34;
+                return RedirectToAction("customexception", "exceptions");
+            }
             return View(track);
         }
         [HttpGet]
@@ -125,13 +185,15 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
-
-            if (!System.IO.File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+            if (!_trackService.IsTrackFileExists(track))
                 return RedirectToAction("notfoundpage", "exceptions");
 
             var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            
+
             Response.Headers.Remove("Cache-Control");
+            Response.Headers.Append("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate");
+            Response.Headers.Append("Pragma", "no-cache");
+            Response.Headers.Append("Expires", "1");
             Response.Headers.Add("Accept-Ranges", "bytes");
             return File(fileStream, "audio/mp3");
         }

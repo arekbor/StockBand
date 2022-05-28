@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "All tracks";
+    Layout = "_Layout";
+    var urlActionContext = Url.ActionContext;
+    var urlQuery = urlActionContext.HttpContext.Request;
+    var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
+    var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
+}
+@model PaginetedList<Track>
+
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <form method="get" asp-controller="@controllerName" asp-action="@acionName" autocomplete="off">
+            <div class="input-group mb-3">
+                <input id="search" type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button id="searchSubmit" class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="@controllerName" asp-action="@acionName" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@if(Model is not null)
+{
+    <div class="table-responsive scrollable">
+        <table class="table text-nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Guid</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Extension</th>
+                    <th scope="col">DateTimeCreate</th>
+                    <th scope="col">TrackAccess</th>
+                    <th scope="col">Size</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var track in Model)
+            {
+                <tr>
+                    <td class="text-warning" scope="row">@track.Guid</td>
+                    <td><a style="text-decoration: none;" asp-controller="account" asp-action="profile" asp-route-name="@track.User.Name" class="btn btn-link btn-sm">@track.User.Name</a></td>
+                    <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link btn-sm">@track.Title</a></td>
+                    @if (!string.IsNullOrEmpty(track.Description))
+                    {
+                        <td class="text-warning">@track.Description</td>
+                    }
+                    else
+                    {
+                        <td class="text-warning">@Message.Code17</td>
+                    }
+                    <td class="text-info">@track.Extension</td>
+                    <td class="text-warning">@track.DateTimeCreate.ToString("g")</td>
+                    <td class="text-info">@track.TrackAccess</td>
+                    <td class="text-warning">@Math.Round(track.Size,2) MB</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="row pagginationDiv">
+        <div class="col-12 text-nowrap">
+            <small>@Model.Count of @Model.TotalCount</small>
+            <nav class="nav justify-content-center border-top border-white">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Pages(1))
+                    {
+                        <li class="page-item @Model.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+}
+else
+{
+    <partial name="_NoResultPartial"/>
+}
+

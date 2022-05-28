@@ -42,13 +42,13 @@
         public const string Code26 = "Unsupported type";
         public const string Code27 = "That title already exists";
         public static Func<string, string> Code28 = x => $"This file is too large to be uploaded. Files larger than {x} MB are not supported";
-        public static string Code29 = "Page not found";
-        public static string Code30 = "You don't have enough space for uplouding this file";
+        public const string Code29 = "Page not found";
+        public const string Code30 = "You don't have enough space for uplouding this file";
         public static Func<string, string> Code31 = x => $"This image is too large to be uploaded. Images larger than {x} MB are not supported";
-        public static string Code32 = "Avatar doesn't exists";
-        public static string Code33 = "Header doesn't exists";
-        public static string Code34 = "File doesn't exists";
-        public static string Code35 = "Track doesn't exists";
+        public const string Code32 = "Avatar doesn't exists";
+        public const string Code33 = "Header doesn't exists";
+        public const string Code34 = "File doesn't exists";
+        public const string Code35 = "Track doesn't exists";
 
     }
 }

@@ -1,0 +1,7 @@
+﻿@if(User.Identity.IsAuthenticated)
+{
+    <div class="input-group mb-3">
+        <a asp-action="profile" asp-controller="account" asp-route-name="@User.Identity.Name" class="btn btn-primary">Profile</a>
+        <a asp-action="index" asp-controller="home" class="btn btn-primary">Home</a>
+    </div>
+}

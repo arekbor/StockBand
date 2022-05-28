@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using NAudio.Wave;
+using NAudio.Lame;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
@@ -25,6 +28,57 @@ namespace StockBand.Services
             _userContextService = userContextService;
             _userLogService = userLogService;
         }
+        public async Task<bool> WavToMp3(Track track)
+        {
+            if (track is null)
+                return false;
+            var path = $"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}";
+            var target = $"{_configuration["TrackFilePath"]}{track.Guid}.mp3";
+            using (var reader = new AudioFileReader(path))
+            try
+            {
+                using (var writer = new LameMP3FileWriter(target, reader.WaveFormat, LAMEPreset.STANDARD))
+                {
+                    await reader.CopyToAsync(writer);
+                }
+            }
+            catch (Exception)
+            {
+               return false;
+            }
+            var bytes = await File.ReadAllBytesAsync(target);
+            var fileSize = Math.Round((float.Parse(bytes.Length.ToString()) / 1048576), 2);
+            track.Size = fileSize;
+            track.Extension = SupportedExts.Types[0];
+            _applicationDbContext.Update(track);
+            File.Delete(path);
+            await _applicationDbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code21(track.Title), _userContextService.GetUserId());
+            return true;
+        }
+        public bool IsTrackFileExists(Track track)
+        {
+            if (File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+                return true;
+            return false;
+        }
+        public bool IsTrackExtWav(Track track)
+        {
+            if (track is null)
+                return false;
+            if(track.Extension.Equals(SupportedExts.Types[1]))
+                return true;
+            return false;
+        }
+        public IQueryable<Track> GetAllTracks()
+        {
+            var tracks = _applicationDbContext
+                .TrackDbContext
+                .AsQueryable();
+            if (tracks is null)
+                return null;
+            return tracks;
+        }
         public async Task<bool> EditTrack(Guid guid, EditTrackDto trackDto)
         {
             var track = await _applicationDbContext
@@ -36,7 +90,7 @@ namespace StockBand.Services
                 return false;
             }
             var id = _userContextService.GetUserId();
-            if (track.UserId != id && !_userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+            if (!IsAuthorOrAdmin(track, id))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
                 return false;
@@ -85,6 +139,20 @@ namespace StockBand.Services
                 .CountAsync();
             return amount;
         }
+        public async Task<bool> DeleteTrack(Track track)
+        {
+            if (track is null)
+                return false;
+
+            var path = $"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}";
+            if (File.Exists(path))
+                File.Delete(path);
+
+            _applicationDbContext.Remove(track);
+            await _applicationDbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code20(track.Title), _userContextService.GetUserId());
+            return true;
+        }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
             ProccessDirectory();
@@ -104,7 +172,6 @@ namespace StockBand.Services
             }
             var track = _mapper.Map<Track>(dto);
             //TODO block button ''submit when uploading
-            //TODO add list of all track in admin panel
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext
@@ -172,7 +239,7 @@ namespace StockBand.Services
                     return true;
                 if (track.TrackAccess.Equals(TrackAccess.Access[0]))
                 {
-                    if (track.User.Id == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+                    if (IsAuthorOrAdmin(track,_userContextService.GetUserId()))
                         return true;
                 }
             }
@@ -188,6 +255,12 @@ namespace StockBand.Services
             if(track is null)
                 return Guid.Empty;
             return track.Guid;
+        }
+        public bool IsAuthorOrAdmin(Track track,int id)
+        {
+            if (track.UserId == id || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+                return true;
+            return false;
         }
         private void ProccessDirectory()
         {

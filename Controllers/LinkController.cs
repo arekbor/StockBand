@@ -20,14 +20,13 @@ namespace StockBand.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> UniqueLinkPanel(int pageNumber = 1, string search = "")
+        public async Task<IActionResult> LinkPanel(int pageNumber = 1, string search = "")
         {
             var links = _linkService
                 .GetAllLinks()
                 .Include(x => x.User)
                 .Where(x => x.Guid.ToString().Contains(search)
                 || x.DateTimeExpire.ToString().Contains(search)
-                || x.Type.Contains(search)
                 || x.User.Name.Contains(search)
                 || x.User.Id.ToString().Contains(search))
                 .OrderByDescending(x => x.DateTimeExpire);
@@ -62,15 +61,15 @@ namespace StockBand.Controllers
                 return View("shareurl", url);
             return RedirectToAction("badrequestpage", "exceptions");
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("link/deleteurl/{guid:guid}/{pNumber:int}")]
         public async Task<IActionResult> DeleteUrl(Guid guid, int pNumber)
         {
             var link = await _linkService.GetUniqueLink(guid);
             if (link is null)
-            {
                 return RedirectToAction("badrequestpage", "exceptions");
-            }
+
             if (!_linkService.VerifyAuthorId(link))
             {
                 TempData["Message"] = Message.Code22;
@@ -78,10 +77,11 @@ namespace StockBand.Controllers
             }
             var result = await _linkService.DeleteLink(link);
             if (result)
-                return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
+                return RedirectToAction("linkpanel", "link", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("link/refreshurl/{guid:guid}/{pNumber:int}")]
         public async Task<IActionResult> RefreshUrl(Guid guid, int pNumber)
         {
@@ -124,13 +124,13 @@ namespace StockBand.Controllers
                 TempData["Message"] = Message.Code19;
                 return RedirectToAction("customexception", "exceptions");
             }
-            var dto = _mapper.Map<UniqueLinkMinutesDto>(link);
+            var dto = _mapper.Map<LinkMinutesDto>(link);
             return View(dto);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("link/editminutes/{guid:Guid}")]
-        public async Task<IActionResult> EditMinutes(Guid guid, UniqueLinkMinutesDto dto)
+        public async Task<IActionResult> EditMinutes(Guid guid, LinkMinutesDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);

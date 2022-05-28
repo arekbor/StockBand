@@ -82,7 +82,7 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code02, _userContextService.GetUserId());
             return true;
         }
-        public IQueryable<User> GetAllUsersAsync()
+        public IQueryable<User> GetAllUsers()
         {
             var users = _dbContext
                 .UserDbContext

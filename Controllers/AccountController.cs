@@ -213,7 +213,7 @@ namespace Stock_Band.Controllers
         public async Task<IActionResult> UserLog(int pageNumber = 1, string search = "")
         {
             var userLogs = _userLogService
-                .GetAllUserLogsAsync()
+                .GetAllUserLogs()
                 .OrderByDescending(x => x.CreatedDate)
                 .Where(x => x.Action.Contains(search)
                 || x.Guid.ToString().Contains(search)

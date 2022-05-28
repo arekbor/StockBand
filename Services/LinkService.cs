@@ -32,7 +32,6 @@ namespace StockBand.Services
             var uniqueLink = new Link()
             {
                 Guid = guid,
-                Type = type,
                 UserId = userId,
                 Controller = controller,
                 Action = action,

@@ -31,7 +31,7 @@ namespace StockBand.Controllers
         public async Task<IActionResult> Userspanel(int pageNumber = 1, string search = "")
         {
            var users = _userService
-                .GetAllUsersAsync()
+                .GetAllUsers()
                 .Where(x => x.Id.ToString().Contains(search)
                 || x.Block.ToString().Contains(search)
                 || x.Name.Contains(search)
@@ -68,18 +68,19 @@ namespace StockBand.Controllers
                 return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser()
         {
             var uniqueLink = await _linkService
                 .AddLink(LinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
-            return RedirectToAction("uniquelinkpanel", "link");
+            return RedirectToAction("linkpanel", "link");
         }
         [HttpGet]
         public async Task<IActionResult> Logs(int pageNumber = 1, string search = "")
         {
             var logs = _userLogService
-                .GetAllLogsAsync()
+                .GetAllLogs()
                 .Include(x => x.User)
                 .Where(x => x.Action.Contains(search)
                 || x.User.Name.Contains(search)

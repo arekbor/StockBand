@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
-    public class UniqueLinkMinutesDto
+    public class LinkMinutesDto
     {
         public Guid Guid { get; set; }
         public string Type { get; set; }

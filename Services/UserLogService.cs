@@ -30,7 +30,7 @@ namespace StockBand.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
-        public IQueryable<UserLog> GetAllLogsAsync()
+        public IQueryable<UserLog> GetAllLogs()
         {
             var usersLogs = _dbContext
                 .UserLogDbContext
@@ -40,7 +40,7 @@ namespace StockBand.Services
             return usersLogs;
         }
         //
-        public IQueryable<UserLog> GetAllUserLogsAsync()
+        public IQueryable<UserLog> GetAllUserLogs()
         {
             var id = _userContextService.GetUserId();
             var userLogs = _dbContext
