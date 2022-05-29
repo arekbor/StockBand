@@ -6,6 +6,7 @@ using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
+using System.Net;
 
 namespace StockBand.Controllers
 {
@@ -65,6 +66,7 @@ namespace StockBand.Controllers
             var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, "application/force-download", $"{track.Title}.{track.Extension}");
         }
+        
         [HttpGet]
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid)
@@ -79,17 +81,16 @@ namespace StockBand.Controllers
             var viewModel = _mapper.Map<EditTrackDto>(track);
             return View(viewModel);
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("library/wavtomp3/{guid:Guid}")]
+        [Authorize(Policy = "AdminRolePolicy")]
         public async Task<IActionResult> WavToMp3(Guid guid)
         {
             var track = await _trackService.GetTrack(guid);
             if (track is null)
                 return RedirectToAction("notfoundpage", "exceptions");
-
-            if (!_trackService.IsAuthorOrAdmin(track, _userContextService.GetUserId()))
-                return RedirectToAction("forbidden", "exceptions");
 
             if (!_trackService.IsTrackFileExists(track))
             {
@@ -104,10 +105,10 @@ namespace StockBand.Controllers
             }
 
             if (await _trackService.WavToMp3(track))
-                return RedirectToAction("track", "library", new { guid = track.Guid });
-
+                return RedirectToAction("alltracks", "library");
             return RedirectToAction("badrequestpage", "exceptions");
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("library/deletetrack/{guid:Guid}")]
@@ -135,11 +136,13 @@ namespace StockBand.Controllers
                 return RedirectToAction("track", "library", new { guid = guid });
             return View(trackDto);
         }
+        
         [HttpGet]
         public IActionResult AddTrack()
         {
             return View();
         }
+        
         [HttpPost]
         public async Task<IActionResult> AddTrack(AddTrackDto dto)
         {
@@ -150,6 +153,7 @@ namespace StockBand.Controllers
                 return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title)});
             return View(dto);
         }
+        
         [HttpGet]
         [AllowAnonymous]
         [Route("library/track/{guid:Guid}")]
@@ -171,6 +175,7 @@ namespace StockBand.Controllers
             }
             return View(track);
         }
+        
         [HttpGet]
         [AllowAnonymous]
         [Route("library/stream/{guid:Guid}")]
@@ -188,14 +193,17 @@ namespace StockBand.Controllers
             if (!_trackService.IsTrackFileExists(track))
                 return RedirectToAction("notfoundpage", "exceptions");
 
-            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            var trackName = $"{track.Guid}.{track.Extension}";
 
-            Response.Headers.Remove("Cache-Control");
-            Response.Headers.Append("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate");
-            Response.Headers.Append("Pragma", "no-cache");
-            Response.Headers.Append("Expires", "1");
-            Response.Headers.Add("Accept-Ranges", "bytes");
-            return File(fileStream, "audio/mp3");
+            var memory = new MemoryStream();
+            var pathCombine = Path.Combine(UserPath.UserTracksPath(track.User.Name), trackName);
+            using (var stream = new FileStream(pathCombine, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, "audio/mpeg", $"{track.Title}.{track.Extension}", true);
+
         }
     }
 }

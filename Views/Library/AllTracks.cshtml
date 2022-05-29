@@ -6,6 +6,7 @@
     var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
 }
+@inject ITrackService _trackService
 @model PaginetedList<Track>
 
 <div class="row">
@@ -35,11 +36,13 @@
                     <th scope="col">DateTimeCreate</th>
                     <th scope="col">TrackAccess</th>
                     <th scope="col">Size</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
             @foreach (var track in Model)
             {
+                bool isWav = _trackService.IsTrackExtWav(_trackService.GetTrack(track.Guid).GetAwaiter().GetResult()) == true ? true : false;
                 <tr>
                     <td class="text-warning" scope="row">@track.Guid</td>
                     <td><a style="text-decoration: none;" asp-controller="account" asp-action="profile" asp-route-name="@track.User.Name" class="btn btn-link btn-sm">@track.User.Name</a></td>
@@ -56,6 +59,10 @@
                     <td class="text-warning">@track.DateTimeCreate.ToString("g")</td>
                     <td class="text-info">@track.TrackAccess</td>
                     <td class="text-warning">@Math.Round(track.Size,2) MB</td>
+                    @if (isWav)
+                    {
+                        <th><form method="post" asp-action="wavtomp3" asp-controller="library" asp-route-guid="@track.Guid"><button type="submit" class="btn btn-danger btn-sm">Format to mp3</button></form></th>
+                    }
                 </tr>
             }
             </tbody>

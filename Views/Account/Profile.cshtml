@@ -13,21 +13,12 @@
     var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
     var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
-    
-    var styleString = Model.IsHeaderUploaded == true ? $"background-image: url({urlHeader}); background-size: cover; background-repeat: no-repeat; background-position: center;": "background:#444444;";
 } 
 
-<div class="row" style="@styleString">
+<div class="row" style="background-image: url(@urlHeader); background-size: auto; background-repeat: no-repeat; background-position: center;">
     <div class="col-md-2 col-12 p-5 text-center">
         <div style="object-fit:cover;">
-        @if(Model.IsAvatarUploaded)
-        {
             <img class="rounded-circle" src="@urlAvatar" alt="Avatar Profile" style="width:120px; height:120px;">
-        }
-        else
-        {
-            <img class="rounded-circle" src="~/img/default_avatar.jpg" alt="Avatar Profile" style="width:120px; height:120px;">
-        }
         </div>
     </div>
 </div>
@@ -38,11 +29,11 @@
     </div>
         <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
         <div class="btn-group" role="group">
-        @if (isAuthorized)
-        {
             <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
-            <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-pencil-square"></i> Edit</button>
-        }
+            @if (isAuthorized)
+            {
+                <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-pencil-square"></i> Edit</button>
+            }
         </div>
     </div>
 </div>
@@ -71,26 +62,26 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="shareModalLabel">Share</h5>
-                        <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
-                            </div>
-                            <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlProfile">
+    }
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareModalLabel">Share</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
                         </div>
-                    <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
+                        <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlProfile">
                     </div>
+                <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
                 </div>
             </div>
         </div>
-    }
+    </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
         <span><i class="bi bi-file-music-fill"></i> Tracks: @Model.TotalTracks</span>
     </div>
@@ -121,6 +112,7 @@
     </div>
 </div>
 
+
 @if(Model.Tracks is not null)
 {
     <div class="row">
@@ -143,6 +135,7 @@
                         {
                             @foreach (var track in Model.Tracks)
                             {
+                                
                                 if(track.TrackAccess.Equals(TrackAccess.Access[0]) && !isAuthorized && !isAdmin){continue;}
                                 <tr>
                                     <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>

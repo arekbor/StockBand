@@ -325,10 +325,8 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code14);
                 return false;
             }
-            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
-
-            ProccessUserDirectory(_userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.Name).Value, 
-                _userContextService.GetUser().FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var username = _userContextService.GetUser().Identity.Name;
+            ProccessUserDirectory(username);
 
             var fileSize = Math.Round((float.Parse(userDto.Image.Length.ToString()) / 1048576), 2);
             var limit = Math.Round(float.Parse(_configuration["SizeImgLimit"]));
@@ -344,6 +342,8 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
                 return false;
             }
+            var path = UserPath.UserImagesPath(username);
+
             var fileNameType = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
             string[] Files = Directory.GetFiles(path);
             foreach (string file in Files)
@@ -440,11 +440,10 @@ namespace StockBand.Services
                 return null;
             return user;
         }
-        private void ProccessUserDirectory(string name, string id)
+        private void ProccessUserDirectory(string name)
         {
-            var folderName = $"{_configuration["UserProfilePrefixFolder"]}{id}{name}";
-            if (!Directory.Exists($"{_configuration["UserProfileContentPath"]}{folderName}"))
-                Directory.CreateDirectory($"{_configuration["UserProfileContentPath"]}{folderName}");
+            if (!Directory.Exists(UserPath.UserImagesPath(name)))
+                Directory.CreateDirectory(UserPath.UserImagesPath(name));
         }
     }
 }

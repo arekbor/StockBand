@@ -1,24 +1,5 @@
-﻿@inject IUserService _userService;
-
-@{
-    string urlAvatar = string.Empty;
-    var isAvatarUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsAvatarUploaded").Value);
-    if(isAvatarUploaded)
-    {
-        urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=User.FindFirst(x => x.Type == ClaimTypes.Name).Value, type=UserProfileImagesTypes.Avatar})}";
-    }
-}
-
-<li class="nav-item dropdown">
+﻿<li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" style="color:@User.FindFirst(x => x.Type == "Color").Value" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        @if (isAvatarUploaded)
-        {
-            <img src="@urlAvatar" class="rounded-circle" style="display:inline-block; height:25px; width:25px;  margin: auto;" alt="Avatar"/>
-        }
-        else
-        {
-            <img src="~/img/default_avatar.jpg" class="rounded-circle" style="display:inline-block; height:25px; width:25px; margin: auto; object-fit:cover;" alt="Avatar"/>
-        }
         @User.Identity.Name
     </a>
     <ul class="dropdown-menu dropdownCustom" aria-labelledby="dropdownMenuUserPanel">

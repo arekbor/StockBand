@@ -30,35 +30,35 @@ namespace StockBand.Services
         }
         public async Task<bool> WavToMp3(Track track)
         {
+            //TODO popraw jeszcze sciezki do zdjec uzytkownika
             if (track is null)
                 return false;
-            var path = $"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}";
-            var target = $"{_configuration["TrackFilePath"]}{track.Guid}.mp3";
-            using (var reader = new AudioFileReader(path))
-            try
+            var actualTrackName = $"{track.Guid}.{track.Extension}";
+            var targetTrackName = $"{track.Guid}.{SupportedExts.Types[0]}";
+
+            using (var reader = new AudioFileReader(Path.Combine(UserPath.UserTracksPath(track.User.Name), actualTrackName)))
+            using (var writer = new LameMP3FileWriter(Path.Combine(UserPath.UserTracksPath(track.User.Name), targetTrackName), reader.WaveFormat, LAMEPreset.STANDARD))
             {
-                using (var writer = new LameMP3FileWriter(target, reader.WaveFormat, LAMEPreset.STANDARD))
-                {
+                if (reader.CanRead)
                     await reader.CopyToAsync(writer);
-                }
+                else
+                    return false;
             }
-            catch (Exception)
-            {
-               return false;
-            }
-            var bytes = await File.ReadAllBytesAsync(target);
-            var fileSize = Math.Round((float.Parse(bytes.Length.ToString()) / 1048576), 2);
+            File.Delete(Path.Combine(UserPath.UserTracksPath(track.User.Name), actualTrackName));
+            var targetTrackBytes = await File.ReadAllBytesAsync(Path.Combine(UserPath.UserTracksPath(track.User.Name), targetTrackName));
+            var fileSize = Math.Round((float.Parse(targetTrackBytes.Length.ToString()) / 1048576), 2);
             track.Size = fileSize;
             track.Extension = SupportedExts.Types[0];
-            _applicationDbContext.Update(track);
-            File.Delete(path);
+            _applicationDbContext.TrackDbContext.Update(track);
+
             await _applicationDbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code21(track.Title), _userContextService.GetUserId());
             return true;
         }
         public bool IsTrackFileExists(Track track)
         {
-            if (File.Exists($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}"))
+            var trackName = $"{track.Guid}.{track.Extension}";
+            if (File.Exists(Path.Combine(UserPath.UserTracksPath(track.User.Name), trackName)))
                 return true;
             return false;
         }
@@ -143,10 +143,9 @@ namespace StockBand.Services
         {
             if (track is null)
                 return false;
-
-            var path = $"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}";
-            if (File.Exists(path))
-                File.Delete(path);
+            var trackName = $"{track.Guid}.{track.Extension}";
+            if (File.Exists(Path.Combine(UserPath.UserTracksPath(track.User.Name),trackName)))
+                File.Delete(Path.Combine(UserPath.UserTracksPath(track.User.Name), trackName));
 
             _applicationDbContext.Remove(track);
             await _applicationDbContext.SaveChangesAsync();
@@ -155,7 +154,6 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
-            ProccessDirectory();
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
             var limit = Math.Round(float.Parse(_configuration["SizeTracksLimit"]));
@@ -170,7 +168,9 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
                 return false;
             }
+            var username = _userContextService.GetUser().Identity.Name;
             var track = _mapper.Map<Track>(dto);
+            ProccessDirectory(username);
             //TODO block button ''submit when uploading
 
             var trackNameVerify = await _applicationDbContext
@@ -196,10 +196,9 @@ namespace StockBand.Services
             track.DateTimeCreate = DateTime.Now;
             track.UserId = id;
             track.Extension = fileExt;
-
             var trackName = $"{track.Guid}.{track.Extension}";
 
-            using (var fileStream = new FileStream(Path.Combine(_configuration["TrackFilePath"], trackName), FileMode.Create, FileAccess.Write))
+            using (var fileStream = new FileStream(Path.Combine(UserPath.UserTracksPath(username), trackName), FileMode.Create, FileAccess.Write))
             {
                 await dto.File.CopyToAsync(fileStream);
             }
@@ -262,11 +261,10 @@ namespace StockBand.Services
                 return true;
             return false;
         }
-        private void ProccessDirectory()
+        private void ProccessDirectory(string username)
         {
-            if (!Directory.Exists(_configuration["TrackFilePath"]))
-                Directory.CreateDirectory(_configuration["TrackFilePath"]);
+            if (!Directory.Exists(UserPath.UserTracksPath(username)))
+                Directory.CreateDirectory(UserPath.UserTracksPath(username));
         }
-         
     }
 }

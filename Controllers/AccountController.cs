@@ -32,6 +32,7 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
             _HttpContextAccessor = httpContextAccessor;
         }
+        
         [HttpGet]
         [Route("account/removeimage/{type}")]
         public async Task<IActionResult> RemoveImage(UserProfileImagesTypes type)
@@ -41,6 +42,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new {name = _userContextService.GetUser().Identity.Name});
             return View("avatar");
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Avatar(EditUserDto dto)
@@ -52,6 +54,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             return View(dto);
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Header(EditUserDto dto)
@@ -63,6 +66,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             return View(dto);
         }
+        
         [HttpGet]
         public IActionResult Avatar()
         {
@@ -73,6 +77,7 @@ namespace Stock_Band.Controllers
         {
             return View();
         }
+        
         [HttpGet]
         [Route("account/streamimage/{name}/{type}")]
         public async Task<IActionResult> StreamImage(string name, UserProfileImagesTypes type)
@@ -82,19 +87,37 @@ namespace Stock_Band.Controllers
             {
                 return RedirectToAction("badrequestpage", "exceptions");
             }
-            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
+            var typeImage = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
 
-            var fileName = type == UserProfileImagesTypes.Avatar ? "UserProfileFileNameAvatar" : "UserProfileFileNameHeader";
+            var extImage = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
 
-            var extFile = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
+            var imageName = $"{_configuration[typeImage]}.{extImage}";
 
-            var image = $"{_configuration[fileName]}.{extFile}";
+            var path = Path.Combine(UserPath.UserImagesPath(user.Name), imageName);
+            //TODO NIE DZIALA TO AWDWDAWDW!!!!!!!!!!!!!!!!
+            if(type == UserProfileImagesTypes.Avatar)
+            {
+                path = $"{_configuration["DefaultAvatarPath"]}";
+            }
+            if (type == UserProfileImagesTypes.Header)
+            {
+                path = $"{_configuration["DefaultAvatarPath"]}";
+            }
 
-            Response.Headers.Remove("Cache-Control");
-            Response.Headers.Add("Accept-Ranges", "bytes");
-            var fileStream = new FileStream($"{path}/{image}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            return File(fileStream, $"image/{extFile}");
+            //if (type == UserProfileImagesTypes.Avatar && !user.IsAvatarUploaded || !System.IO.File.Exists(path))
+            //{
+            //    path = $"{_configuration["DefaultAvatarPath"]}";
+            //}
+            //else if (type == UserProfileImagesTypes.Header && !user.IsHeaderUploaded || !System.IO.File.Exists(path))
+            //{
+            //    path = $"{_configuration["DefaultHeaderPath"]}";
+            //}
+
+
+            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            return File(fileStream, $"image/{extImage}");
         }
+        
         [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")
@@ -125,12 +148,14 @@ namespace Stock_Band.Controllers
             userDto.Tracks = paginatedList;
             return View(userDto);
         }
+        
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
@@ -148,6 +173,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new { name = user.Name });
             return View(user);
         }
+        
         [HttpGet]
         public async Task<IActionResult> LogoutAsync()
         {
@@ -156,6 +182,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("index", "home");
             return RedirectToAction("index", "home");
         }
+        
         [HttpGet]
         [Route("account/create/{guid:Guid}")]
         [AllowAnonymous]
@@ -178,6 +205,7 @@ namespace Stock_Band.Controllers
             }
             return View();
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("account/create/{guid:Guid}")]
@@ -191,11 +219,13 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("login", "account");
             return View(dto);
         }
+        
         [HttpGet]
         public IActionResult ChangePassword()
         {
             return View();
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
@@ -209,6 +239,7 @@ namespace Stock_Band.Controllers
             }
             return View(dto);
         }
+        
         [HttpGet]
         public async Task<IActionResult> UserLog(int pageNumber = 1, string search = "")
         {
@@ -224,16 +255,19 @@ namespace Stock_Band.Controllers
             var paginatedList = await PaginetedList<UserLog>.CreateAsync(userLogs.AsNoTracking(), pageNumber);
             return View(paginatedList);
         }
+        
         [HttpGet]
         public IActionResult UserSettings()
         {
             return View();
         }
+        
         [HttpGet]
         public IActionResult ChangeColor()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> ChangeColor(ChangeColorDto userDto)
         {
@@ -246,11 +280,13 @@ namespace Stock_Band.Controllers
             }
             return RedirectToAction("changecolor", "account", userDto);
         }
+        
         [HttpGet]
         public IActionResult ChangeTheme()
         {
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> ChangeTheme(ChangeThemeDto userDto)
         {

@@ -127,24 +127,10 @@
 @section Scripts{
 
 <script>
-    $(document).ready(function(){
-        $("#editModal").modal('show');
-    });
-
-
-    function copyText(){
-        const text = document.getElementById("copyFuncion");
-        text.select();
-        text.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(text.value);
-        document.getElementById("textCopied").style = "display:block";
-        setTimeout(function(){
-            document.getElementById("textCopied").style = "display:none";
-        },3500);
-    }
-
-
     const audio = new Audio("@urlStream");
+    audio.preload = true;
+    audio.load();
+    
     const button_play_pause = document.getElementById("button_play_pause");
     const duration_dynamic = document.getElementById("duration_dynamic");
     const duration_container = document.getElementById("duration_container");
