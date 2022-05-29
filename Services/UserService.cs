@@ -290,11 +290,9 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code33);
                 return false;
             }
-
-            var path = $"{_configuration["UserProfileContentPath"]}{_configuration["UserProfilePrefixFolder"]}{user.Id}{user.Name}";
             var file = type == UserProfileImagesTypes.Avatar ? _configuration["UserProfileFileNameAvatar"] : _configuration["UserProfileFileNameHeader"];
             var fileType = type == UserProfileImagesTypes.Avatar ? user.AvatarType : user.HeaderType;
-            var filePath = $"{path}/{file}.{fileType}";
+            var filePath = Path.Combine(UserPath.UserImagesPath(user.Name), $"{file}.{fileType}");
             if (!File.Exists(filePath))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code34);

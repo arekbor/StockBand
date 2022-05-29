@@ -19,6 +19,7 @@ namespace StockBand.Controllers
             _linkService = linkService;
             _mapper = mapper;
         }
+        
         [HttpGet]
         public async Task<IActionResult> LinkPanel(int pageNumber = 1, string search = "")
         {
@@ -37,6 +38,7 @@ namespace StockBand.Controllers
             var paginatedList = await PaginetedList<Link>.CreateAsync(links.AsNoTracking(), pageNumber);
             return View(paginatedList);
         }
+        
         [HttpGet]
         [Route("link/shareurl/{guid:guid}")]
         public async Task<IActionResult> ShareUrl(Guid guid)
@@ -61,6 +63,7 @@ namespace StockBand.Controllers
                 return View("shareurl", url);
             return RedirectToAction("badrequestpage", "exceptions");
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("link/deleteurl/{guid:guid}/{pNumber:int}")]
@@ -80,6 +83,7 @@ namespace StockBand.Controllers
                 return RedirectToAction("linkpanel", "link", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("link/refreshurl/{guid:guid}/{pNumber:int}")]
@@ -105,6 +109,7 @@ namespace StockBand.Controllers
                 return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
+        
         [HttpGet]
         [Route("link/editminutes/{guid:guid}")]
         public async Task<IActionResult> EditMinutes(Guid guid)
@@ -127,6 +132,7 @@ namespace StockBand.Controllers
             var dto = _mapper.Map<LinkMinutesDto>(link);
             return View(dto);
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("link/editminutes/{guid:Guid}")]

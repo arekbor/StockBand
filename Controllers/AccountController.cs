@@ -33,14 +33,15 @@ namespace Stock_Band.Controllers
             _HttpContextAccessor = httpContextAccessor;
         }
         
-        [HttpGet]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("account/removeimage/{type}")]
         public async Task<IActionResult> RemoveImage(UserProfileImagesTypes type)
         {
             var result = await _userService.RemoveUserImage(type);
             if(result)
                 return RedirectToAction("profile", "account", new {name = _userContextService.GetUser().Identity.Name});
-            return View("avatar");
+            return View(nameof(type));
         }
         
         [HttpPost]
@@ -93,29 +94,26 @@ namespace Stock_Band.Controllers
 
             var imageName = $"{_configuration[typeImage]}.{extImage}";
 
-            var path = Path.Combine(UserPath.UserImagesPath(user.Name), imageName);
-            //TODO NIE DZIALA TO AWDWDAWDW!!!!!!!!!!!!!!!!
-            if(type == UserProfileImagesTypes.Avatar)
-            {
-                path = $"{_configuration["DefaultAvatarPath"]}";
-            }
-            if (type == UserProfileImagesTypes.Header)
-            {
-                path = $"{_configuration["DefaultAvatarPath"]}";
-            }
-
-            //if (type == UserProfileImagesTypes.Avatar && !user.IsAvatarUploaded || !System.IO.File.Exists(path))
-            //{
-            //    path = $"{_configuration["DefaultAvatarPath"]}";
-            //}
-            //else if (type == UserProfileImagesTypes.Header && !user.IsHeaderUploaded || !System.IO.File.Exists(path))
-            //{
-            //    path = $"{_configuration["DefaultHeaderPath"]}";
-            //}
-
+            var path = RedirectPath(type, user, Path.Combine(UserPath.UserImagesPath(user.Name), imageName));
 
             var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            return File(fileStream, $"image/{extImage}");
+            return File(fileStream, "image/png");
+        }
+        private string RedirectPath(UserProfileImagesTypes type, User user, string path)
+        {
+            if (type == UserProfileImagesTypes.Avatar && user.IsAvatarUploaded == false)
+            {
+                return $"{_configuration["DefaultAvatarPath"]}";
+            }
+            if (type == UserProfileImagesTypes.Header && user.IsHeaderUploaded == false)
+            {
+                return $"{_configuration["DefaultHeaderPath"]}";
+            }
+            if (!System.IO.File.Exists(path))
+            {
+                return $"{_configuration["ErrorImagePath"]}";
+            }
+            return path;
         }
         
         [HttpGet]

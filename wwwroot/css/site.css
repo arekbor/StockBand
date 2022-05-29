@@ -57,10 +57,22 @@
     .formBox{
         width:100%;
     }
+    .profileHeader {
+        height: 200px;
+        
+    }
 }
 @media only screen and (min-width:920px) {
     .formBox {
         width: 50%;
+
+    }
+}
+
+@media only screen and (min-width:1200px) {
+
+    .profileHeader {
+        height: 320px;
     }
 }
 

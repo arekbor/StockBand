@@ -4,19 +4,34 @@
     Layout = "_layout";
 
     var isHeaderUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsHeaderUploaded").Value);
-
     string urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=User.Identity.Name, type=UserProfileImagesTypes.Header})}";
-    string buttonRemoveHeaderClass = string.Empty;
-
-    if (isHeaderUploaded)
-    {
-        buttonRemoveHeaderClass = "btn btn-danger mx-2";
-    }
-    else
-    {
-        buttonRemoveHeaderClass = "btn btn-danger mx-2 disabled";
-    }
 }
+@if (isHeaderUploaded)
+{
+    <div class="modal fade" id="removeHeaderModal" tabindex="-1" role="dialog" aria-labelledby="removeHeaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeHeaderModalLabel">Remove header</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span>Are you sure you want to remove header ?</span>
+                    </div>
+                    <form method="post" asp-action="removeimage" asp-controller="account" asp-route-type="@UserProfileImagesTypes.Header">
+                        <div class="form-group mt-3 text-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
 <div class="row mt-2">
     <div class="d-flex justify-content-center">
         <div class="card formBox"> 
@@ -36,7 +51,10 @@
                         <div class="col-12 text-center">
                             <div class="btn-group mr-2 mt-3" role="group">
                                 <button id="uploadButton" type="submit" class="btn btn-success disabled">Upload</button>
-                                <a asp-controller="account" asp-action="removeimage" asp-route-type="@UserProfileImagesTypes.Header" class="@buttonRemoveHeaderClass" role="button">Remove</a>
+                                @if (isHeaderUploaded)
+                                {
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#removeHeaderModal" class="btn btn-danger btn-sm">Remove</button>
+                                }
                                 <a asp-controller="account" asp-action="profile" asp-route-name="@User.Identity.Name" class="btn btn-warning" role="button">Back</a>
                             </div>
                         </div>
