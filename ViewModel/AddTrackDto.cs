@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
-    //TODO do dynamic variables DataAnnotations in appsettings
     public class AddTrackDto
     {
         [Required]

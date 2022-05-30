@@ -270,7 +270,6 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        //TODO check this funcion
         public async Task<bool> RemoveUserImage(UserProfileImagesTypes type)
         {
             var id = _userContextService.GetUserId();
@@ -364,7 +363,8 @@ namespace StockBand.Services
                 user.IsHeaderUploaded = true;
                 fileName = $"{_configuration["UserProfileFileNameHeader"]}.{user.HeaderType}";
             }
-            using (var fileStream = new FileStream(Path.Combine(path, fileName), FileMode.Create, FileAccess.Write))
+            var pathToImg = Path.Combine(path, fileName);
+            using (var fileStream = new FileStream(pathToImg, FileMode.Create, FileAccess.Write))
             {
                 await userDto.Image.CopyToAsync(fileStream);
             }

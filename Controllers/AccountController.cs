@@ -32,7 +32,49 @@ namespace Stock_Band.Controllers
             _userContextService = userContextService;
             _HttpContextAccessor = httpContextAccessor;
         }
-        
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Avatar()
+        {
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Header()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult UserSettings()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChangeColor()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ChangeTheme()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("account/removeimage/{type}")]
@@ -43,7 +85,7 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new {name = _userContextService.GetUser().Identity.Name});
             return View(nameof(type));
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Avatar(EditUserDto dto)
@@ -69,17 +111,6 @@ namespace Stock_Band.Controllers
         }
         
         [HttpGet]
-        public IActionResult Avatar()
-        {
-            return View();
-        }
-        [HttpGet]
-        public IActionResult Header()
-        {
-            return View();
-        }
-        
-        [HttpGet]
         [Route("account/streamimage/{name}/{type}")]
         public async Task<IActionResult> StreamImage(string name, UserProfileImagesTypes type)
         {
@@ -98,24 +129,7 @@ namespace Stock_Band.Controllers
 
             var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, "image/png");
-        }
-        private string RedirectPath(UserProfileImagesTypes type, User user, string path)
-        {
-            if (type == UserProfileImagesTypes.Avatar && user.IsAvatarUploaded == false)
-            {
-                return $"{_configuration["DefaultAvatarPath"]}";
-            }
-            if (type == UserProfileImagesTypes.Header && user.IsHeaderUploaded == false)
-            {
-                return $"{_configuration["DefaultHeaderPath"]}";
-            }
-            if (!System.IO.File.Exists(path))
-            {
-                return $"{_configuration["ErrorImagePath"]}";
-            }
-            return path;
-        }
-        
+        }        
         [HttpGet]
         [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")
@@ -145,13 +159,6 @@ namespace Stock_Band.Controllers
             
             userDto.Tracks = paginatedList;
             return View(userDto);
-        }
-        
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult Login()
-        {
-            return View();
         }
         
         [HttpPost]
@@ -218,12 +225,6 @@ namespace Stock_Band.Controllers
             return View(dto);
         }
         
-        [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
@@ -254,18 +255,6 @@ namespace Stock_Band.Controllers
             return View(paginatedList);
         }
         
-        [HttpGet]
-        public IActionResult UserSettings()
-        {
-            return View();
-        }
-        
-        [HttpGet]
-        public IActionResult ChangeColor()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> ChangeColor(ChangeColorDto userDto)
         {
@@ -279,12 +268,6 @@ namespace Stock_Band.Controllers
             return RedirectToAction("changecolor", "account", userDto);
         }
         
-        [HttpGet]
-        public IActionResult ChangeTheme()
-        {
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> ChangeTheme(ChangeThemeDto userDto)
         {
@@ -296,6 +279,23 @@ namespace Stock_Band.Controllers
                 return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
             }
             return RedirectToAction("changetheme", "account", userDto);
+        }
+
+        private string RedirectPath(UserProfileImagesTypes type, User user, string path)
+        {
+            if (type == UserProfileImagesTypes.Avatar && user.IsAvatarUploaded == false)
+            {
+                return $"{_configuration["DefaultAvatarPath"]}";
+            }
+            if (type == UserProfileImagesTypes.Header && user.IsHeaderUploaded == false)
+            {
+                return $"{_configuration["DefaultHeaderPath"]}";
+            }
+            if (!System.IO.File.Exists(path))
+            {
+                return $"{_configuration["ErrorImagePath"]}";
+            }
+            return path;
         }
     }
 }

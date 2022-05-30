@@ -24,6 +24,11 @@ namespace StockBand.Controllers
             _mapper = mapper;
             _userContextService = userContextService;
         }
+        [HttpGet]
+        public IActionResult AddTrack()
+        {
+            return View();
+        }
 
         [Authorize(Policy = "AdminRolePolicy")]
         [HttpGet]
@@ -62,8 +67,8 @@ namespace StockBand.Controllers
                 TempData["Message"] = Message.Code34;
                 return RedirectToAction("customexception", "exceptions");
             }
-
-            var fileStream = new FileStream($"{_configuration["TrackFilePath"]}{track.Guid}.{track.Extension}", FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
+            var trackName = $"{ track.Guid }.{ track.Extension}";
+            var fileStream = new FileStream(Path.Combine(UserPath.UserTracksPath(track.User.Name),trackName), FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
             return File(fileStream, "application/force-download", $"{track.Title}.{track.Extension}");
         }
         
@@ -135,12 +140,6 @@ namespace StockBand.Controllers
             if(await _trackService.EditTrack(guid, trackDto))
                 return RedirectToAction("track", "library", new { guid = guid });
             return View(trackDto);
-        }
-        
-        [HttpGet]
-        public IActionResult AddTrack()
-        {
-            return View();
         }
         
         [HttpPost]

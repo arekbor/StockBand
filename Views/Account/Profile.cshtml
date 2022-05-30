@@ -140,22 +140,22 @@
                                 <tr>
                                     <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>
                                         
-                                    <th class="text-warning" scope="row">@track.DateTimeCreate</th>
+                                    <td class="text-warning">@track.DateTimeCreate</td>
                                        
                                     @if (track.TrackAccess.Equals(TrackAccess.Access[0]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-lock-fill"></i> @TrackAccess.Access[0]</th>
+                                        <td class="text-info"><i class="bi bi-lock-fill"></i> @TrackAccess.Access[0]</td>
                                     }
                                     else if (track.TrackAccess.Equals(TrackAccess.Access[1]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-unlock-fill"></i> @TrackAccess.Access[1]</th>
+                                        <td class="text-info"><i class="bi bi-unlock-fill"></i> @TrackAccess.Access[1]</td>
                                     }
                                     else if(track.TrackAccess.Equals(TrackAccess.Access[2]))
                                     {
-                                        <th class="text-info" scope="row"><i class="bi bi-globe"></i> @TrackAccess.Access[2]</th>
+                                        <td class="text-info"><i class="bi bi-globe"></i> @TrackAccess.Access[2]</td>
                                     }
-                                    <th class="text-warning" scope="row">@track.Extension</th>
-                                    <th class="text-warning" scope="row">@Math.Round(track.Size,2) MB</th>
+                                    <td class="text-warning">@track.Extension</td>
+                                    <td class="text-warning">@Math.Round(track.Size,2) MB</td>
                                 </tr>
                             }
                         }

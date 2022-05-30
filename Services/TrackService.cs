@@ -30,7 +30,6 @@ namespace StockBand.Services
         }
         public async Task<bool> WavToMp3(Track track)
         {
-            //TODO popraw jeszcze sciezki do zdjec uzytkownika
             if (track is null)
                 return false;
             var actualTrackName = $"{track.Guid}.{track.Extension}";
@@ -107,17 +106,17 @@ namespace StockBand.Services
         }
         public async Task<double> GetTotalSizeOfTracksByUserId(int id)
         {
-            double totalSize = 0;
-            var tracks = await _applicationDbContext
-                .TrackDbContext
-                .Where(x => x.UserId == id)
-                .Select(x => x.Size)
-                .ToListAsync();
-            if(tracks is null)
-                totalSize = 0;
-            foreach (var item in tracks)
-                totalSize += item;
-            return totalSize;
+            var user = await _applicationDbContext
+                .UserDbContext
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if(user is null)
+                return 0;
+            DirectoryInfo dirInfo = new DirectoryInfo(UserPath.UserTracksPath(user.Name));
+            if (!dirInfo.Exists)
+                return 0;
+            long dirSize = await Task.Run(() => dirInfo.EnumerateFiles("*", SearchOption.AllDirectories).Sum(file => file.Length));
+            var result = Convert.ToDouble(dirSize);
+            return Math.Round(result/1048576, 2);
         }
         public async Task<string> GetLastUploadTrackNameByUserId(int id)
         {
@@ -171,7 +170,6 @@ namespace StockBand.Services
             var username = _userContextService.GetUser().Identity.Name;
             var track = _mapper.Map<Track>(dto);
             ProccessDirectory(username);
-            //TODO block button ''submit when uploading
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext

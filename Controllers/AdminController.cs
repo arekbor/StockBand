@@ -27,6 +27,7 @@ namespace StockBand.Controllers
             _linkService = linkService;
             _configuration = configuration;
         }
+        
         [HttpGet]
         public async Task<IActionResult> Userspanel(int pageNumber = 1, string search = "")
         {
@@ -45,6 +46,7 @@ namespace StockBand.Controllers
             return View(paginatedList);
 
         }
+        
         [HttpGet]
         [Route("admin/edituser/{id:int}")]
         public async Task<IActionResult> EditUser(int id)
@@ -56,6 +58,7 @@ namespace StockBand.Controllers
             var viewModel = _mapper.Map<SettingsUserDto>(user);
             return View(viewModel);
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("admin/edituser/{id:int}")]
@@ -68,6 +71,7 @@ namespace StockBand.Controllers
                 return RedirectToAction("userspanel", "admin");
             return View(userDto);
         }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateUser()
@@ -76,6 +80,7 @@ namespace StockBand.Controllers
                 .AddLink(LinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
             return RedirectToAction("linkpanel", "link");
         }
+        
         [HttpGet]
         public async Task<IActionResult> Logs(int pageNumber = 1, string search = "")
         {

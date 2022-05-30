@@ -10,7 +10,6 @@ namespace StockBand.ViewModel
         public virtual User User { get; set; }
         public string Controller { get; set; }
         public string Action { get; set; }
-        //TODO to ustaw max minutes z appsettings.json
         [Required]
         [Range(0, 60)]
         public int Minutes { get; set; }

@@ -1,6 +1,6 @@
 ﻿@model EditUserDto
 @{
-    ViewData["Title"] = "Edit avatar";
+    ViewData["Title"] = PageTitle.PageTitle06;
     Layout = "_layout";
 
     var isAvatarUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsAvatarUploaded").Value);

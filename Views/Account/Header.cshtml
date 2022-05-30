@@ -1,6 +1,6 @@
 ﻿@model EditUserDto
 @{
-    ViewData["Title"] = "Edit header";
+    ViewData["Title"] = PageTitle.PageTitle11;
     Layout = "_layout";
 
     var isHeaderUploaded = bool.Parse(User.FindFirst(x => x.Type == "IsHeaderUploaded").Value);

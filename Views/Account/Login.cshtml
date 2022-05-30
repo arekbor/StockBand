@@ -1,11 +1,10 @@
 ﻿@model UserLoginDto
 @{
+    ViewData["Title"] = PageTitle.PageTitle12;
     Layout = "_SimpleLayout";
     var urlActionContext = Url.ActionContext;
     var urlQuery = urlActionContext.HttpContext.Request;
     var returnpage = !string.IsNullOrEmpty(urlQuery.Query["returnpage"].ToString()) ? urlQuery.Query["returnpage"].ToString() : string.Empty;
-    ViewData["Title"] = "Sign In";
-    
 }
 
 <div class="row mt-5">

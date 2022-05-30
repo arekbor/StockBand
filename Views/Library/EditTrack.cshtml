@@ -1,7 +1,7 @@
 ﻿@model EditTrackDto
 @inject ITrackService _trackService
 @{
-    ViewData["Title"] = "Edit " + Model.Title;
+    ViewData["Title"] = PageTitle.PageTitle21(Model.Title);
     Layout = "_Layout";
 }
 
