@@ -118,51 +118,20 @@
     <div class="row">
         @if(Model.Tracks is not null)
         {
-            <div class="col-12" >
-                <div class="table-responsive scrollable">
-                    <table class="table text-nowrap">
-                        <thead>
-                            <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Posted</th>
-                                <th scope="col">Access</th>
-                                <th scope="col">Type</th>
-                                <th scope="col">Size</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        @if (Model.Tracks is not null)
-                        {
-                            @foreach (var track in Model.Tracks)
-                            {
-                                
-                                if(track.TrackAccess.Equals(TrackAccess.Access[0]) && !isAuthorized && !isAdmin){continue;}
-                                <tr>
-                                    <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link pt-0">@track.Title</a></td>
-                                        
-                                    <td class="text-warning">@track.DateTimeCreate</td>
-                                       
-                                    @if (track.TrackAccess.Equals(TrackAccess.Access[0]))
-                                    {
-                                        <td class="text-info"><i class="bi bi-lock-fill"></i> @TrackAccess.Access[0]</td>
-                                    }
-                                    else if (track.TrackAccess.Equals(TrackAccess.Access[1]))
-                                    {
-                                        <td class="text-info"><i class="bi bi-unlock-fill"></i> @TrackAccess.Access[1]</td>
-                                    }
-                                    else if(track.TrackAccess.Equals(TrackAccess.Access[2]))
-                                    {
-                                        <td class="text-info"><i class="bi bi-globe"></i> @TrackAccess.Access[2]</td>
-                                    }
-                                    <td class="text-warning">@track.Extension</td>
-                                    <td class="text-warning">@Math.Round(track.Size,2) MB</td>
-                                </tr>
-                            }
-                        }
-                        </tbody>
-                    </table>
+            foreach (var item in Model.Tracks)
+            {
+                
+                <div class="col-md-2 col-6 p-3 home-item1">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <a asp-action="track" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration: none;">
+                                <h1><i class="bi bi-file-earmark-music-fill"></i></h1>
+                                <span class="mt-0 align-text-top">@item.Title</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
     <div class="row pagginationDiv">
