@@ -270,6 +270,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        //TODO zablokuj usuwanie gdy bool IsAvatarUplaoded lub IsHeaderUploaded jest na true ale wyswietla zdjecie z 404
         public async Task<bool> RemoveUserImage(UserProfileImagesTypes type)
         {
             var id = _userContextService.GetUserId();
@@ -309,6 +310,9 @@ namespace StockBand.Services
                 user.HeaderType = String.Empty;
                 user.IsHeaderUploaded = false;
             }
+            _dbContext.UserDbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+
             _actionContext.ActionContext.ModelState.Clear();
             await Cookie(user);
             return true;

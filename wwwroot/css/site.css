@@ -85,12 +85,7 @@
     -ms-user-select: none;
     user-select: none;
 }
-.home-item1 {
-    border: 1px solid #202227;
-    opacity: 0.5;
-}
 
-.home-item1 a:hover {
-    border: 1px solid #495a6c;
-    opacity: 1.0;
+.icon-item a:hover {
+    color: gray;
 }
