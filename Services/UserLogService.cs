@@ -39,7 +39,6 @@ namespace StockBand.Services
                 return null;
             return usersLogs;
         }
-        //
         public IQueryable<UserLog> GetAllUserLogs()
         {
             var id = _userContextService.GetUserId();

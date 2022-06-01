@@ -15,5 +15,7 @@ namespace StockBand.Models
         public int UserId { get; set; }
         public virtual User User { get; set; }
         public double Size { get; set; }
+        public virtual Album Album { get; set;}
+        public int AlbumGuid { get; set; }
     }
 }

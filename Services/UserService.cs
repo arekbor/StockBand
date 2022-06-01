@@ -22,7 +22,6 @@ namespace StockBand.Services
         private readonly ILinkService _linkService;
         private readonly IUserContextService _userContextService;
         private readonly IConfiguration _configuration;
-
         public UserService(IConfiguration configuration, ApplicationDbContext dbContext, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
@@ -270,7 +269,6 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        //TODO zablokuj usuwanie gdy bool IsAvatarUplaoded lub IsHeaderUploaded jest na true ale wyswietla zdjecie z 404
         public async Task<bool> RemoveUserImage(UserProfileImagesTypes type)
         {
             var id = _userContextService.GetUserId();
@@ -298,7 +296,6 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code34);
                 return false;
             }
-                
             File.Delete(filePath);
             if(type == UserProfileImagesTypes.Avatar)
             {

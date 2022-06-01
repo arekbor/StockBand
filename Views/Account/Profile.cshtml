@@ -29,10 +29,11 @@
     </div>
         <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
         <div class="btn-group" role="group">
-            <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn mx-2 btn-sm btn-info text-start"><i class="bi bi-share-fill"></i> Share</button>
             @if (isAuthorized)
             {
-                <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-secondary mx-2 btn-sm btn-info text-start"><i class="bi bi-pencil-square"></i> Edit</button>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#editModal" class="btn mx-2 btn-sm btn-info text-start"><i class="bi bi-pencil-square"></i> Edit profile</button>
+                <a asp-action="addalbum" asp-controller="library" class="btn mx-2 btn-sm btn-info"><i class="bi bi-folder-plus"></i> Add album</a>
             }
         </div>
     </div>
@@ -82,6 +83,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
         <span><i class="bi bi-file-music-fill"></i> Tracks: @Model.TotalTracks</span>
     </div>

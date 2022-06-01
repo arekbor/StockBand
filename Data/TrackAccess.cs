@@ -6,7 +6,7 @@
         {
             "private",
             "internal",
-            "public",
+            "public"
         };
     }
 }

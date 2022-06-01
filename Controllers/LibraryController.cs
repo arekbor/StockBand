@@ -14,15 +14,27 @@ namespace StockBand.Controllers
     public class LibraryController : Controller
     {
         private readonly ITrackService _trackService;
-        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
         public LibraryController(ITrackService trackService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
         {
             _trackService = trackService;
-            _configuration = configuration;
             _mapper = mapper;
             _userContextService = userContextService;
+        }
+        [HttpGet]
+        public IActionResult AddAlbum()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAlbum(AddAlbumDto albumDto)
+        {
+            if (!ModelState.IsValid)
+                return View(albumDto);
+            return RedirectToAction("index", "home");
         }
         [HttpGet]
         public IActionResult AddTrack()

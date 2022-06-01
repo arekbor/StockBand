@@ -5,7 +5,7 @@
         public static string[] Themes =
         {
             "basic",
-            "slate",
+            "slate"
         };
     }
 }

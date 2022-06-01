@@ -18,7 +18,6 @@ namespace StockBand.Services
             }
             return _httpContextAccessor?.HttpContext?.User as ClaimsPrincipal;
         }
-
         public int GetUserId()
         {
             return int.Parse(GetUser()?.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);

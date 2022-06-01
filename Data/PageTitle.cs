@@ -26,5 +26,6 @@
         public const string PageTitle22 = "Edit expire time of link";
         public const string PageTitle23 = "Link panel";
         public const string PageTitle24 = "Share link";
+        public const string PageTitle25 = "Add album";
     }
 }

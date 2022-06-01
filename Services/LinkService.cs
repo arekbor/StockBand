@@ -110,7 +110,6 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code13(link.Guid), _userContextService.GetUserId());
             return true;
         }
-
         public async Task<bool> SetMinutes(Link link, int minutes)
         {
             link.Minutes = minutes;

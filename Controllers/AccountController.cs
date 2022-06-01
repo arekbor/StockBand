@@ -280,7 +280,6 @@ namespace Stock_Band.Controllers
             }
             return RedirectToAction("changetheme", "account", userDto);
         }
-
         private string RedirectPath(UserProfileImagesTypes type, User user, string path)
         {
             if (type == UserProfileImagesTypes.Avatar && user.IsAvatarUploaded == false)
