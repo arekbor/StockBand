@@ -49,6 +49,7 @@
         public const string Code33 = "Header doesn't exists";
         public const string Code34 = "File doesn't exists";
         public const string Code35 = "Track doesn't exists";
+        public const string Code36 = "Object doesn't exists";
 
     }
 }

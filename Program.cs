@@ -49,6 +49,7 @@ builder.Services.AddScoped<IUserLogService, UserLogService>();
 builder.Services.AddScoped<ILinkService, LinkService>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IAlbumService, AlbumService>();
 
 var app = builder.Build();
 

@@ -16,11 +16,13 @@ namespace StockBand.Controllers
         private readonly ITrackService _trackService;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
-        public LibraryController(ITrackService trackService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
+        private readonly IAlbumService _albumService;
+        public LibraryController(ITrackService trackService, IAlbumService albumService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
         {
             _trackService = trackService;
             _mapper = mapper;
             _userContextService = userContextService;
+            _albumService = albumService;
         }
         [HttpGet]
         public IActionResult AddAlbum()
@@ -34,7 +36,9 @@ namespace StockBand.Controllers
         {
             if (!ModelState.IsValid)
                 return View(albumDto);
-            return RedirectToAction("index", "home");
+            if(await _albumService.AddAlbumAsync(albumDto))
+                return RedirectToAction("profile", "account", new {name = _userContextService.GetUser().Identity.Name });
+            return View(albumDto);
         }
         [HttpGet]
         public IActionResult AddTrack()

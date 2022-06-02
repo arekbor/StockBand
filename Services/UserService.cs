@@ -183,7 +183,11 @@ namespace StockBand.Services
                 return false;
             }
             var user = _mapper.Map<User>(userDto);
-
+            if (user is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code36);
+                return false;
+            }
             var hashedPwd = _passwordHasher.HashPassword(user, userDto.Password);
             user.HashPassword = hashedPwd;
             user.CreatedTime = DateTime.Now;

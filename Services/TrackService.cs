@@ -169,6 +169,11 @@ namespace StockBand.Services
             }
             var username = _userContextService.GetUser().Identity.Name;
             var track = _mapper.Map<Track>(dto);
+            if(track is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code36);
+                return false;
+            }
             ProccessDirectory(username);
 
             var trackNameVerify = await _applicationDbContext
