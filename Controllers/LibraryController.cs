@@ -41,8 +41,13 @@ namespace StockBand.Controllers
             return View(albumDto);
         }
         [HttpGet]
-        public IActionResult AddTrack()
+        public async Task<IActionResult> AddTrack()
         {
+            if (await _albumService.GetCountOfAlbums(_userContextService.GetUserId()) <= 0)
+            {
+                TempData["Message"] = Message.Code40;
+                return RedirectToAction("customexception", "exceptions");
+            }
             return View();
         }
 
@@ -163,7 +168,6 @@ namespace StockBand.Controllers
         {
             if (!ModelState.IsValid)
                 return View(dto);
-
             if (await _trackService.AddTrack(dto))
                 return RedirectToAction("track", "library",new {guid = await _trackService.GetGuidTrackByTitle(dto.Title)});
             return View(dto);

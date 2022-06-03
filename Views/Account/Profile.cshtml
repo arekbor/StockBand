@@ -115,19 +115,19 @@
 </div>
 
 
-@if(Model.Tracks is not null)
+@if(Model.Albums is not null)
 {
     <div class="row">
-        @if(Model.Tracks is not null)
+        @if(Model.Albums is not null)
         {
-            foreach (var item in Model.Tracks)
+            foreach (var item in Model.Albums)
             {
                 <div class="col-md-2 col-6 p-3 icon-item">
                     <div class="row">
                         <div class="col-12 text-center">
                             <a asp-action="track" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration: none;">
-                                <h1><i class="bi bi-file-earmark-music-fill"></i></h1>
-                                <span class="mt-0 align-text-top">@item.Title</span>
+                                <h1><i class="bi bi-folder"></i></h1>
+                                <span class="mt-0 align-text-top">@item.Name</span>
                             </a>
                         </div>
                     </div>
@@ -137,15 +137,15 @@
     </div>
     <div class="row pagginationDiv">
         <div class="col-12 text-nowrap">
-            <small>@Model.Tracks.Count of @Model.Tracks.TotalCount</small>
+            <small>@Model.Albums.Count of @Model.Albums.TotalCount</small>
             <nav class="nav justify-content-center border-top border-white">
                 <ul class="pagination mt-2">
-                    <li class="page-item @Model.Tracks.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Tracks.PageIndex-1)">Previous</a></li>
-                    @foreach (var item in Model.Tracks.Pages(1))
+                    <li class="page-item @Model.Albums.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Albums.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Albums.Pages(1))
                     {
-                        <li class="page-item @Model.Tracks.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                        <li class="page-item @Model.Albums.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
                     }
-                    <li class="page-item @Model.Tracks.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Tracks.PageIndex+1)">Next</a></li>
+                    <li class="page-item @Model.Albums.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Albums.PageIndex+1)">Next</a></li>
                 </ul>
             </nav>
         </div>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
@@ -14,13 +15,15 @@ namespace StockBand.Services
         private readonly IUserContextService _userContextService;
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
-        public AlbumService(ApplicationDbContext dbContext, IActionContextAccessor actionContext, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
+        private readonly IConfiguration _configuration;
+        public AlbumService(ApplicationDbContext dbContext, IActionContextAccessor actionContext,IConfiguration configuration, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
         {
             _dbContext = dbContext;
             _actionContext = actionContext;
             _userContextService = userContextService;
             _mapper = mapper;
             _userLogService = userLogService;
+            _configuration = configuration;
         }
         public async Task<bool> AddAlbumAsync(AddAlbumDto addAlbumDto)
         {
@@ -30,9 +33,25 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code36);
                 return false;
             }
+
+            var albumNameVerify = await _dbContext
+                .AlbumDbContext
+                .AnyAsync(x => x.Name == album.Name);
+            if (albumNameVerify)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code37);
+                return false;
+            }
+
+            if(await GetCountOfAlbums(_userContextService.GetUserId()) >= int.Parse(_configuration["MaxCountOfAlbums"]))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code38);
+                return false;
+            }
+
             var id = _userContextService.GetUserId();
             album.UserId = id;
-            album.DateTimeCreated = DateTime.Now;
+            album.DateTimeCreate = DateTime.Now;
 
             await _dbContext.AlbumDbContext.AddAsync(album);
             await _dbContext.SaveChangesAsync();
@@ -41,6 +60,33 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
 
+        }
+        public async Task<int> GetCountOfAlbums(int userId)
+        {
+            var count = await _dbContext
+                .AlbumDbContext
+                .Where(x => x.UserId == userId)
+                .CountAsync();
+            return count;
+        }
+        public IQueryable<Album> GetAllUserAlbums(int id)
+        {
+            var albums = _dbContext
+                .AlbumDbContext
+                .Where(x => x.UserId == id)
+                .AsQueryable();
+            if (albums is null)
+                return null;
+            return albums;
+        }
+        public async Task<Album> GetAlbumByName(string name)
+        {
+            var album = await _dbContext
+                .AlbumDbContext
+                .FirstOrDefaultAsync(x => x.Name == name);
+            if (album is null)
+                return null;
+            return album;
         }
     }
 }

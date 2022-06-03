@@ -3,6 +3,8 @@
     Layout = "_layout";
 }
 @model AddTrackDto
+@inject IAlbumService _albumService
+@inject IUserContextService _userContextService
 
 <div class="row mt-5">
     <div class="d-flex justify-content-center">
@@ -36,6 +38,16 @@
                                 }
                             </select>
                         </div>
+                        <div class="form-group mt-1">
+                            <label>Choose album</label>
+                            <select asp-for="AlbumName" class="form-control">
+                                @foreach (var item in _albumService.GetAllUserAlbums(_userContextService.GetUserId()))
+                                {
+                                    <option>@item.Name</option>
+                                }
+                            </select>
+                        </div>
+
                         <div class="form-group mt-3 text-center">
                             <button type="submit" class="btn btn-success">Submit</button>
                         </div>

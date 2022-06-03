@@ -15,5 +15,6 @@ namespace StockBand.ViewModel
         public string TrackAccess { get; set; }
         [Required]
         public IFormFile File { get; set; }
+        public string AlbumName { get; set; }
     }
 }

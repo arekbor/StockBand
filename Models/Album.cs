@@ -8,7 +8,7 @@ namespace StockBand.Models
         public Guid Guid { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DateTimeCreate { get; set; }
         public virtual User User { get; set; }
         public int UserId { get; set; }
     }

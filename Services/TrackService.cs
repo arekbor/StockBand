@@ -19,7 +19,8 @@ namespace StockBand.Services
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
         private readonly IUserLogService _userLogService;
-        public TrackService(ApplicationDbContext applicationDbContext, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
+        private readonly IAlbumService _albumService;
+        public TrackService(ApplicationDbContext applicationDbContext,IAlbumService albumService, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _actionContext = actionContext;
@@ -27,6 +28,7 @@ namespace StockBand.Services
             _mapper = mapper;
             _userContextService = userContextService;
             _userLogService = userLogService;
+            _albumService = albumService;
         }
         public async Task<bool> WavToMp3(Track track)
         {
@@ -153,6 +155,13 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
+            var album = await _albumService.GetAlbumByName(dto.AlbumName);
+            if (album is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
+                return false;
+            }
+
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
             var limit = Math.Round(float.Parse(_configuration["SizeTracksLimit"]));
@@ -161,12 +170,14 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code30);
                 return false;
             }
+
             var fileExt = Path.GetExtension(dto.File.FileName).Substring(1).ToLower();
             if (!SupportedExts.Types.Contains(fileExt))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code26);
                 return false;
             }
+
             var username = _userContextService.GetUser().Identity.Name;
             var track = _mapper.Map<Track>(dto);
             if(track is null)
@@ -174,6 +185,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code36);
                 return false;
             }
+
             ProccessDirectory(username);
 
             var trackNameVerify = await _applicationDbContext
@@ -184,6 +196,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code27);
                 return false;
             }
+
             if(dto.File.Length >= int.Parse(_configuration["MaxFileBytes"]))
             {
                 decimal mb = int.Parse(_configuration["MaxFileBytes"])/1048576;
@@ -192,6 +205,7 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code28(mb.ToString()));
                 return false;
             }
+
             var id = _userContextService.GetUserId();
             track.Size = fileSize;
             track.TrackAccess = dto.TrackAccess;
@@ -199,6 +213,7 @@ namespace StockBand.Services
             track.DateTimeCreate = DateTime.Now;
             track.UserId = id;
             track.Extension = fileExt;
+            track.AlbumGuid = album.Guid;
             var trackName = $"{track.Guid}.{track.Extension}";
 
             using (var fileStream = new FileStream(Path.Combine(UserPath.UserTracksPath(username), trackName), FileMode.Create, FileAccess.Write))
@@ -211,7 +226,7 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
-        public IQueryable<Track> GetAllUserTracksAsync(int id)
+        public IQueryable<Track> GetAllUserTracks(int id)
         {
             var tracks = _applicationDbContext
                 .TrackDbContext

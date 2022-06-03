@@ -13,7 +13,7 @@ namespace StockBand.ViewModel
         public int TotalTracks { get; set; }
         public bool IsAvatarUploaded { get; set; }
         public bool IsHeaderUploaded { get; set; }
-        public PaginetedList<Track> Tracks { get; set; }
+        public PaginetedList<Album> Albums { get; set; }
         public string LastUpload { get; set; }
     }
 }

@@ -50,6 +50,10 @@
         public const string Code34 = "File doesn't exists";
         public const string Code35 = "Track doesn't exists";
         public const string Code36 = "Object doesn't exists";
+        public const string Code37 = "That album name already exists";
+        public const string Code38 = "Album limit exceeded";
+        public const string Code39 = "Album doesn't exists";
+        public const string Code40 = "You must create a album to upload this track";
 
     }
 }

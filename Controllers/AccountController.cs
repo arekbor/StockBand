@@ -21,7 +21,8 @@ namespace Stock_Band.Controllers
         private readonly ITrackService _trackService;
         private readonly IUserContextService _userContextService;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        public AccountController(IUserContextService userContextService, IHttpContextAccessor httpContextAccessor, ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly IAlbumService _albumService;
+        public AccountController(IUserContextService userContextService,IAlbumService albumService, IHttpContextAccessor httpContextAccessor, ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
@@ -31,6 +32,7 @@ namespace Stock_Band.Controllers
             _trackService = trackService;
             _userContextService = userContextService;
             _HttpContextAccessor = httpContextAccessor;
+            _albumService = albumService;
         }
 
         [HttpGet]
@@ -143,21 +145,21 @@ namespace Stock_Band.Controllers
             userDto.TotalTracks = await _trackService
                 .GetTracksCountByUserId(user.Id);
 
-            var tracks = _trackService
-                .GetAllUserTracksAsync(user.Id)
-                .Where(x => x.Title.Contains(search))
+            var albums = _albumService
+                .GetAllUserAlbums(user.Id)
+                .Where(x => x.Name.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
 
             userDto.TotalTracks = await _trackService.GetTracksCountByUserId(user.Id);
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
             userDto.TotalSizeOfTracks = await _trackService.GetTotalSizeOfTracksByUserId(user.Id);
             
-            if (!tracks.Any())
+            if (!albums.Any())
                 return View(userDto);
-            var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);
+            var paginatedList = await PaginetedList<Album>.CreateAsync(albums.AsNoTracking(), pageNumber);
 
             
-            userDto.Tracks = paginatedList;
+            userDto.Albums = paginatedList;
             return View(userDto);
         }
         
