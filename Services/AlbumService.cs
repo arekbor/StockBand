@@ -88,5 +88,39 @@ namespace StockBand.Services
                 return null;
             return album;
         }
+        public async Task<Album> GetAlbum(Guid guid)
+        {
+            var album = await _dbContext
+                .AlbumDbContext
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if (album is null)
+                return null;
+            return album;
+        }
+        public async Task<IEnumerable<Track>> GetAlbumTracks(Album album)
+        {
+            if (album is null)
+                return null;
+
+            var tracks = await _dbContext
+                .TrackDbContext
+                .Where(x => x.AlbumGuid == album.Guid)
+                .ToListAsync();
+
+            if (tracks is null)
+                return null;
+            return tracks;
+        }
+        public async Task<int> GetCountOfAlbumTracks(Album album)
+        {
+            if (album is null)
+                return 0;
+            var count = await _dbContext
+                .TrackDbContext
+                .Where(x => x.AlbumGuid == album.Guid)
+                .CountAsync();
+            return count;
+        }
     }
 }

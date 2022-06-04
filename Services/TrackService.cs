@@ -162,6 +162,12 @@ namespace StockBand.Services
                 return false;
             }
 
+            if(await _albumService.GetCountOfAlbumTracks(album) >= int.Parse(_configuration["MaxCountOfTracksAlbum"]))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code41);
+                return false;
+            }
+
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
             var limit = Math.Round(float.Parse(_configuration["SizeTracksLimit"]));

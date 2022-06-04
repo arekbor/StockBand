@@ -1,0 +1,38 @@
+﻿@model AlbumDto
+@{
+    ViewData["Title"] = @Model.Name;
+}
+
+
+<div class="card">
+    <div class="card-header text-md-start text-center">
+        <h4>@Model.Name</h4>
+        <h6><a style="text-decoration: none;" asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name">@Model.User.Name</a></h6>
+        <span class="text-muted">@Model.Description</span>
+    </div>
+
+    <div class="card-body">
+    @if (Model.Tracks is not null && Model.Tracks.Count() > 0)
+    {
+        <div class="row">
+        @foreach (var item in Model.Tracks)
+        {
+            <div class="col-md-2 col-6 p-3 icon-item">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <a asp-action="track" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration: none;">
+                            <h1><i class="bi bi-file-earmark-music"></i></h1>
+                            <span class="mt-0 align-text-top">@item.Title</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    }
+    else
+    {
+        <partial name="_NoResultPartial"/>
+    }
+    </div>
+</div>

@@ -16,6 +16,7 @@ namespace StockBand.Data
             CreateMap<EditTrackDto, Track>();
             CreateMap<Track, EditTrackDto>();
             CreateMap<AddAlbumDto, Album>();
+            CreateMap<Album, AlbumDto>();
         }
     }
 }

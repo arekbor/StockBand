@@ -24,6 +24,19 @@ namespace StockBand.Controllers
             _userContextService = userContextService;
             _albumService = albumService;
         }
+        
+        [HttpGet]
+        [Route("library/album/{guid:Guid}")]
+        public async Task<IActionResult> Album(Guid guid)
+        {
+            var album = await _albumService.GetAlbum(guid);
+            var albumDto = _mapper.Map<AlbumDto>(album);
+            if(albumDto is null)
+                return RedirectToAction("notfoundpage", "exceptions");
+            albumDto.Tracks = await _albumService.GetAlbumTracks(album);
+            return View(albumDto);
+        }
+        
         [HttpGet]
         public IActionResult AddAlbum()
         {

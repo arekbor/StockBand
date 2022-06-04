@@ -9,5 +9,8 @@ namespace StockBand.Interfaces
         public IQueryable<Album> GetAllUserAlbums(int id);
         public Task<int> GetCountOfAlbums(int userId);
         public Task<Album> GetAlbumByName(string name);
+        public Task<Album> GetAlbum(Guid guid);
+        public Task<IEnumerable<Track>> GetAlbumTracks(Album album);
+        public Task<int> GetCountOfAlbumTracks(Album album);
     }
 }
