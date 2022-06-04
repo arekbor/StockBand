@@ -54,8 +54,8 @@ namespace StockBand.Services
             var id = _userContextService.GetUserId();
             var sanitizer = new HtmlSanitizer();
             sanitizer.KeepChildNodes = true;
-            var html = addAlbumDto.Description;
-            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(html));
+            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(addAlbumDto.Description));
+
             album.Description = sanitized;
             album.UserId = id;
             album.DateTimeCreate = DateTime.Now;

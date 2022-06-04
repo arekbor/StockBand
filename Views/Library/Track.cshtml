@@ -84,16 +84,18 @@
 
                         <div class="col-12">
                             <div class="text-start p-1 text-muted" style="font-size:small;">
-                                <p>Author: <i style="color:@Model.User.Color;">@Model.User.Name</i></p>
-                                <p>Posted: @Model.DateTimeCreate.ToString("f")</p>
-                                <p>Access: @Model.TrackAccess</p>
-                                <p>Size: @Model.Size MB</p>
-                                <p>Type: @Model.Extension</p>
                                 @if (!string.IsNullOrEmpty(Model.Description))
                                 {
-                                    <p>Description: @Model.Description</p>
+                                    <div class="p-1" style="border-bottom: 1px solid gray;">
+                                        @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+                                    </div>
                                 }
-                                <p>Guid: @Model.Guid</p>
+                                <div class="mt-4">Guid: @Model.Guid</div>
+                                <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
+                                <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
+                                <div>Access: @Model.TrackAccess</div>
+                                <div>Size: @Model.Size MB</div>
+                                <div>Type: @Model.Extension</div>
                             </div>
                         </div>
                     </div>

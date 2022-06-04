@@ -49,7 +49,7 @@
                     <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link btn-sm">@track.Title</a></td>
                     @if (!string.IsNullOrEmpty(track.Description))
                     {
-                        <td class="text-warning">@track.Description</td>
+                        <td class="text-warning">@Html.Raw(System.Web.HttpUtility.HtmlDecode(track.Description))</td>
                     }
                     else
                     {

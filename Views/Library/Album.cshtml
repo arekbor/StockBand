@@ -6,23 +6,25 @@
 
 
 <div class="card">
-    <div class="card-header text-md-start text-center">
+    <div class="card-header text-md-start text-start">
         <div class="text-info">
             <h2>@Model.Name</h2>
         </div>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <div class="p-1 text-muted mt-4 text-start" style="border-bottom: 1px solid gray;">
+                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+            </div>
+        }
         <div class="mt-2">
-            <a style="text-decoration: none; color:@Model.User.Color;" asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name">@Model.User.Name</a>
+            <a style="text-decoration: none; color:@Model.User.Color;" asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name">Author: @Model.User.Name</a>
         </div>
-        <div class="mt-4">Total tracks: @Model.CountTracks</div>
+        <div>Total tracks: @Model.CountTracks</div>
         <div>Album release date: @Model.DateTimeCreate.ToString("d")</div>
         
-        <div class="text-muted mt-4">
-            @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
-        </div>
-
         @if (isAuthorized)
         {
-            <a asp-action="editalbum" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-sm btn-info"><i class="bi bi-pencil-square mt-1"></i> Edit album</a>
+            <a asp-action="editalbum" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-sm btn-info mt-4"><i class="bi bi-pencil-square"></i> Edit album</a>
         }
 
     </div>

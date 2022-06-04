@@ -20,7 +20,7 @@
                         </div>
                         <div class="form-group mt-1">
                             <label asp-for="Description"></label>
-                            <textarea id="textarea" asp-for="Description" class="form-control" placeholder="Description" style="resize: none;"></textarea>
+                            <textarea id="textarea_ckeditor" asp-for="Description" class="form-control" placeholder="Description" style="resize: none;"></textarea>
                         </div>
                         <div class="form-group mt-3 text-center">
                             <button type="submit" class="btn btn-success">Submit</button>
@@ -34,7 +34,7 @@
 
 @section Scripts{
      <script>
-        CKEDITOR.replace('textarea', {
+        CKEDITOR.replace('textarea_ckeditor', {
             customConfig: '/ckeditor/custom/config.js'
         });
     </script>

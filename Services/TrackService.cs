@@ -8,6 +8,7 @@ using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
+using Ganss.XSS;
 
 namespace StockBand.Services
 {
@@ -213,6 +214,12 @@ namespace StockBand.Services
             }
 
             var id = _userContextService.GetUserId();
+
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.KeepChildNodes = true;
+            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(dto.Description));
+
+            track.Description = sanitized;
             track.Size = fileSize;
             track.TrackAccess = dto.TrackAccess;
             track.Guid = Guid.NewGuid();
