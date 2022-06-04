@@ -34,6 +34,7 @@ namespace StockBand.Controllers
             if(albumDto is null)
                 return RedirectToAction("notfoundpage", "exceptions");
             albumDto.Tracks = await _albumService.GetAlbumTracks(album);
+            albumDto.CountTracks = await _albumService.GetCountOfAlbumTracks(album);
             return View(albumDto);
         }
         

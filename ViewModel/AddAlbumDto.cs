@@ -7,7 +7,7 @@ namespace StockBand.ViewModel
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
-        [MaxLength(30)]
+        [MaxLength(120)]
         public string Description { get; set; }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Ganss.XSS;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
 using StockBand.ViewModel;
+using System.Text.RegularExpressions;
 
 namespace StockBand.Services
 {
@@ -50,6 +52,11 @@ namespace StockBand.Services
             }
 
             var id = _userContextService.GetUserId();
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.KeepChildNodes = true;
+            var html = addAlbumDto.Description;
+            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(html));
+            album.Description = sanitized;
             album.UserId = id;
             album.DateTimeCreate = DateTime.Now;
 
