@@ -1,4 +1,5 @@
 ﻿@model Track
+@inject IUserService _userService;
 @{
 
     ViewData["Title"] = @Model.Title;
@@ -50,7 +51,7 @@
                 {
                     <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
                     <a asp-action="downloadtrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-file-earmark-arrow-down-fill"></i></a>
-                    if (User.IsInRole(UserRoles.Roles[1]) || Model.UserId == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value))
+                    if (_userService.IsAuthorOrAdmin(Model.UserId))
                     {
                         <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-pencil-square"></i></a>
                     }
@@ -129,6 +130,17 @@
 @section Scripts{
 
 <script>
+    function copyText(){
+        const text = document.getElementById("copyFuncion");
+        text.select();
+        text.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(text.value);
+        document.getElementById("textCopied").style = "display:block";
+        setTimeout(function(){
+            document.getElementById("textCopied").style = "display:none";
+        },3500);
+    }
+
     const audio = new Audio("@urlStream");
     audio.preload = true;
     audio.load();

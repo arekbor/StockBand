@@ -17,14 +17,44 @@ namespace StockBand.Controllers
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContextService;
         private readonly IAlbumService _albumService;
-        public LibraryController(ITrackService trackService, IAlbumService albumService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
+        private readonly IUserService _userService;
+        public LibraryController(ITrackService trackService,IUserService userService, IAlbumService albumService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
         {
             _trackService = trackService;
             _mapper = mapper;
             _userContextService = userContextService;
             _albumService = albumService;
+            _userService = userService;
         }
         
+        [HttpGet]
+        [Route("library/editalbum/{guid:Guid}")]
+        public async Task<IActionResult> EditAlbum(Guid guid)
+        {
+            var album = await _albumService.GetAlbum(guid);
+            if (album is null)
+                return RedirectToAction("badrequestpage", "exceptions");
+
+            if (!_userService.IsAuthorOrAdmin(album.UserId))
+                return RedirectToAction("forbidden", "exceptions");
+
+            var viewModel = _mapper.Map<EditAlbumDto>(album);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("library/editalbum/{guid:Guid}")]
+        public async Task<IActionResult> EditAlbum(Guid guid, EditAlbumDto viewModel)
+        {
+            if (!ModelState.IsValid)
+                return View(viewModel);
+
+            if (await _albumService.EditAlbum(guid, viewModel))
+                return RedirectToAction("album", "library", new { guid = guid });
+            return View(viewModel);
+        }
+
         [HttpGet]
         [Route("library/album/{guid:Guid}")]
         public async Task<IActionResult> Album(Guid guid)
@@ -115,7 +145,7 @@ namespace StockBand.Controllers
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
-            if(!_trackService.IsAuthorOrAdmin(track, _userContextService.GetUserId()))
+            if(!_userService.IsAuthorOrAdmin(track.UserId))
                 return RedirectToAction("forbidden", "exceptions");
 
             var viewModel = _mapper.Map<EditTrackDto>(track);
@@ -157,7 +187,7 @@ namespace StockBand.Controllers
             var track = await _trackService.GetTrack(guid);
             if(track is null)
                 return RedirectToAction("notfoundpage", "exceptions");
-            if(!_trackService.IsAuthorOrAdmin(track,_userContextService.GetUserId()))
+            if(!_userService.IsAuthorOrAdmin(track.UserId))
                 return RedirectToAction("forbidden", "exceptions");
             if(await _trackService.DeleteTrack(track))
                 return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });

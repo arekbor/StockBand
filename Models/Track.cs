@@ -14,7 +14,7 @@ namespace StockBand.Models
         public DateTime DateTimeCreate { get; set; }
         public string TrackAccess { get; set; } = Data.TrackAccess.Access[1];
         public double Size { get; set; }
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
         public virtual User User { get; set; }
         public Guid? AlbumGuid { get; set; }
         public virtual Album Album { get; set; }

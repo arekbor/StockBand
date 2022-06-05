@@ -4,7 +4,7 @@
     </a>
     <ul class="dropdown-menu dropdownCustom" aria-labelledby="dropdownMenuUserPanel">
         <li>
-            <a class="dropdown-item" asp-controller="account" asp-action="profile" asp-route-name="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value" asp-route-type="@ProfileSearchTypes.Types[0]">Profile</a>
+            <a class="dropdown-item" asp-controller="account" asp-action="profile" asp-route-name="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Profile</a>
         </li>
         <li>
             <a class="dropdown-item" asp-controller="account" asp-action="userlog">Logs</a>

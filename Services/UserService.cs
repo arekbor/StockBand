@@ -448,5 +448,11 @@ namespace StockBand.Services
             if (!Directory.Exists(UserPath.UserImagesPath(name)))
                 Directory.CreateDirectory(UserPath.UserImagesPath(name));
         }
+        public bool IsAuthorOrAdmin(int userObjectId)
+        {
+            if (userObjectId == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
+                return true;
+            return false;
+        }
     }
 }

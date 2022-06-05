@@ -22,5 +22,6 @@ namespace StockBand.Interfaces
         public Task<bool> UpdateUserImages(EditUserDto userDto, UserProfileImagesTypes type);
         public Task<bool> RemoveUserImage(UserProfileImagesTypes type);
         public Task<bool> IsUserImageExists(int id, UserProfileImagesTypes type);
+        public bool IsAuthorOrAdmin(int userObjectId);
     }
 }

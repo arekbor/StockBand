@@ -21,7 +21,8 @@ namespace StockBand.Services
         private readonly IUserContextService _userContextService;
         private readonly IUserLogService _userLogService;
         private readonly IAlbumService _albumService;
-        public TrackService(ApplicationDbContext applicationDbContext,IAlbumService albumService, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
+        private readonly IUserService _userService;
+        public TrackService(ApplicationDbContext applicationDbContext,IAlbumService albumService, IUserService userService, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _actionContext = actionContext;
@@ -30,6 +31,7 @@ namespace StockBand.Services
             _userContextService = userContextService;
             _userLogService = userLogService;
             _albumService = albumService;
+            _userService = userService;
         }
         public async Task<bool> WavToMp3(Track track)
         {
@@ -92,11 +94,21 @@ namespace StockBand.Services
                 return false;
             }
             var id = _userContextService.GetUserId();
-            if (!IsAuthorOrAdmin(track, id))
+            if (!_userService.IsAuthorOrAdmin(track.UserId))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
                 return false;
             }
+
+            var trackNameVerify = await _applicationDbContext
+                .TrackDbContext
+                .AnyAsync(x => x.Title == trackDto.Title);
+            if (trackNameVerify)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code27);
+                return false;
+            }
+
             track.Title = trackDto.Title;
             track.Description = trackDto.Description;
             track.TrackAccess = trackDto.TrackAccess;
@@ -269,7 +281,7 @@ namespace StockBand.Services
                     return true;
                 if (track.TrackAccess.Equals(TrackAccess.Access[0]))
                 {
-                    if (IsAuthorOrAdmin(track,_userContextService.GetUserId()))
+                    if (_userService.IsAuthorOrAdmin(track.UserId))
                         return true;
                 }
             }
@@ -285,12 +297,6 @@ namespace StockBand.Services
             if(track is null)
                 return Guid.Empty;
             return track.Guid;
-        }
-        public bool IsAuthorOrAdmin(Track track,int id)
-        {
-            if (track.UserId == id || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]))
-                return true;
-            return false;
         }
         private void ProccessDirectory(string username)
         {

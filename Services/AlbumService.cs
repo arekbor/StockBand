@@ -18,7 +18,8 @@ namespace StockBand.Services
         private readonly IMapper _mapper;
         private readonly IUserLogService _userLogService;
         private readonly IConfiguration _configuration;
-        public AlbumService(ApplicationDbContext dbContext, IActionContextAccessor actionContext,IConfiguration configuration, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
+        private readonly IUserService _userService;
+        public AlbumService(ApplicationDbContext dbContext, IUserService userService, IActionContextAccessor actionContext,IConfiguration configuration, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
         {
             _dbContext = dbContext;
             _actionContext = actionContext;
@@ -26,6 +27,7 @@ namespace StockBand.Services
             _mapper = mapper;
             _userLogService = userLogService;
             _configuration = configuration;
+            _userService = userService;
         }
         public async Task<bool> AddAlbumAsync(AddAlbumDto addAlbumDto)
         {
@@ -128,6 +130,43 @@ namespace StockBand.Services
                 .Where(x => x.AlbumGuid == album.Guid)
                 .CountAsync();
             return count;
+        }
+        public async Task<bool> EditAlbum(Guid guid, EditAlbumDto editAlbum)
+        {
+            var album = await _dbContext
+                .AlbumDbContext
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if(album is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
+                return false;
+            }
+            var id = _userContextService.GetUserId();
+
+            if (!_userService.IsAuthorOrAdmin(album.UserId))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code15);
+                return false;
+            }
+
+            //TODO przepusc jezeli nazwa sie nie zmienila
+            var albumNameVerify = await _dbContext
+                .AlbumDbContext
+                .AnyAsync(x => x.Title == editAlbum.Title);
+            if (albumNameVerify)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code37);
+                return false;
+            }
+
+            album.Title = editAlbum.Title;
+            album.Description = editAlbum.Description;
+
+            _dbContext.AlbumDbContext.Update(album);
+            await _dbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code23(album.Title), id);
+            _actionContext.ActionContext.ModelState.Clear();
+            return true;
         }
     }
 }

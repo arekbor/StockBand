@@ -15,7 +15,6 @@ namespace StockBand.Interfaces
         public Task<double> GetTotalSizeOfTracksByUserId(int id);
         public Task<bool> EditTrack(Guid guid, EditTrackDto track);
         public Task<bool> DeleteTrack(Track track);
-        public bool IsAuthorOrAdmin(Track track, int id);
         public IQueryable<Track> GetAllTracks();
         public bool IsTrackExtWav(Track track);
         public Task<bool> WavToMp3(Track track);
