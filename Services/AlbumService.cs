@@ -38,7 +38,7 @@ namespace StockBand.Services
 
             var albumNameVerify = await _dbContext
                 .AlbumDbContext
-                .AnyAsync(x => x.Name == album.Name);
+                .AnyAsync(x => x.Title == album.Title);
             if (albumNameVerify)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code37);
@@ -63,7 +63,7 @@ namespace StockBand.Services
             await _dbContext.AlbumDbContext.AddAsync(album);
             await _dbContext.SaveChangesAsync();
 
-            await _userLogService.AddToLogsAsync(LogMessage.Code22(album.Name), id);
+            await _userLogService.AddToLogsAsync(LogMessage.Code22(album.Title), id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
 
@@ -90,7 +90,7 @@ namespace StockBand.Services
         {
             var album = await _dbContext
                 .AlbumDbContext
-                .FirstOrDefaultAsync(x => x.Name == name);
+                .FirstOrDefaultAsync(x => x.Title == name);
             if (album is null)
                 return null;
             return album;

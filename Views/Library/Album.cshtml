@@ -1,6 +1,6 @@
 ﻿@model AlbumDto
 @{
-    ViewData["Title"] = @Model.Name;
+    ViewData["Title"] = @Model.Title;
     var isAuthorized = Model.UserId == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
 }
 
@@ -8,7 +8,7 @@
 <div class="card">
     <div class="card-header text-md-start text-start">
         <div class="text-info">
-            <h2>@Model.Name</h2>
+            <h2>@Model.Title</h2>
         </div>
         @if (!string.IsNullOrEmpty(Model.Description))
         {

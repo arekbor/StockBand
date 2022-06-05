@@ -9,7 +9,7 @@ namespace StockBand.ViewModel
         [MaxLength(50)]
         [MinLength(5)]
         public string Title { get; set; }
-        [MaxLength(200)]
+        [MaxLength(250)]
         public string Description { get; set; }
         [Required]
         public string TrackAccess { get; set; }

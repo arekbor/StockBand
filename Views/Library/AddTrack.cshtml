@@ -43,7 +43,7 @@
                             <select asp-for="AlbumName" class="form-control">
                                 @foreach (var item in _albumService.GetAllUserAlbums(_userContextService.GetUserId()))
                                 {
-                                    <option>@item.Name</option>
+                                    <option>@item.Title</option>
                                 }
                             </select>
                         </div>

@@ -31,7 +31,6 @@
                     <th scope="col">Guid</th>
                     <th scope="col">Author</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Description</th>
                     <th scope="col">Extension</th>
                     <th scope="col">DateTimeCreate</th>
                     <th scope="col">TrackAccess</th>
@@ -47,14 +46,6 @@
                     <td class="text-warning" scope="row">@track.Guid</td>
                     <td><a style="text-decoration: none;" asp-controller="account" asp-action="profile" asp-route-name="@track.User.Name" class="btn btn-link btn-sm">@track.User.Name</a></td>
                     <td><a style="text-decoration: none;" asp-controller="library" asp-action="track" asp-route-guid="@track.Guid" class="btn btn-link btn-sm">@track.Title</a></td>
-                    @if (!string.IsNullOrEmpty(track.Description))
-                    {
-                        <td class="text-warning">@Html.Raw(System.Web.HttpUtility.HtmlDecode(track.Description))</td>
-                    }
-                    else
-                    {
-                        <td class="text-warning">@Message.Code17</td>
-                    }
                     <td class="text-info">@track.Extension</td>
                     <td class="text-warning">@track.DateTimeCreate.ToString("g")</td>
                     <td class="text-info">@track.TrackAccess</td>

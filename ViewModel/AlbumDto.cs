@@ -5,7 +5,7 @@ namespace StockBand.ViewModel
     public class AlbumDto
     {
         public Guid Guid { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateTimeCreate { get; set; }
         public int UserId { get; set; }

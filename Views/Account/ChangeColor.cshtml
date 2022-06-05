@@ -16,10 +16,10 @@
                     <div class="form-group mt-3">
                         <label>Update color</label>
                         <select asp-for="Color" class="form-control">
-                            @foreach (var item in UserColor.Colors)
-                            {
-                                        <option>@item</option>
-                            }
+                        @foreach (var item in UserColor.Colors)
+                        {
+                            <option>@item</option>
+                        }
                         </select>
                     </div>
                     <div class="form-group mt-3 text-center">

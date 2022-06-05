@@ -133,8 +133,8 @@ namespace Stock_Band.Controllers
             return File(fileStream, "image/png");
         }        
         [HttpGet]
-        [Route("account/profile/{name}")]
-        public async Task<IActionResult> Profile(string name,int pageNumber = 1, string search="")
+        [Route("account/profile/{name}/{type}")]
+        public async Task<IActionResult> Profile(string name, string type, int pageNumber = 1, string search = "")
         {
             var user = await _userService.GetUserByName(name);
             if (user is null)
@@ -145,21 +145,39 @@ namespace Stock_Band.Controllers
             userDto.TotalTracks = await _trackService
                 .GetTracksCountByUserId(user.Id);
 
-            var albums = _albumService
-                .GetAllUserAlbums(user.Id)
-                .Where(x => x.Name.Contains(search))
-                .OrderByDescending(x => x.DateTimeCreate);
-
             userDto.TotalTracks = await _trackService.GetTracksCountByUserId(user.Id);
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
             userDto.TotalSizeOfTracks = await _trackService.GetTotalSizeOfTracksByUserId(user.Id);
-            
-            if (!albums.Any())
-                return View(userDto);
-            var paginatedList = await PaginetedList<Album>.CreateAsync(albums.AsNoTracking(), pageNumber);
 
-            
-            userDto.Albums = paginatedList;
+            if (type.Equals(ProfileSearchTypes.Types[0]))
+            {
+                var albums = _albumService
+                .GetAllUserAlbums(user.Id)
+                .Where(x => x.Title.Contains(search))
+                .OrderByDescending(x => x.DateTimeCreate);
+
+                if (!albums.Any())
+                    return View(userDto);
+                userDto.TypeSearch = ProfileSearchTypes.Types[0];
+                userDto.Library = await PaginetedList<dynamic>.CreateAsync(albums.AsNoTracking(), pageNumber);
+            }
+            else if (type.Equals(ProfileSearchTypes.Types[1]))
+            {
+                var tracks = _trackService
+                .GetAllUserTracks(user.Id)
+                .Where(x => x.Title.Contains(search))
+                .OrderByDescending(x => x.DateTimeCreate);
+
+                if (!tracks.Any())
+                    return View(userDto);
+                userDto.TypeSearch = ProfileSearchTypes.Types[1];
+                userDto.Library = await PaginetedList<dynamic>.CreateAsync(tracks.AsNoTracking(), pageNumber);
+            }
+            else
+            {
+                TempData["Message"] = Message.Code42;
+                return RedirectToAction("customexception", "exceptions");
+            }
             return View(userDto);
         }
         

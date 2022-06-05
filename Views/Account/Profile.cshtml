@@ -10,6 +10,7 @@
     var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
     var isAdmin = User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
+    var type = urlActionContext.RouteData.Values["type"].ToString().ToLower();
     var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
     var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
@@ -25,7 +26,7 @@
 
 <div class="row mt-2">
     <div class="col-md-2 col-12 text-center">
-        <strong style="color:@Model.Color;">@Model.Name</strong>
+        <h4><strong style="color:@Model.Color;">@Model.Name</strong></h4>
     </div>
     <div class="col-md-10 col-12 p-0 text-md-end text-center mt-md-0 mt-2">
         <div class="btn-group" role="group">
@@ -115,19 +116,36 @@
 </div>
 
 
-@if(Model.Albums is not null)
+
+@if(Model.Library is not null)
 {
+
+    var actionLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "album" : "track";
+    var iconLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "bi bi-folder" : "bi bi-file-earmark-music";
+    var albumsButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var tracksButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+
+
+    <div class="row" style="border-bottom: 1px solid gray;">
+        <div class="col-sm-12 col-md-6 col-lg-3">
+            <div class="input-group mb-3">
+                <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
+                <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
+            </div>
+        </div>
+    </div>
+   
     <div class="row">
-        @if(Model.Albums is not null)
+        @if(Model.Library is not null)
         {
-            foreach (var item in Model.Albums)
+            foreach (var item in Model.Library)
             {
                 <div class="col-md-2 col-6 p-3 icon-item">
                     <div class="row">
                         <div class="col-12 text-center">
-                            <a asp-action="album" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration: none;">
-                                <h1><i class="bi bi-folder"></i></h1>
-                                <span class="mt-0 align-text-top">@item.Name</span>
+                            <a asp-action="@actionLibrary" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration: none;">
+                                <h1><i class="@iconLibrary"></i></h1>
+                                <span class="mt-0 align-text-top">@item.Title</span>
                             </a>
                         </div>
                     </div>
@@ -137,15 +155,15 @@
     </div>
     <div class="row pagginationDiv">
         <div class="col-12 text-nowrap">
-            <small>@Model.Albums.Count of @Model.Albums.TotalCount</small>
+            <small>@Model.Library.Count of @Model.Library.TotalCount</small>
             <nav class="nav justify-content-center border-top border-white">
                 <ul class="pagination mt-2">
-                    <li class="page-item @Model.Albums.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Albums.PageIndex-1)">Previous</a></li>
-                    @foreach (var item in Model.Albums.Pages(1))
+                    <li class="page-item @Model.Library.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Library.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Library.Pages(1))
                     {
-                        <li class="page-item @Model.Albums.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                        <li class="page-item @Model.Library.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
                     }
-                    <li class="page-item @Model.Albums.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Albums.PageIndex+1)">Next</a></li>
+                    <li class="page-item @Model.Library.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Library.PageIndex+1)">Next</a></li>
                 </ul>
             </nav>
         </div>
