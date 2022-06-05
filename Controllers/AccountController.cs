@@ -134,13 +134,16 @@ namespace Stock_Band.Controllers
         }        
         [HttpGet]
         [Route("account/profile/{name}/{type}")]
+        [Route("account/profile/{name}")]
         public async Task<IActionResult> Profile(string name, string type, int pageNumber = 1, string search = "")
         {
+            if (type is null)
+                type = ProfileSearchTypes.Types[0];
+
             var user = await _userService.GetUserByName(name);
             if (user is null)
-            {
                 return RedirectToAction("notfoundpage", "exceptions");
-            }
+
             var userDto = _mapper.Map<UserDto>(user);
             userDto.TotalTracks = await _trackService
                 .GetTracksCountByUserId(user.Id);
@@ -155,10 +158,9 @@ namespace Stock_Band.Controllers
                 .GetAllUserAlbums(user.Id)
                 .Where(x => x.Title.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
-
+                userDto.TypeSearch = ProfileSearchTypes.Types[0];
                 if (!albums.Any())
                     return View(userDto);
-                userDto.TypeSearch = ProfileSearchTypes.Types[0];
                 userDto.Library = await PaginetedList<dynamic>.CreateAsync(albums.AsNoTracking(), pageNumber);
             }
             else if (type.Equals(ProfileSearchTypes.Types[1]))
@@ -167,10 +169,9 @@ namespace Stock_Band.Controllers
                 .GetAllUserTracks(user.Id)
                 .Where(x => x.Title.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
-
+                userDto.TypeSearch = ProfileSearchTypes.Types[1];
                 if (!tracks.Any())
                     return View(userDto);
-                userDto.TypeSearch = ProfileSearchTypes.Types[1];
                 userDto.Library = await PaginetedList<dynamic>.CreateAsync(tracks.AsNoTracking(), pageNumber);
             }
             else

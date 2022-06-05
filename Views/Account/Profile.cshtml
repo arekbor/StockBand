@@ -10,10 +10,12 @@
     var isAuthorized = Model.Id == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
     var isAdmin = User.IsInRole(UserRoles.Roles[1]);
     var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
-    var type = urlActionContext.RouteData.Values["type"].ToString().ToLower();
     var urlAvatar = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Avatar})}";
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
     var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
+
+    var albumsButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var tracksButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
 } 
 
 <div class="row profileHeader" style="background-image: url(@urlHeader); background-size: 100% 100%; background-repeat: no-repeat; background-position: center;">
@@ -115,18 +117,7 @@
     </div>
 </div>
 
-
-
-@if(Model.Library is not null)
-{
-
-    var actionLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "album" : "track";
-    var iconLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "bi bi-folder" : "bi bi-file-earmark-music";
-    var albumsButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
-    var tracksButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
-
-
-    <div class="row" style="border-bottom: 1px solid gray;">
+<div class="row" style="border-bottom: 1px solid gray;">
         <div class="col-sm-12 col-md-6 col-lg-3">
             <div class="input-group mb-3">
                 <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
@@ -134,7 +125,13 @@
             </div>
         </div>
     </div>
-   
+
+@if(Model.Library is not null)
+{
+
+    var actionLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "album" : "track";
+    var iconLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "bi bi-folder" : "bi bi-file-earmark-music";
+    
     <div class="row">
         @if(Model.Library is not null)
         {

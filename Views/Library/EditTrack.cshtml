@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-group mt-1">
                         <label asp-for="Description"></label>
-                        <textarea asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
+                        <textarea id="textarea" asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
                     </div>
                     <div class="form-group mt-3">
                         <label asp-for="TrackAccess"></label>
@@ -65,7 +65,12 @@
 </div>
 
 @section scripts{
+    <script>
+        CKEDITOR.replace('textarea', {
+            customConfig: '/ckeditor/custom/config.js'
+        });
+    </script>
 
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 }

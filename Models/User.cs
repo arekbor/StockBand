@@ -18,5 +18,10 @@ namespace StockBand.Models
         public string AvatarType { get; set; }
         public bool IsHeaderUploaded { get; set; } = false;
         public string HeaderType { get; set; }
+
+        public static string Method()
+        {
+            return "hello world";
+        }
     }
 }

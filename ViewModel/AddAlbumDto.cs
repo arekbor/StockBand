@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StockBand.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace StockBand.ViewModel
 {
