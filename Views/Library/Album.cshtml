@@ -4,29 +4,48 @@
     var isAuthorized = Model.UserId == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
 }
 
+<div class="modal fade" id="infoAlbumModal" tabindex="-1" role="dialog" aria-labelledby="infoAlbumLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoAlbumLabel">Info</h5>
+                <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-start p-1 text-muted" style="font-size:small;">
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="p-1" style="border-bottom: 1px solid gray;">
+                            @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+                        </div>
+                    }
+                    <div class="mt-4">Guid: @Model.Guid</div>
+                    <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
+                    <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
+                    <div>Total tracks: @Model.CountTracks</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
 
 <div class="card">
-    <div class="card-header text-md-start text-start">
-        <div class="text-info">
-            <h2>@Model.Title</h2>
-        </div>
-        @if (!string.IsNullOrEmpty(Model.Description))
-        {
-            <div class="p-1 text-muted mt-4 text-start" style="border-bottom: 1px solid gray;">
-                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+    <div class="card-header">
+        <div class="row">
+            <div class="col-6">
+                @Model.Title
             </div>
-        }
-        <div class="mt-2">
-            <a style="text-decoration: none; color:@Model.User.Color;" asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name">Author: @Model.User.Name</a>
+            <div class="col-6 text-end">
+                <div class="btn-group" role="group">
+                    @if (isAuthorized)
+                    {
+                        <a asp-action="editalbum" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-info btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                    }
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#infoAlbumModal" class="btn btn-info btn-sm mx-2"><i class="bi bi-info-square"></i></button>
+                </div>
+            </div>
         </div>
-        <div>Total tracks: @Model.CountTracks</div>
-        <div>Album release date: @Model.DateTimeCreate.ToString("d")</div>
-        
-        @if (isAuthorized)
-        {
-            <a asp-action="editalbum" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-sm btn-info mt-4"><i class="bi bi-pencil-square"></i> Edit album</a>
-        }
-
     </div>
 
     <div class="card-body">
