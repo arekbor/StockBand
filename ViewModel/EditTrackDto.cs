@@ -7,7 +7,6 @@ namespace StockBand.ViewModel
         public Guid Guid { get; set; }
         [Required]
         [MaxLength(50)]
-        [MinLength(5)]
         public string Title { get; set; }
         [MaxLength(200)]
         public string Description { get; set; }

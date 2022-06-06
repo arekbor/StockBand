@@ -149,9 +149,9 @@ namespace StockBand.Services
                 return false;
             }
 
-            //TODO przepusc jezeli nazwa sie nie zmienila
             var albumNameVerify = await _dbContext
                 .AlbumDbContext
+                .Where(x => x.Guid != editAlbum.Guid)
                 .AnyAsync(x => x.Title == editAlbum.Title);
             if (albumNameVerify)
             {

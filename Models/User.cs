@@ -8,7 +8,6 @@ namespace StockBand.Models
         public string Name { get; set; }
         public string HashPassword { get; set; }
         public string Role { get; set; } = UserRoles.Roles[0];
-        //TODO implement in middleware Block user
         public bool Block { get; set; } = false;
         public DateTime CreatedTime { get; set; }
         public string Color { get; set; } = UserColor.Colors[0];
@@ -18,10 +17,5 @@ namespace StockBand.Models
         public string AvatarType { get; set; }
         public bool IsHeaderUploaded { get; set; } = false;
         public string HeaderType { get; set; }
-
-        public static string Method()
-        {
-            return "hello world";
-        }
     }
 }

@@ -88,11 +88,13 @@ namespace StockBand.Services
             var track = await _applicationDbContext
                 .TrackDbContext
                 .FirstOrDefaultAsync(x => x.Guid == guid);
+
             if (track is null)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code35);
                 return false;
             }
+
             var id = _userContextService.GetUserId();
             if (!_userService.IsAuthorOrAdmin(track.UserId))
             {
@@ -102,7 +104,9 @@ namespace StockBand.Services
 
             var trackNameVerify = await _applicationDbContext
                 .TrackDbContext
+                .Where(x => x.Guid != trackDto.Guid)
                 .AnyAsync(x => x.Title == trackDto.Title);
+
             if (trackNameVerify)
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code27);
@@ -168,19 +172,6 @@ namespace StockBand.Services
         }
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
-            var album = await _albumService.GetAlbumByName(dto.AlbumName);
-            if (album is null)
-            {
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
-                return false;
-            }
-
-            if(await _albumService.GetCountOfAlbumTracks(album) >= int.Parse(_configuration["MaxCountOfTracksAlbum"]))
-            {
-                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code41);
-                return false;
-            }
-
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
             var totalSize = await GetTotalSizeOfTracksByUserId(_userContextService.GetUserId())+fileSize;
             var limit = Math.Round(float.Parse(_configuration["SizeTracksLimit"]));
@@ -238,7 +229,23 @@ namespace StockBand.Services
             track.DateTimeCreate = DateTime.Now;
             track.UserId = id;
             track.Extension = fileExt;
-            track.AlbumGuid = album.Guid;
+
+            if (dto.IsAlbumSelectedToChoose)
+            {
+                var album = await _albumService.GetAlbumByName(dto.AlbumName);
+                if (album is null)
+                {
+                    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
+                    return false;
+                }
+                if (await _albumService.GetCountOfAlbumTracks(album) >= int.Parse(_configuration["MaxCountOfTracksAlbum"]))
+                {
+                    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code41);
+                    return false;
+                }
+                track.AlbumGuid = album.Guid;
+            }
+
             var trackName = $"{track.Guid}.{track.Extension}";
 
             using (var fileStream = new FileStream(Path.Combine(UserPath.UserTracksPath(username), trackName), FileMode.Create, FileAccess.Write))
