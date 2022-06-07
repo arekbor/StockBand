@@ -106,7 +106,7 @@ namespace StockBand.Controllers
             }
             var result = await _linkService.RefreshUrl(link);
             if (result)
-                return RedirectToAction("uniquelinkpanel", "link", new { pageNumber = pNumber });
+                return RedirectToAction("linkpanel", "link", new { pageNumber = pNumber });
             return RedirectToAction("badrequestpage", "exceptions");
         }
         
@@ -152,7 +152,7 @@ namespace StockBand.Controllers
             var status = await _linkService.SetMinutes(link, dto.Minutes);
             if (status)
             {
-                return RedirectToAction("uniquelinkpanel", "link");
+                return RedirectToAction("linkpanel", "link");
             }
             return View(dto);
         }

@@ -136,6 +136,18 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code08);
                 return false;
             }
+
+            var userNameVerify = await _dbContext
+                .UserDbContext
+                .Where(x => x.Id != model.Id)
+                .AnyAsync(x => x.Name == model.Name);
+
+            if (userNameVerify)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code10);
+                return false;
+            }
+
             user.Name = model.Name;
             user.Block = model.Block;
             user.Role = model.Role;

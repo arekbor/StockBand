@@ -56,6 +56,5 @@
         public const string Code40 = "You must create a album to upload this track";
         public const string Code41 = "Tracks album limit exceeded";
         public const string Code42 = "Unknow type of search profile";
-
     }
 }
