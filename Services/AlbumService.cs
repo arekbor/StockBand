@@ -168,5 +168,14 @@ namespace StockBand.Services
             _actionContext.ActionContext.ModelState.Clear();
             return true;
         }
+        public async Task<bool> RemoveAlbum(Album album)
+        {
+            if (album is null)
+                return false;
+            _dbContext.AlbumDbContext.Remove(album);
+            await _dbContext.SaveChangesAsync();
+            await _userLogService.AddToLogsAsync(LogMessage.Code24(album.Title), _userContextService.GetUserId());
+            return true;
+        }
     }
 }

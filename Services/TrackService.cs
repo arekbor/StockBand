@@ -268,11 +268,10 @@ namespace StockBand.Services
                 return null;
             return tracks;
         }
-        public async Task<Track> GetTrack(Guid guid)
+        public async Task<Track> GetOnlyTrack(Guid guid)
         {
             var track = await _applicationDbContext
                 .TrackDbContext
-                .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Guid == guid);
             if (track is null)
                 return null;
@@ -309,6 +308,17 @@ namespace StockBand.Services
         {
             if (!Directory.Exists(UserPath.UserTracksPath(username)))
                 Directory.CreateDirectory(UserPath.UserTracksPath(username));
+        }
+        public async Task<Track> GetWholeTrack(Guid guid)
+        {
+            var track = await _applicationDbContext
+                .TrackDbContext
+                .Include(x => x.User)
+                .Include(x => x.Album)
+                .FirstOrDefaultAsync(x => x.Guid == guid);
+            if (track is null)
+                return null;
+            return track;
         }
     }
 }

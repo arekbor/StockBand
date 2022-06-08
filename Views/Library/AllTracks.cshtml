@@ -41,7 +41,7 @@
             <tbody>
             @foreach (var track in Model)
             {
-                bool isWav = _trackService.IsTrackExtWav(_trackService.GetTrack(track.Guid).GetAwaiter().GetResult()) == true ? true : false;
+                bool isWav = _trackService.IsTrackExtWav(_trackService.GetOnlyTrack(track.Guid).GetAwaiter().GetResult()) == true ? true : false;
                 <tr>
                     <td class="text-warning" scope="row">@track.Guid</td>
                     <td><a style="text-decoration: none;" asp-controller="account" asp-action="profile" asp-route-name="@track.User.Name" class="btn btn-link btn-sm">@track.User.Name</a></td>

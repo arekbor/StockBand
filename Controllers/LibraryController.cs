@@ -26,7 +26,6 @@ namespace StockBand.Controllers
             _albumService = albumService;
             _userService = userService;
         }
-        
         [HttpGet]
         [Route("library/editalbum/{guid:Guid}")]
         public async Task<IActionResult> EditAlbum(Guid guid)
@@ -39,6 +38,8 @@ namespace StockBand.Controllers
                 return RedirectToAction("forbidden", "exceptions");
 
             var viewModel = _mapper.Map<EditAlbumDto>(album);
+
+            viewModel.CountTracks = await _albumService.GetCountOfAlbumTracks(album);
             return View(viewModel);
         }
 
@@ -87,11 +88,6 @@ namespace StockBand.Controllers
         [HttpGet]
         public async Task<IActionResult> AddTrack()
         {
-            if (await _albumService.GetCountOfAlbums(_userContextService.GetUserId()) <= 0)
-            {
-                TempData["Message"] = Message.Code40;
-                return RedirectToAction("customexception", "exceptions");
-            }
             return View();
         }
 
@@ -120,7 +116,7 @@ namespace StockBand.Controllers
         [Route("library/downloadtrack/{guid:Guid}")]
         public async Task<IActionResult> DownloadTrack(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
@@ -141,7 +137,7 @@ namespace StockBand.Controllers
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetOnlyTrack(guid);
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
@@ -158,7 +154,7 @@ namespace StockBand.Controllers
         [Authorize(Policy = "AdminRolePolicy")]
         public async Task<IActionResult> WavToMp3(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if (track is null)
                 return RedirectToAction("notfoundpage", "exceptions");
 
@@ -184,13 +180,34 @@ namespace StockBand.Controllers
         [Route("library/deletetrack/{guid:Guid}")]
         public async Task<IActionResult> DeleteTrack(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if(track is null)
                 return RedirectToAction("notfoundpage", "exceptions");
             if(!_userService.IsAuthorOrAdmin(track.UserId))
                 return RedirectToAction("forbidden", "exceptions");
             if(await _trackService.DeleteTrack(track))
-                return RedirectToAction("profile", "account", new { name = _userContextService.GetUser().Identity.Name });
+                return RedirectToAction("profile", "account", new { name = track.User.Name });
+            return RedirectToAction("badrequestpage", "exceptions");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("library/deletealbum/{guid:Guid}")]
+        public async Task<IActionResult> DeleteAlbum(Guid guid)
+        {
+            var album = await _albumService
+                .GetAlbum(guid);
+            if(album is null)
+                return RedirectToAction("notfoundpage", "exceptions");
+            if (!_userService.IsAuthorOrAdmin(album.UserId))
+                return RedirectToAction("forbidden", "exceptions");
+            if(await _albumService.GetCountOfAlbumTracks(album) > 0)
+            {
+                TempData["Message"] = Message.Code44;
+                return RedirectToAction("customexception", "exceptions");
+            }
+            if (await _albumService.RemoveAlbum(album))
+                return RedirectToAction("profile", "account", new { name = album.User.Name });
             return RedirectToAction("badrequestpage", "exceptions");
         }
 
@@ -222,7 +239,7 @@ namespace StockBand.Controllers
         [Route("library/track/{guid:Guid}")]
         public async Task <IActionResult> Track(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if(track is null)
             {
                 return RedirectToAction("badrequestpage", "exceptions");
@@ -244,7 +261,7 @@ namespace StockBand.Controllers
         [Route("library/stream/{guid:Guid}")]
         public async Task<IActionResult> Stream(Guid guid)
         {
-            var track = await _trackService.GetTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if (track is null)
             {
                 return RedirectToAction("badrequestpage", "exceptions");

@@ -5,10 +5,34 @@
 }
 
 <div class="row mt-5">
+    <div class="modal fade" id="removeAlbumModal" tabindex="-1" role="dialog" aria-labelledby="removeAlbumModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeAlbumModalLabel">Remove album</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span>@Message.Code43(Model.Title)</span>
+                    </div>
+                    <form method="post" asp-controller="library" asp-action="deletealbum" asp-route-guid="@Model.Guid">
+                        <div class="form-group mt-3 text-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="d-flex justify-content-center">
         <div class="card formBox">
             <div class="card-header">
                 <h5>Edit album</h5>
+                <div class="form-group mt-3 text-start">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#removeAlbumModal" class="btn btn-danger btn-sm">Delete album</button>
+                </div>
             </div>
             <div class="card-body">
                 <form method="post" asp-controller="library" asp-action="editalbum" asp-route-guid="@Model.Guid">

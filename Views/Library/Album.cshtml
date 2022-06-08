@@ -1,7 +1,7 @@
 ﻿@model AlbumDto
+@inject IUserService _userService;
 @{
     ViewData["Title"] = @Model.Title;
-    var isAuthorized = Model.UserId == int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value);
 }
 
 <div class="modal fade" id="infoAlbumModal" tabindex="-1" role="dialog" aria-labelledby="infoAlbumLabel" aria-hidden="true">
@@ -38,7 +38,7 @@
             </div>
             <div class="col-6 text-end">
                 <div class="btn-group" role="group">
-                    @if (isAuthorized)
+                    @if (_userService.IsAuthorOrAdmin(Model.UserId))
                     {
                         <a asp-action="editalbum" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-info btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
                     }

@@ -94,6 +94,10 @@
                                 <div class="mt-4">Guid: @Model.Guid</div>
                                 <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
                                 <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
+                                @if(Model.Album is not null)
+                                {
+                                   <div>Album: <a asp-action="album" asp-controller="library" asp-route-guid="@Model.AlbumGuid" class="text-info" style="text-decoration:none;">@Model.Album.Title</a></div>
+                                }
                                 <div>Access: @Model.TrackAccess</div>
                                 <div>Size: @Model.Size MB</div>
                                 <div>Type: @Model.Extension</div>

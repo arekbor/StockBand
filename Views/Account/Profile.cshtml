@@ -1,6 +1,7 @@
 ﻿@model UserDto
 @inject IConfiguration _configuration
 @inject ITrackService _trackService
+@inject IUserService _userService
 @{
     ViewData["Title"] = @Model.Name;
     Layout = "_Layout";

@@ -7,7 +7,8 @@ namespace StockBand.Interfaces
     {
         public Task<bool> AddTrack(AddTrackDto dto);
         public IQueryable<Track> GetAllUserTracks(int id);
-        public Task<Track> GetTrack(Guid guid);
+        public Task<Track> GetOnlyTrack(Guid guid);
+        public Task<Track> GetWholeTrack(Guid guid);
         public bool VerifyAccessTrack(Track track);
         public Task<Guid> GetGuidTrackByTitle(string title);
         public Task<int> GetTracksCountByUserId(int id);
