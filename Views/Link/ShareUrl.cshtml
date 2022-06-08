@@ -13,24 +13,21 @@
             <div class="card-body">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
+                        <button id="buttonCopy" class="btn btn-outline-secondary" type="button">Copy</button>
                     </div>
-                    <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@Model">
+                    <input id="elementToCopy" type="text" class="form-control w-25"  readonly="readonly" value="@Model">
                 </div>
-                <small id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</small>
+                <small id="elementInfo" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</small>
             </div>
         </div>
     </div>
 </div>
-<script>
-    function copyText(){
-        const text = document.getElementById("copyFuncion");
-        text.select();
-        text.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(text.value);
-        document.getElementById("textCopied").style = "display:block";
-        setTimeout(function(){
-            document.getElementById("textCopied").style = "display:none";
-        },3500);
-    }
-</script>
+
+@section Scripts{
+    <script src="~/js/copyTextFunction.js"></script>
+    <script>
+        document.getElementById("buttonCopy").addEventListener("click", function(){
+            copyText(document.getElementById("elementToCopy"), document.getElementById("elementInfo"));
+        });
+    </script>
+}

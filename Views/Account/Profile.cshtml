@@ -77,11 +77,11 @@
                 <div class="modal-body">
                     <div class="input-group mb-3">
                         <div class="input-group-prepend">
-                            <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
+                            <button id="buttonCopy" class="btn btn-outline-secondary" type="button">Copy</button>
                         </div>
-                        <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlProfile">
+                        <input id="elementToCopy" type="text" class="form-control w-25"  readonly="readonly" value="@urlProfile">
                     </div>
-                <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
+                <div id="elementInfo" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
                 </div>
             </div>
         </div>
@@ -118,13 +118,13 @@
 </div>
 
 <div class="row" style="border-bottom: 1px solid gray;">
-        <div class="col-sm-12 col-md-6 col-lg-3">
-            <div class="input-group mb-3">
-                <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
-                <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
-            </div>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="input-group mb-3">
+            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
+            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
         </div>
     </div>
+</div>
 
 @if(Model.Library is not null)
 {
@@ -172,16 +172,10 @@ else
 }
 
 @section Scripts{
+    <script src="~/js/copyTextFunction.js"></script>
     <script>
-    function copyText(){
-        const text = document.getElementById("copyFuncion");
-        text.select();
-        text.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(text.value);
-        document.getElementById("textCopied").style = "display:block";
-        setTimeout(function(){
-            document.getElementById("textCopied").style = "display:none";
-        },3500);
-    }
+        document.getElementById("buttonCopy").addEventListener("click", function(){
+            copyText(document.getElementById("elementToCopy"), document.getElementById("elementInfo"));
+        });
     </script>
 }

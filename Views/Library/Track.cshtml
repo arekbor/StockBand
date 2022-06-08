@@ -28,11 +28,11 @@
                     <div class="modal-body">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <button class="btn btn-outline-secondary" onclick="copyText()" type="button">Copy</button>
+                                <button id="buttonCopy" class="btn btn-outline-secondary" type="button">Copy</button>
                             </div>
-                                <input type="text" class="form-control w-25" id="copyFuncion" readonly="readonly" value="@urlTrack">
+                                <input id="elementToCopy" type="text" class="form-control w-25"  readonly="readonly" value="@urlTrack">
                             </div>
-                        <div id="textCopied" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
+                        <div id="elementInfo" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
                     </div>
                 </div>
             </div>
@@ -127,19 +127,13 @@
 
     </div>
 </div>
-@section Scripts{
 
+@section Scripts{
+<script src="~/js/copyTextFunction.js"></script>
 <script>
-    function copyText(){
-        const text = document.getElementById("copyFuncion");
-        text.select();
-        text.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(text.value);
-        document.getElementById("textCopied").style = "display:block";
-        setTimeout(function(){
-            document.getElementById("textCopied").style = "display:none";
-        },3500);
-    }
+    document.getElementById("buttonCopy").addEventListener("click", function(){
+        copyText(document.getElementById("elementToCopy"), document.getElementById("elementInfo"));
+    });
 
     const audio = new Audio("@urlStream");
     audio.preload = true;
