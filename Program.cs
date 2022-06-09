@@ -1,3 +1,4 @@
+using Ganss.XSS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -43,6 +44,7 @@ builder.Services.Configure<KestrelServerOptions>(options =>
     options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(100);
     
 });
+builder.Services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLogService, UserLogService>();
@@ -50,6 +52,7 @@ builder.Services.AddScoped<ILinkService, LinkService>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITrackService, TrackService>();
 builder.Services.AddScoped<IAlbumService, AlbumService>();
+builder.Services.AddScoped<IHtmlOperationService, HtmlOperationService>();
 
 var app = builder.Build();
 

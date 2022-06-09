@@ -19,7 +19,8 @@ namespace StockBand.Services
         private readonly IUserLogService _userLogService;
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
-        public AlbumService(ApplicationDbContext dbContext, IUserService userService, IActionContextAccessor actionContext,IConfiguration configuration, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
+        private readonly IHtmlOperationService _htmlOperationService;
+        public AlbumService(ApplicationDbContext dbContext, IHtmlOperationService htmlOperationService, IUserService userService, IActionContextAccessor actionContext,IConfiguration configuration, IUserContextService userContextService, IMapper mapper, IUserLogService userLogService)
         {
             _dbContext = dbContext;
             _actionContext = actionContext;
@@ -28,6 +29,7 @@ namespace StockBand.Services
             _userLogService = userLogService;
             _configuration = configuration;
             _userService = userService;
+            _htmlOperationService = htmlOperationService;
         }
         public async Task<bool> AddAlbumAsync(AddAlbumDto addAlbumDto)
         {
@@ -52,13 +54,9 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code38);
                 return false;
             }
-
             var id = _userContextService.GetUserId();
-            var sanitizer = new HtmlSanitizer();
-            sanitizer.KeepChildNodes = true;
-            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(addAlbumDto.Description));
 
-            album.Description = sanitized;
+            album.Description = _htmlOperationService.SanitizeHtml(addAlbumDto.Description);
             album.UserId = id;
             album.DateTimeCreate = DateTime.Now;
 
@@ -158,9 +156,8 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code37);
                 return false;
             }
-
-            album.Title = editAlbum.Title;
-            album.Description = editAlbum.Description;
+            album.Title = _htmlOperationService.SanitizeHtml(editAlbum.Title);
+            album.Description = _htmlOperationService.SanitizeHtml(editAlbum.Description);
 
             _dbContext.AlbumDbContext.Update(album);
             await _dbContext.SaveChangesAsync();

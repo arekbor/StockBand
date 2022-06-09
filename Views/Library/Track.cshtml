@@ -1,7 +1,6 @@
 ﻿@model Track
 @inject IUserService _userService;
 @{
-
     ViewData["Title"] = @Model.Title;
     if (User.Identity.IsAuthenticated)
     {
@@ -14,121 +13,80 @@
     var urlStream = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
     var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("track","library",new {guid=Model.Guid})}";
 }
-
-<div class="container mt-4">
-    @if (User.Identity.IsAuthenticated)
-    {
-        <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="shareModalLabel">Share</h5>
-                        <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <button id="buttonCopy" class="btn btn-outline-secondary" type="button">Copy</button>
-                            </div>
-                                <input id="elementToCopy" type="text" class="form-control w-25"  readonly="readonly" value="@urlTrack">
-                            </div>
-                        <div id="elementInfo" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
-                    </div>
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareModalLabel">Share</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button id="buttonCopy" class="btn btn-outline-secondary" type="button">Copy</button>
+                        </div>
+                            <input id="elementToCopy" type="text" class="form-control w-25"  readonly="readonly" value="@urlTrack">
+                        </div>
+                    <div id="elementInfo" style="display:none;" class="text-success"><i class="bi bi-check-circle"></i> Url copied</div>
                 </div>
             </div>
-        </div> 
-    }
-    <div class="row">
-        <div class="col-12 text-center" >
-            <h5>@Model.Title</h5>
         </div>
+    </div> 
 
-        <div class="col-12 text-center mt-2">
-            <div class="btn-group" role="group">
-                <button id="button_play_pause" type="button" class="btn btn-secondary mx-2"><i class="bi bi-play-fill"></i></button>
-                <button id="button_stop" type="button" class="btn btn-secondary mx-2"><i class="bi bi-stop-fill"></i></button>
-                @if(User.Identity.IsAuthenticated)
-                {
-                    <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-secondary mx-2"><i class="bi bi-share-fill"></i></button>
-                    <a asp-action="downloadtrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-file-earmark-arrow-down-fill"></i></a>
-                    if (_userService.IsAuthorOrAdmin(Model.UserId))
+    <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Info</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(Model.Description))
                     {
-                        <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-secondary mx-2"><i class="bi bi-pencil-square"></i></a>
+                        <div class="p-1" style="border-bottom: 1px solid gray;">
+                            @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+                        </div>
                     }
-                }
-             </div>
-        </div>
-        <div class="col-12 text-center mt-3">
-            <input type="range" class="form-range" id="volumeRange" value="100" style="width:150px;"> 
-        </div>
-
-        <div id="duration_dynamic" class="col-2 col-lg-1 mt-4 mb-3 text-end px-0" style="padding-right:3px !important;"></div>
-
-        <div class="col-8 col-lg-10 px-0">
-            <div id="duration_container" class="w3-progress-container mt-4 mb-3">
-                <div id="duration_progress" class="w3-progressbar"></div>
-            </div>
-        </div>
-        <div id="duration_length" class="col-2 col-lg-1 mt-4 mb-3 text-start px-0" style="padding-left:3px !important;"></div>
-
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-6 text-start"><i class="bi bi-info-circle"></i></div>
-                            <div class="col-6 text-end"><button id="info_body_button" type="button" class="btn btn-outline-light">Show</button></div>
-                        </div>
-                    </div>
-                    <div class="card-body" id="info_body">
-
-                        <div class="col-12">
-                            <div class="text-start p-1 text-muted" style="font-size:small;">
-                                @if (!string.IsNullOrEmpty(Model.Description))
-                                {
-                                    <div class="p-1" style="border-bottom: 1px solid gray;">
-                                        @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
-                                    </div>
-                                }
-                                <div class="mt-4">Guid: @Model.Guid</div>
-                                <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
-                                <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
-                                @if(Model.Album is not null)
-                                {
-                                   <div>Album: <a asp-action="album" asp-controller="library" asp-route-guid="@Model.AlbumGuid" class="text-info" style="text-decoration:none;">@Model.Album.Title</a></div>
-                                }
-                                <div>Access: @Model.TrackAccess</div>
-                                <div>Size: @Model.Size MB</div>
-                                <div>Type: @Model.Extension</div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="mt-4">Guid: @Model.Guid</div>
+                    <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
+                    <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
+                    <div>Access: @Model.TrackAccess</div>
+                    <div>Size: @Model.Size MB</div>
+                    <div>Type: @Model.Extension</div>
                 </div>
             </div>
-        }
-        @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(@Model.Lyrics))
-        {
-            <div class="col-12 mt-2">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-6 text-start"><i class="bi bi-card-text"></i></div>
-                            <div class="col-6 text-end"><button id="lyrics_body_button" type="button" class="btn btn-outline-light">Show</button></div>
-                        </div>
-                    </div>
-                    <div class="card-body" id="lyrics_body">
-                        <div class="col-12">
-                            <div class="text-start p-1 text-muted" style="font-size:small;">
-                                <p>Lyrics:</p>
-                                <p>@Model.Lyrics</p>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+    </div> 
+}
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6 col-12 text-md-start text-center">
+                @Model.Title
+            </div>
+            <div class="col-md-6 col-12 text-md-end text-center mt-2 mt-md-0">
+                <div class="btn-group" role="group">
+                    @if(User.Identity.IsAuthenticated)
+                    {
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-share-fill"></i> Share</button>
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#infoModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-info-square"></i></button>
+                        if (_userService.IsAuthorOrAdmin(Model.UserId))
+                        {
+                            <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-warning mx-2 btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                        }
+                    }
                 </div>
             </div>
-        }
-
+            <div class="col-12 text-center mt-2" style="border-top: 1px solid gray; padding-top: 5px;">
+                <audio controls class="mt-5">
+                    <source src="@urlStream" type="audio/mpeg">
+                </audio>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -137,98 +95,6 @@
 <script>
     document.getElementById("buttonCopy").addEventListener("click", function(){
         copyText(document.getElementById("elementToCopy"), document.getElementById("elementInfo"));
-    });
-
-    const audio = new Audio("@urlStream");
-    audio.preload = true;
-    audio.load();
-    
-    const button_play_pause = document.getElementById("button_play_pause");
-    const duration_dynamic = document.getElementById("duration_dynamic");
-    const duration_container = document.getElementById("duration_container");
-    const info_body_button = document.getElementById("info_body_button");
-    const info_body = document.getElementById("info_body");
-    const lyrics_body = document.getElementById("lyrics_body");
-    const lyrics_body_button = document.getElementById("lyrics_body_button");
-
-    if(lyrics_body_button){
-        lyrics_body.style.display = 'none';
-        lyrics_body_button.addEventListener("click",function(){
-            if(window.getComputedStyle(lyrics_body, null).getPropertyValue('display') === 'none'){
-                lyrics_body.style.display = '';
-                lyrics_body_button.innerHTML = "Hide";
-            }
-            else{
-                lyrics_body.style.display = 'none';
-                lyrics_body_button.innerHTML = "Show";
-            }
-        });
-    }
-    if(info_body_button){
-        info_body.style.display = 'none';
-        info_body_button.addEventListener("click",function(){
-            if(window.getComputedStyle(info_body, null).getPropertyValue('display') === 'none'){
-                info_body.style.display = '';
-                info_body_button.innerHTML = "Hide";
-            }
-            else{
-                info_body.style.display = 'none';
-                info_body_button.innerHTML = "Show";
-            }
-        });
-    }
-
-    duration_dynamic.innerHTML = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
-
-    button_play_pause.addEventListener("click",function(){
-        
-        if(audio.paused && audio.duration > 0 && !audio.ended){
-            audio.play();
-            interval = setInterval(UploadCurrentTime, 1000);
-            button_play_pause.innerHTML = '<i class="bi bi-pause-fill"></i>';
-        }
-        else{
-            audio.pause();
-            button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-        }
-    });
-    const button_stop = document.getElementById("button_stop");
-    button_stop.addEventListener("click",function(){
-        if(audio.duration > 0 && !audio.ended){
-            audio.pause();
-            audio.currentTime=0;
-            button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-        }
-    });
-    audio.addEventListener("ended",function(){
-        audio.currentTime = 0;
-        button_play_pause.innerHTML = '<i class="bi bi-play-fill"></i>';
-    });
-
-    const duration_length = document.getElementById("duration_length");
-    audio.addEventListener("loadedmetadata",function(){
-        const result = new Date(audio.duration * 1000).toISOString().slice(14, 19);
-        duration_length.innerHTML = result;
-    });
-    const duration_progress = document.getElementById("duration_progress");
-    const volumeRange = document.getElementById("volumeRange");
-
-    function UploadCurrentTime(){
-        const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
-        duration_dynamic.innerHTML = result;
-        let percent = Math.round((audio.currentTime*100)/audio.duration);
-        duration_progress.style.width = percent+"%";
-    }
-
-    duration_container.addEventListener("click",function(e){
-        let percent_bar = e.offsetX / this.offsetWidth;
-        audio.currentTime = Math.round(percent_bar*audio.duration);
-        duration_progress.style.width = Math.round(percent_bar*100)+"%";
-        const result = new Date(audio.currentTime * 1000).toISOString().slice(14, 19);
-        duration_dynamic.innerHTML = result;
-    });
-    volumeRange.addEventListener("change",function(e){
-        audio.volume = (e.target.value/100);
     });
 </script>
 }

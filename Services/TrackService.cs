@@ -22,7 +22,8 @@ namespace StockBand.Services
         private readonly IUserLogService _userLogService;
         private readonly IAlbumService _albumService;
         private readonly IUserService _userService;
-        public TrackService(ApplicationDbContext applicationDbContext,IAlbumService albumService, IUserService userService, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
+        private readonly IHtmlOperationService _htmlOperationService;
+        public TrackService(ApplicationDbContext applicationDbContext,IHtmlOperationService htmlOperationService, IAlbumService albumService, IUserService userService, IUserLogService userLogService, IUserContextService userContextService, IActionContextAccessor actionContext, IConfiguration configuration, IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _actionContext = actionContext;
@@ -32,6 +33,7 @@ namespace StockBand.Services
             _userLogService = userLogService;
             _albumService = albumService;
             _userService = userService;
+            _htmlOperationService = htmlOperationService;
         }
         public async Task<bool> WavToMp3(Track track)
         {
@@ -114,8 +116,10 @@ namespace StockBand.Services
             }
 
             track.Title = trackDto.Title;
-            track.Description = trackDto.Description;
+            track.Description = _htmlOperationService.SanitizeHtml(trackDto.Description);
+            track.Lyrics = _htmlOperationService.SanitizeHtml(trackDto.Lyrics);
             track.TrackAccess = trackDto.TrackAccess;
+            track.Lyrics = trackDto.Lyrics;
 
             _applicationDbContext.TrackDbContext.Update(track);
             await _applicationDbContext.SaveChangesAsync();
@@ -218,11 +222,7 @@ namespace StockBand.Services
 
             var id = _userContextService.GetUserId();
 
-            var sanitizer = new HtmlSanitizer();
-            sanitizer.KeepChildNodes = true;
-            var sanitized = sanitizer.Sanitize(System.Web.HttpUtility.HtmlDecode(dto.Description));
-
-            track.Description = sanitized;
+            track.Description = _htmlOperationService.SanitizeHtml(dto.Description);
             track.Size = fileSize;
             track.TrackAccess = dto.TrackAccess;
             track.Guid = Guid.NewGuid();

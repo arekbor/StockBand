@@ -5,7 +5,7 @@ namespace StockBand.Interfaces
 {
     public interface ILinkService
     {
-        Task<Guid> AddLink(string type, int userId, string controller, string action);
+        Task<Guid> AddLink(int userId, string controller, string action);
         Task<bool> DeleteLink(Link link);
         IQueryable<Link> GetAllLinks();
         Task<Link> GetUniqueLink(Guid guid);

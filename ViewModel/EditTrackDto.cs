@@ -12,6 +12,8 @@ namespace StockBand.ViewModel
         public string Description { get; set; }
         [Required]
         public string TrackAccess { get; set; }
+        [MaxLength(1000)]
+        public string Lyrics { get; set; }
         public int UserId { get; set; }
     }
 }

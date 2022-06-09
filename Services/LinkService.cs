@@ -26,7 +26,7 @@ namespace StockBand.Services
             _actionContextAccessor = actionContextAccessor;
             _userContextService = userContextService;
         }
-        public async Task<Guid> AddLink(string type, int userId, string controller, string action)
+        public async Task<Guid> AddLink(int userId, string controller, string action)
         {
             var guid = Guid.NewGuid();
             var uniqueLink = new Link()
@@ -38,7 +38,7 @@ namespace StockBand.Services
             };
             uniqueLink.DateTimeExpire = DateTime.Now.AddMinutes(uniqueLink.Minutes);
             await _applicationDbContext
-                .UniqueLinkDbContext
+                .LinkDbContext
                 .AddAsync(uniqueLink);
             await _applicationDbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code06(guid), _userContextService.GetUserId());
@@ -49,7 +49,7 @@ namespace StockBand.Services
             if (link is null)
                 return false;
             _applicationDbContext
-                .UniqueLinkDbContext
+                .LinkDbContext
                 .Remove(link);
             await _applicationDbContext.SaveChangesAsync();
             if(_userContextService.GetUser().Identity.IsAuthenticated)
@@ -59,7 +59,7 @@ namespace StockBand.Services
         public IQueryable<Link> GetAllLinks()
         {
             var uniqueLinks = _applicationDbContext
-                .UniqueLinkDbContext
+                .LinkDbContext
                 .AsQueryable();
             if (uniqueLinks is null)
                 return null;
@@ -68,7 +68,7 @@ namespace StockBand.Services
         public async Task<Link> GetUniqueLink(Guid guid)
         {
             var uniqueLink = await _applicationDbContext
-                .UniqueLinkDbContext
+                .LinkDbContext
                 .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Guid == guid);
             if (uniqueLink is null)

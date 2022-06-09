@@ -86,7 +86,7 @@ namespace StockBand.Controllers
             return View(albumDto);
         }
         [HttpGet]
-        public async Task<IActionResult> AddTrack()
+        public IActionResult AddTrack()
         {
             return View();
         }
@@ -112,27 +112,6 @@ namespace StockBand.Controllers
             return View(paginatedList);
         }
 
-        [HttpGet]
-        [Route("library/downloadtrack/{guid:Guid}")]
-        public async Task<IActionResult> DownloadTrack(Guid guid)
-        {
-            var track = await _trackService.GetWholeTrack(guid);
-            if (track is null)
-                return RedirectToAction("badrequestpage", "exceptions");
-
-            if (!_trackService.VerifyAccessTrack(track))
-                return RedirectToAction("forbidden", "exceptions");
-
-            if (!_trackService.IsTrackFileExists(track))
-            {
-                TempData["Message"] = Message.Code34;
-                return RedirectToAction("customexception", "exceptions");
-            }
-            var trackName = $"{ track.Guid }.{ track.Extension}";
-            var fileStream = new FileStream(Path.Combine(UserPath.UserTracksPath(track.User.Name),trackName), FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
-            return File(fileStream, "application/force-download", $"{track.Title}.{track.Extension}");
-        }
-        
         [HttpGet]
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid)

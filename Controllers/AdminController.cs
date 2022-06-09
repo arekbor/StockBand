@@ -77,7 +77,7 @@ namespace StockBand.Controllers
         public async Task<IActionResult> CreateUser()
         {
             var uniqueLink = await _linkService
-                .AddLink(LinkType.Types[0], int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
+                .AddLink(int.Parse(User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier).Value), "account", "create");
             return RedirectToAction("linkpanel", "link");
         }
         
