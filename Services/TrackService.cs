@@ -232,7 +232,7 @@ namespace StockBand.Services
 
             if (dto.IsAlbumSelectedToChoose)
             {
-                var album = await _albumService.GetAlbumByName(dto.AlbumName);
+                var album = await _albumService.GetAlbumByUserame(dto.AlbumName);
                 if (album is null)
                 {
                     _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
@@ -319,6 +319,18 @@ namespace StockBand.Services
             if (track is null)
                 return null;
             return track;
+        }
+        public async Task<IEnumerable<Track>> GetSpecificQuantityOfTracks(int userId, int quantity)
+        {
+            var randomTracks = await _applicationDbContext
+                .TrackDbContext
+                .Where(x => x.UserId == userId)
+                .Skip(new Random().Next(0, await GetTracksCountByUserId(userId)))
+                .Take(quantity)
+                .ToListAsync();
+            if (randomTracks is null)
+                return null;
+            return randomTracks;
         }
     }
 }

@@ -49,7 +49,7 @@ namespace StockBand.Services
                 return false;
             }
 
-            if(await GetCountOfAlbums(_userContextService.GetUserId()) >= int.Parse(_configuration["MaxCountOfAlbums"]))
+            if(await GetCountOfAlbumsByUserId(_userContextService.GetUserId()) >= int.Parse(_configuration["MaxCountOfAlbums"]))
             {
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code38);
                 return false;
@@ -68,7 +68,7 @@ namespace StockBand.Services
             return true;
 
         }
-        public async Task<int> GetCountOfAlbums(int userId)
+        public async Task<int> GetCountOfAlbumsByUserId(int userId)
         {
             var count = await _dbContext
                 .AlbumDbContext
@@ -86,7 +86,7 @@ namespace StockBand.Services
                 return null;
             return albums;
         }
-        public async Task<Album> GetAlbumByName(string name)
+        public async Task<Album> GetAlbumByUserame(string name)
         {
             var album = await _dbContext
                 .AlbumDbContext
@@ -173,6 +173,19 @@ namespace StockBand.Services
             await _dbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code24(album.Title), _userContextService.GetUserId());
             return true;
+        }
+
+        public async Task<IEnumerable<Album>> GetSpecificQuantityOfAlbums(int userId, int quantity)
+        {
+            var randomAlbums = await _dbContext
+                .AlbumDbContext
+                .Where(x => x.UserId == userId)
+                .Skip(new Random().Next(0, await GetCountOfAlbumsByUserId(userId)))
+                .Take(quantity)
+                .ToListAsync();
+            if (randomAlbums is null)
+                return null;
+            return randomAlbums;
         }
     }
 }

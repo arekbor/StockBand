@@ -39,7 +39,7 @@
                             </select>
                         </div>
 
-                        @if(_albumService.GetCountOfAlbums(_userContextService.GetUserId()).GetAwaiter().GetResult() > 0)
+                        @if(_albumService.GetCountOfAlbumsByUserId(_userContextService.GetUserId()).GetAwaiter().GetResult() > 0)
                         {
                             <div class="form-check form-switch mt-3">
                                 <label class="form-check-label" asp-for="IsAlbumSelectedToChoose"></label>

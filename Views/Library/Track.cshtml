@@ -61,48 +61,88 @@
     </div> 
 }
 
-
-<div class="card">
-    <div class="card-header">
-        <div class="row">
-            <div class="col-md-6 col-12 text-md-start text-center">
-                @Model.Title
+<div class="row">
+    <div class="col-md-8 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-8 col-12 text-center text-md-start">
+                        @Model.Title
+                    </div>
+                    <div class="col-md-4 col-12 text-md-end text-center mt-md-0 mt-2">
+                        <div class="btn-group" role="group">
+                            @if(User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-share-fill"></i> Share</button>
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#infoModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-info-square"></i></button>
+                                if (_userService.IsAuthorOrAdmin(Model.UserId))
+                                {
+                                    <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-warning mx-2 btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6 col-12 text-md-end text-center mt-2 mt-md-0">
-                <div class="btn-group" role="group">
-                    @if(User.Identity.IsAuthenticated)
-                    {
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#shareModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-share-fill"></i> Share</button>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#infoModal" class="btn btn-info mx-2 btn-sm"><i class="bi bi-info-square"></i></button>
-                        if (_userService.IsAuthorOrAdmin(Model.UserId))
-                        {
-                            <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-warning mx-2 btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
-                        }
-                    }
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <audio controls class="mt-5">
+                            <source src="@urlStream" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    <div class="col-12 mt-2 d-flex justify-content-center" style="border-top: 1px solid gray; padding-top:10px;">
+                        <div class="text-start p-3 lyrics-shadows">
+                            @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Lyrics))
+                            {
+                                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Lyrics))
+                            }
+                            else
+                            {
+                                <div class="text-danger text-center">No lyrics</div>
+                            } 
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="card-body bg-muted">
-        <div class="row">
-            <div class="col-12 text-center">
-                <audio controls class="mt-5">
-                    <source src="@urlStream" type="audio/mpeg">
-                </audio>
+    <div class="col-md-4 col-12 mt-md-0 mt-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-12">
+                        @Message.Code45
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="card-body bg-secondary">
-        <div class="row">
-            <div class="col-md-6 col-12 text-left">
-            @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Lyrics))
-            {
-                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Lyrics))
-            }       
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.SpecificQuantityOfTracksDto)
+                            {
+                                <li class="list-group-item">
+                                    <a asp-action="track" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration:none;"><i class="bi bi-file-earmark-music"></i> @item.Title</a>
+                                </li>
+                            }
+                        </ul>
+                        <div style="border-top: 1px solid gray;"></div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.SpecificQuantityOfAlbumsDto)
+                            {
+                                <li class="list-group-item">
+                                    <a asp-action="album" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration:none;"><i class="bi bi-folder"></i> @item.Title</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 @section Scripts{
 <script src="~/js/copyTextFunction.js"></script>

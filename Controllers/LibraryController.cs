@@ -18,13 +18,15 @@ namespace StockBand.Controllers
         private readonly IUserContextService _userContextService;
         private readonly IAlbumService _albumService;
         private readonly IUserService _userService;
-        public LibraryController(ITrackService trackService,IUserService userService, IAlbumService albumService, IUserContextService userContextService, IConfiguration configuration, IMapper mapper)
+        private readonly IConfiguration _configuration;
+        public LibraryController(ITrackService trackService, IConfiguration configuration, IUserService userService, IAlbumService albumService, IUserContextService userContextService, IMapper mapper)
         {
             _trackService = trackService;
             _mapper = mapper;
             _userContextService = userContextService;
             _albumService = albumService;
             _userService = userService;
+            _configuration = configuration;
         }
         [HttpGet]
         [Route("library/editalbum/{guid:Guid}")]
@@ -233,6 +235,14 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var trackDto = _mapper.Map<TrackDto>(track);
+
+            var maxCountOfResults = int.Parse(_configuration["MaxCountOfSpecificResult"]);
+            trackDto.SpecificQuantityOfTracksDto = 
+                _mapper.Map<IEnumerable<TrackDto>>(await _trackService.GetSpecificQuantityOfTracks(track.UserId, maxCountOfResults));
+
+            trackDto.SpecificQuantityOfAlbumsDto =
+                _mapper.Map<IEnumerable<AlbumDto>>(await _albumService.GetSpecificQuantityOfAlbums(track.UserId, maxCountOfResults));
+
             return View(trackDto);
         }
         

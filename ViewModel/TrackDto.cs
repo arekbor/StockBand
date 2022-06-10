@@ -15,5 +15,7 @@ namespace StockBand.ViewModel
         public double Size { get; set; }
         public int UserId { get; set; }
         public Guid AlbumGuid { get; set; }
+        public IEnumerable<TrackDto> SpecificQuantityOfTracksDto { get; set; }
+        public IEnumerable<AlbumDto> SpecificQuantityOfAlbumsDto { get; set; }
     }
 }

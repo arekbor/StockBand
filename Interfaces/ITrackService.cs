@@ -20,5 +20,6 @@ namespace StockBand.Interfaces
         public bool IsTrackExtWav(Track track);
         public Task<bool> WavToMp3(Track track);
         public bool IsTrackFileExists(Track track);
+        public Task<IEnumerable<Track>> GetSpecificQuantityOfTracks(int userId, int quantity);
     }
 }

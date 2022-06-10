@@ -57,5 +57,6 @@
         public const string Code42 = "Unknow type of search profile";
         public static Func<string, string> Code43 = x => $"Are you sure you want to delete '{x}'?";
         public const string Code44 = "Cannot delete album. Album is not empty";
+        public const string Code45 = "More result from user";
     }
 }
