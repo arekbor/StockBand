@@ -44,12 +44,12 @@
                     </div>
                     <div class="form-group mt-1">
                         <label asp-for="Description"></label>
-                        <textarea id="textarea" asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
+                        <textarea id="textareaDescription" asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
                     </div>
 
                     <div class="form-group mt-1">
                         <label asp-for="Lyrics"></label>
-                        <textarea id="textarea" asp-for="Lyrics" class="form-control" placeholder="Update lyrics" style="resize: none;"></textarea>
+                        <textarea id="textareaLyrics" asp-for="Lyrics" class="form-control" placeholder="Update lyrics" style="resize: none;"></textarea>
                     </div>
 
                     <div class="form-group mt-3">
@@ -72,7 +72,10 @@
 
 @section scripts{
     <script>
-        CKEDITOR.replace('textarea', {
+        CKEDITOR.replace('textareaDescription', {
+            customConfig: '/ckeditor/custom/config.js'
+        });
+        CKEDITOR.replace('textareaLyrics', {
             customConfig: '/ckeditor/custom/config.js'
         });
     </script>

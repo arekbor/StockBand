@@ -232,7 +232,8 @@ namespace StockBand.Controllers
                 TempData["Message"] = Message.Code34;
                 return RedirectToAction("customexception", "exceptions");
             }
-            return View(track);
+            var trackDto = _mapper.Map<TrackDto>(track);
+            return View(trackDto);
         }
         
         [HttpGet]

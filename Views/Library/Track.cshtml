@@ -1,4 +1,4 @@
-﻿@model Track
+﻿@model TrackDto
 @inject IUserService _userService;
 @{
     ViewData["Title"] = @Model.Title;
@@ -81,10 +81,24 @@
                     }
                 </div>
             </div>
-            <div class="col-12 text-center mt-2" style="border-top: 1px solid gray; padding-top: 5px;">
+        </div>
+    </div>
+    <div class="card-body bg-muted">
+        <div class="row">
+            <div class="col-12 text-center">
                 <audio controls class="mt-5">
                     <source src="@urlStream" type="audio/mpeg">
                 </audio>
+            </div>
+        </div>
+    </div>
+    <div class="card-body bg-secondary">
+        <div class="row">
+            <div class="col-md-6 col-12 text-left">
+            @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Lyrics))
+            {
+                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Lyrics))
+            }       
             </div>
         </div>
     </div>
