@@ -25,6 +25,26 @@
                         <label asp-for="ConfirmPassword"></label>
                         <input asp-for="ConfirmPassword" type="password" class="form-control">
                     </div>
+                    <div class="form-group mt-3">
+                        <dnt-captcha asp-captcha-generator-max="30"
+			                 asp-captcha-generator-min="1"
+			                 asp-captcha-generator-language="English"
+			                 asp-captcha-generator-display-mode="NumberToWord"
+			                 asp-use-relative-urls="true"
+			                 asp-placeholder="@Message.Code48"
+			                 asp-validation-error-message="@Message.Code47"
+			                 asp-font-name="Tahoma"
+			                 asp-font-size="20"
+			                 asp-fore-color="#333333"
+			                 asp-back-color="#FCF6F5FF"
+			                 asp-text-box-class="form-control"
+			                 asp-text-box-template="<div class='input-group'><span class='input-group-text'><span class='bi-lock'></span></span>{0}</div>"
+			                 asp-validation-message-class="text-danger"
+			                 asp-refresh-button-class="bi-arrow-counterclockwise btn-lg"
+			                 asp-show-refresh-button="true"
+			                 asp-dir="ltr"
+			                 />
+                    </div>
                     <div class="form-group mt-3 text-center">
                         <button type="submit" class="btn btn-success">Submit</button>
                     </div>
@@ -36,6 +56,8 @@
 
 @section scripts{
 
+
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/js/jquery.unobtrusive-ajax.js"></script>
 }

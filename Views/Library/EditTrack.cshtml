@@ -47,6 +47,16 @@
                         <textarea id="textareaDescription" asp-for="Description" class="form-control" placeholder="Update description" style="resize: none;"></textarea>
                     </div>
 
+                    <div class="form-group mt-3">
+                        <label asp-for="LyricsAccess"></label>
+                        <select asp-for="LyricsAccess" class="form-control">
+                        @foreach (var item in LibraryAccess.Access)
+                        {
+                            <option>@item</option>
+                        }
+                        </select>
+                    </div>
+
                     <div class="form-group mt-1">
                         <label asp-for="Lyrics"></label>
                         <textarea id="textareaLyrics" asp-for="Lyrics" class="form-control" placeholder="Update lyrics" style="resize: none;"></textarea>
@@ -55,7 +65,7 @@
                     <div class="form-group mt-3">
                         <label asp-for="TrackAccess"></label>
                         <select asp-for="TrackAccess" class="form-control">
-                        @foreach (var item in TrackAccess.Access)
+                        @foreach (var item in LibraryAccess.Access)
                         {
                             <option>@item</option>
                         }

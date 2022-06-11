@@ -30,9 +30,9 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label>Access</label>
+                            <label asp-for="TrackAccess"></label>
                             <select asp-for="TrackAccess" class="form-control">
-                                @foreach (var item in TrackAccess.Access)
+                                @foreach (var item in LibraryAccess.Access)
                                 {
                                     <option>@item</option>
                                 }

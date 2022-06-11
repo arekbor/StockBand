@@ -174,18 +174,14 @@ namespace StockBand.Services
             await _userLogService.AddToLogsAsync(LogMessage.Code24(album.Title), _userContextService.GetUserId());
             return true;
         }
-
-        public async Task<IEnumerable<Album>> GetSpecificQuantityOfAlbums(int userId, int quantity)
+        public IQueryable<Album> GetAllAlbums()
         {
-            var randomAlbums = await _dbContext
+            var albums = _dbContext
                 .AlbumDbContext
-                .Where(x => x.UserId == userId)
-                .Skip(new Random().Next(0, await GetCountOfAlbumsByUserId(userId)))
-                .Take(quantity)
-                .ToListAsync();
-            if (randomAlbums is null)
+                .AsQueryable();
+            if (albums is null)
                 return null;
-            return randomAlbums;
+            return albums;
         }
     }
 }

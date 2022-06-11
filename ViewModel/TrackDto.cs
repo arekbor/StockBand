@@ -11,11 +11,10 @@ namespace StockBand.ViewModel
         public string Extension { get; set; }
         public DateTime DateTimeCreate { get; set; }
         public string TrackAccess { get; set; }
+        public string LyricsAccess { get; set; }
         public virtual User User { get; set; }
         public double Size { get; set; }
         public int UserId { get; set; }
         public Guid AlbumGuid { get; set; }
-        public IEnumerable<TrackDto> SpecificQuantityOfTracksDto { get; set; }
-        public IEnumerable<AlbumDto> SpecificQuantityOfAlbumsDto { get; set; }
     }
 }

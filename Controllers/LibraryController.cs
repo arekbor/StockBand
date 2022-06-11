@@ -113,6 +113,23 @@ namespace StockBand.Controllers
             var paginatedList = await PaginetedList<Track>.CreateAsync(tracks.AsNoTracking(), pageNumber);
             return View(paginatedList);
         }
+        [Authorize(Policy = "AdminRolePolicy")]
+        [HttpGet]
+        public async Task<IActionResult> AllAlbums(int pageNumber = 1, string search = "")
+        {
+            var albums = _albumService
+                .GetAllAlbums()
+                .Include(x => x.User)
+                .Where(x => x.Guid.ToString().Contains(search)
+                || x.Title.Contains(search)
+                || x.User.Name.Contains(search))
+                .OrderByDescending(x => x.DateTimeCreate);
+
+            if (!albums.Any())
+                return View();
+            var paginatedList = await PaginetedList<Album>.CreateAsync(albums.AsNoTracking(), pageNumber);
+            return View(paginatedList);
+        }
 
         [HttpGet]
         [Route("library/edittrack/{guid:Guid}")]
@@ -225,7 +242,7 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("badrequestpage", "exceptions");
             }
-            if (!_trackService.VerifyAccessTrack(track))
+            if (!_trackService.VerifyAccess(track.TrackAccess, track.UserId))
             {
                 return RedirectToAction("forbidden", "exceptions");
             }
@@ -235,19 +252,12 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var trackDto = _mapper.Map<TrackDto>(track);
-
-            var maxCountOfResults = int.Parse(_configuration["MaxCountOfSpecificResult"]);
-            trackDto.SpecificQuantityOfTracksDto = 
-                _mapper.Map<IEnumerable<TrackDto>>(await _trackService.GetSpecificQuantityOfTracks(track.UserId, maxCountOfResults));
-
-            trackDto.SpecificQuantityOfAlbumsDto =
-                _mapper.Map<IEnumerable<AlbumDto>>(await _albumService.GetSpecificQuantityOfAlbums(track.UserId, maxCountOfResults));
-
             return View(trackDto);
         }
         
         [HttpGet]
         [AllowAnonymous]
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         [Route("library/stream/{guid:Guid}")]
         public async Task<IActionResult> Stream(Guid guid)
         {
@@ -256,7 +266,7 @@ namespace StockBand.Controllers
             {
                 return RedirectToAction("badrequestpage", "exceptions");
             }
-            if (!_trackService.VerifyAccessTrack(track))
+            if (!_trackService.VerifyAccess(track.TrackAccess, track.UserId))
             {
                 return RedirectToAction("forbidden", "exceptions");
             }

@@ -14,6 +14,6 @@ namespace StockBand.Interfaces
         public Task<int> GetCountOfAlbumTracks(Album album);
         public Task<bool> EditAlbum(Guid guid, EditAlbumDto editAlbum);
         public Task<bool> RemoveAlbum(Album album);
-        public Task<IEnumerable<Album>> GetSpecificQuantityOfAlbums(int userId, int quantity);
+        public IQueryable<Album> GetAllAlbums();
     }
 }

@@ -114,12 +114,18 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code27);
                 return false;
             }
+            if (!IsAccessTrackAndLyricsAreCompatible(trackDto.TrackAccess, trackDto.LyricsAccess))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code45);
+                return false;
+            }
 
             track.Title = trackDto.Title;
             track.Description = _htmlOperationService.SanitizeHtml(trackDto.Description);
             track.Lyrics = _htmlOperationService.SanitizeHtml(trackDto.Lyrics);
+
             track.TrackAccess = trackDto.TrackAccess;
-            track.Lyrics = trackDto.Lyrics;
+            track.LyricsAccess = trackDto.LyricsAccess;
 
             _applicationDbContext.TrackDbContext.Update(track);
             await _applicationDbContext.SaveChangesAsync();
@@ -146,7 +152,7 @@ namespace StockBand.Services
             var lastTrackName = await _applicationDbContext
                 .TrackDbContext
                 .Where(x => x.UserId == id)
-                .OrderByDescending(x => x.DateTimeCreate).FirstOrDefaultAsync(x => !x.TrackAccess.Equals(TrackAccess.Access[0]) 
+                .OrderByDescending(x => x.DateTimeCreate).FirstOrDefaultAsync(x => !x.TrackAccess.Equals(LibraryAccess.Access[0]) 
                 || x.UserId == _userContextService.GetUserId() || _userContextService.GetUser().IsInRole(UserRoles.Roles[1]));
 
             if (lastTrackName is null)
@@ -173,7 +179,7 @@ namespace StockBand.Services
             await _applicationDbContext.SaveChangesAsync();
             await _userLogService.AddToLogsAsync(LogMessage.Code20(track.Title), _userContextService.GetUserId());
             return true;
-        }
+        }  
         public async Task<bool> AddTrack(AddTrackDto dto)
         {
             var fileSize = Math.Round((float.Parse(dto.File.Length.ToString()) / 1048576), 2);
@@ -277,19 +283,16 @@ namespace StockBand.Services
                 return null;
             return track;
         }
-        public bool VerifyAccessTrack(Track track)
+        public bool VerifyAccess(string property, int userId)
         {
-            if (track.TrackAccess.Equals(TrackAccess.Access[2]))
+            if (property.Equals(LibraryAccess.Access[2]))
                 return true;
             if (_userContextService.GetUser().Identity.IsAuthenticated)
             {
-                if (track.TrackAccess.Equals(TrackAccess.Access[1]))
+                if (property.Equals(LibraryAccess.Access[1]))
                     return true;
-                if (track.TrackAccess.Equals(TrackAccess.Access[0]))
-                {
-                    if (_userService.IsAuthorOrAdmin(track.UserId))
-                        return true;
-                }
+                if (property.Equals(LibraryAccess.Access[0]) && _userService.IsAuthorOrAdmin(userId))
+                    return true;
             }
             return false;
         }
@@ -320,17 +323,21 @@ namespace StockBand.Services
                 return null;
             return track;
         }
-        public async Task<IEnumerable<Track>> GetSpecificQuantityOfTracks(int userId, int quantity)
+        public bool IsAccessTrackAndLyricsAreCompatible(string trackAccess, string lyricsAccess)
         {
-            var randomTracks = await _applicationDbContext
-                .TrackDbContext
-                .Where(x => x.UserId == userId)
-                .Skip(new Random().Next(0, await GetTracksCountByUserId(userId)))
-                .Take(quantity)
-                .ToListAsync();
-            if (randomTracks is null)
-                return null;
-            return randomTracks;
+            if (trackAccess.Equals(LibraryAccess.Access[2]))
+                return true;
+            if (trackAccess.Equals(LibraryAccess.Access[1]))
+            {
+                if (lyricsAccess.Equals(LibraryAccess.Access[1]) || lyricsAccess.Equals(LibraryAccess.Access[0]))
+                    return true;
+            }
+            if (trackAccess.Equals(LibraryAccess.Access[0]))
+            { 
+                if (lyricsAccess.Equals(LibraryAccess.Access[0]))
+                    return true;
+            }
+            return false;
         }
     }
 }

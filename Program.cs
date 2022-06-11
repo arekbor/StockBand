@@ -1,3 +1,4 @@
+using DNTCaptcha.Core;
 using Ganss.XSS;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -28,6 +29,15 @@ builder.Services.AddAuthentication(ConfigurationHelper.config.GetSection("Cookie
     option.AccessDeniedPath = "/exceptions/forbidden";
     option.ReturnUrlParameter = "returnpage";
 });
+builder.Services.AddDNTCaptcha(options =>
+{
+    options.UseCookieStorageProvider(SameSiteMode.Strict)
+        .AbsoluteExpiration(minutes: 5)
+        .ShowThousandsSeparators(false)
+        .WithNoise(pixelsDensity: 25, linesCount: 3)
+        .WithEncryptionKey("JZ]{nZ%%3<(Y4AsA");
+});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminRolePolicy", policy =>

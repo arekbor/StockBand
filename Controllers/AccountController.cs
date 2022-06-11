@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using DNTCaptcha.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using StockBand.Data;
 using StockBand.Interfaces;
 using StockBand.Models;
@@ -20,9 +22,10 @@ namespace Stock_Band.Controllers
         private readonly IMapper _mapper;
         private readonly ITrackService _trackService;
         private readonly IUserContextService _userContextService;
-        private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly IAlbumService _albumService;
-        public AccountController(IUserContextService userContextService,IAlbumService albumService, IHttpContextAccessor httpContextAccessor, ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
+        private readonly IDNTCaptchaValidatorService _dNTCaptchaValidator;
+        private readonly DNTCaptchaOptions _dNTCaptchaOptions;
+        public AccountController(IUserContextService userContextService, IOptions<DNTCaptchaOptions> options, IDNTCaptchaValidatorService dNTCaptchaValidator, IAlbumService albumService, ITrackService trackService,IMapper mapper, ILinkService LinkService,IConfiguration configuration, IUserService userService, IUserLogService userLogService)
         {
             _userService = userService;
             _userLogService = userLogService;
@@ -31,8 +34,9 @@ namespace Stock_Band.Controllers
             _mapper = mapper;
             _trackService = trackService;
             _userContextService = userContextService;
-            _HttpContextAccessor = httpContextAccessor;
             _albumService = albumService;
+            _dNTCaptchaValidator = dNTCaptchaValidator;
+            _dNTCaptchaOptions = options == null ? throw new ArgumentNullException(nameof(options)) : options.Value;
         }
 
         [HttpGet]
@@ -240,6 +244,11 @@ namespace Stock_Band.Controllers
         {
             if (!ModelState.IsValid)
                 return View(dto);
+            if(!_dNTCaptchaValidator.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
+            {
+                this.ModelState.AddModelError(_dNTCaptchaOptions.CaptchaComponent.CaptchaInputName, Message.Code46);
+                return View(dto);
+            }
             var status = await _userService.CreateUser(guid, dto);
             if (status)
                 return RedirectToAction("login", "account");

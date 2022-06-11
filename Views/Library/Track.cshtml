@@ -1,5 +1,6 @@
 ﻿@model TrackDto
 @inject IUserService _userService;
+@inject ITrackService _trackService;
 @{
     ViewData["Title"] = @Model.Title;
     if (User.Identity.IsAuthenticated)
@@ -12,6 +13,8 @@
     }
     var urlStream = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("stream","library",new {guid=Model.Guid})}";
     var urlTrack = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("track","library",new {guid=Model.Guid})}";
+
+    
 }
 @if (User.Identity.IsAuthenticated)
 {
@@ -52,7 +55,8 @@
                     <div class="mt-4">Guid: @Model.Guid</div>
                     <div>Author: <a asp-action="profile" asp-controller="account" asp-route-name="@Model.User.Name" style="color:@Model.User.Color; text-decoration:none;">@Model.User.Name</a></div>
                     <div>Posted: @Model.DateTimeCreate.ToString("f")</div>
-                    <div>Access: @Model.TrackAccess</div>
+                    <div>Access track: @Model.TrackAccess</div>
+                    <div>Access lyrics: @Model.LyricsAccess</div>
                     <div>Size: @Model.Size MB</div>
                     <div>Type: @Model.Extension</div>
                 </div>
@@ -60,9 +64,8 @@
         </div>
     </div> 
 }
-
 <div class="row">
-    <div class="col-md-8 col-12">
+    <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <div class="row">
@@ -91,58 +94,26 @@
                             <source src="@urlStream" type="audio/mpeg">
                         </audio>
                     </div>
-                    <div class="col-12 mt-2 d-flex justify-content-center" style="border-top: 1px solid gray; padding-top:10px;">
-                        <div class="text-start p-3 lyrics-shadows">
-                            @if (User.Identity.IsAuthenticated && !string.IsNullOrEmpty(Model.Lyrics))
+                    <div class="col-12 mt-2 d-flex justify-content-center" style="border-top: 1px solid gray; padding-top:50px;">
+                        @if (_trackService.VerifyAccess(Model.LyricsAccess, Model.UserId))
+                        {
+                            if (!string.IsNullOrEmpty(Model.Lyrics))
                             {
-                                @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Lyrics))
+                                <div class="text-start p-5 lyrics-shadows" style="font-size:18px; letter-spacing:1px;">
+                                    @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Lyrics))
+                                </div>
                             }
                             else
                             {
                                 <div class="text-danger text-center">No lyrics</div>
                             } 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-12 mt-md-0 mt-2">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-12">
-                        @Message.Code45
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-                        <ul class="list-group list-group-flush">
-                            @foreach (var item in Model.SpecificQuantityOfTracksDto)
-                            {
-                                <li class="list-group-item">
-                                    <a asp-action="track" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration:none;"><i class="bi bi-file-earmark-music"></i> @item.Title</a>
-                                </li>
-                            }
-                        </ul>
-                        <div style="border-top: 1px solid gray;"></div>
-                        <ul class="list-group list-group-flush">
-                            @foreach (var item in Model.SpecificQuantityOfAlbumsDto)
-                            {
-                                <li class="list-group-item">
-                                    <a asp-action="album" asp-controller="library" asp-route-guid="@item.Guid" style="text-decoration:none;"><i class="bi bi-folder"></i> @item.Title</a>
-                                </li>
-                            }
-                        </ul>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 @section Scripts{
 <script src="~/js/copyTextFunction.js"></script>

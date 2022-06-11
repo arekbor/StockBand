@@ -1,6 +1,6 @@
 ﻿namespace StockBand.Data
 {
-    public static class TrackAccess
+    public static class LibraryAccess
     {
         public static string[] Access =
         {

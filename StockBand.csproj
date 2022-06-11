@@ -5,9 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>StockBand</RootNamespace>
     <Nullable>disable</Nullable>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <Copyright>a_r_e_k97</Copyright>
+    <PackageIcon></PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="DNTCaptcha.Core" Version="4.3.3" />
     <PackageReference Include="HtmlSanitizer" Version="7.1.512" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />

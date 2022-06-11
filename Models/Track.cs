@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StockBand.Models
 {
@@ -12,7 +11,8 @@ namespace StockBand.Models
         public string Lyrics { get; set; }
         public string Extension { get; set; }
         public DateTime DateTimeCreate { get; set; }
-        public string TrackAccess { get; set; } = Data.TrackAccess.Access[1];
+        public string TrackAccess { get; set; } = Data.LibraryAccess.Access[1];
+        public string LyricsAccess { get; set; } = Data.LibraryAccess.Access[1];
         public double Size { get; set; }
         public int UserId { get; set; }
         public virtual User User { get; set; }

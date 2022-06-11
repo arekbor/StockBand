@@ -11,6 +11,7 @@ namespace StockBand.ViewModel
         [MaxLength(250)]
         public string Description { get; set; }
         [Required]
+        [Display(Name = "Access track")]
         public string TrackAccess { get; set; }
         [Required]
         public IFormFile File { get; set; }

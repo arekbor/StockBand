@@ -138,6 +138,8 @@
         {
             foreach (var item in Model.Library)
             {
+                if (Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) && !_trackService.VerifyAccess(item.TrackAccess, item.UserId))
+                    continue;
                 <div class="col-md-2 col-6 p-3 icon-item">
                     <div class="row">
                         <div class="col-12 text-center">
@@ -147,7 +149,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> 
             }
         }
     </div>

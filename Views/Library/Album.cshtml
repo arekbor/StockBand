@@ -1,5 +1,6 @@
 ﻿@model AlbumDto
 @inject IUserService _userService;
+@inject ITrackService _trackService;
 @{
     ViewData["Title"] = @Model.Title;
 }
@@ -52,6 +53,8 @@
         <div class="row">
         @foreach (var item in Model.Tracks)
         {
+            if (!_trackService.VerifyAccess(item.TrackAccess, item.UserId))
+                continue;
             <div class="col-md-2 col-6 p-3 icon-item">
                 <div class="row">
                     <div class="col-12 text-center">

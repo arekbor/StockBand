@@ -9,7 +9,7 @@ namespace StockBand.Interfaces
         public IQueryable<Track> GetAllUserTracks(int id);
         public Task<Track> GetOnlyTrack(Guid guid);
         public Task<Track> GetWholeTrack(Guid guid);
-        public bool VerifyAccessTrack(Track track);
+        public bool VerifyAccess(string property, int userId);
         public Task<Guid> GetGuidTrackByTitle(string title);
         public Task<int> GetTracksCountByUserId(int id);
         public Task<string> GetLastUploadTrackNameByUserId(int id);
@@ -20,6 +20,6 @@ namespace StockBand.Interfaces
         public bool IsTrackExtWav(Track track);
         public Task<bool> WavToMp3(Track track);
         public bool IsTrackFileExists(Track track);
-        public Task<IEnumerable<Track>> GetSpecificQuantityOfTracks(int userId, int quantity);
+        public bool IsAccessTrackAndLyricsAreCompatible(string trackAccess, string lyricsAccess);
     }
 }
