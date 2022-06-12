@@ -59,7 +59,8 @@
         public const string Code44 = "Cannot delete album. Album is not empty";
         public const string Code45 = "Accesses are incompatibility";
         public const string Code46 = "Please enter valid captcha";
-        public const string Code47 = "Please enter the security code as a number";
-        public const string Code48 = "Security code as a number";
+        public const string Code47 = "Please enter the security code";
+        public const string Code48 = "Security code";
+        public const string Code49 = "An error occurred while converting the image";
     }
 }

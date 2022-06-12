@@ -95,7 +95,7 @@
         <span><i class="bi bi-calendar-week-fill"></i> Joined: @Model.CreatedTime.ToString("d")</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
-        <span><i class="bi bi-hdd-rack-fill"></i> @Math.Round(Model.TotalSizeOfTracks,2) MB free of @float.Parse(_configuration["SizeTracksLimit"]) MB</span>
+        <span><i class="bi bi-hdd-rack-fill"></i> @Math.Round(Model.TotalSizeOfTracks,2) MB used of @float.Parse(_configuration["SizeTracksLimit"]) MB</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
         <a asp-action="track" asp-controller="library" asp-route-guid="@_trackService.GetGuidTrackByTitle(Model.LastUpload).GetAwaiter().GetResult().ToString()" style="text-decoration: none;">

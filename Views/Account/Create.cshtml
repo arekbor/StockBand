@@ -26,10 +26,10 @@
                         <input asp-for="ConfirmPassword" type="password" class="form-control">
                     </div>
                     <div class="form-group mt-3">
-                        <dnt-captcha asp-captcha-generator-max="30"
-			                 asp-captcha-generator-min="1"
+                        <dnt-captcha asp-captcha-generator-max="999999"
+			                 asp-captcha-generator-min="111111"
 			                 asp-captcha-generator-language="English"
-			                 asp-captcha-generator-display-mode="NumberToWord"
+			                 asp-captcha-generator-display-mode="ShowDigits"
 			                 asp-use-relative-urls="true"
 			                 asp-placeholder="@Message.Code48"
 			                 asp-validation-error-message="@Message.Code47"
@@ -43,6 +43,7 @@
 			                 asp-refresh-button-class="bi-arrow-counterclockwise btn-lg"
 			                 asp-show-refresh-button="true"
 			                 asp-dir="ltr"
+                             asp-use-noise="false"
 			                 />
                     </div>
                     <div class="form-group mt-3 text-center">
@@ -55,7 +56,6 @@
 </div>
 
 @section scripts{
-
 
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

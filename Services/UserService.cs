@@ -22,7 +22,8 @@ namespace StockBand.Services
         private readonly ILinkService _linkService;
         private readonly IUserContextService _userContextService;
         private readonly IConfiguration _configuration;
-        public UserService(IConfiguration configuration, ApplicationDbContext dbContext, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
+        private readonly IImgService _imgService;
+        public UserService(IConfiguration configuration, ApplicationDbContext dbContext, IImgService imgService, IUserContextService userContextService, ILinkService linkService, IUserLogService userLogService, IPasswordHasher<User> passwordHasher, IHttpContextAccessor httpContextAccessor, IActionContextAccessor actionContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
@@ -33,6 +34,7 @@ namespace StockBand.Services
             _linkService = linkService;
             _userContextService = userContextService;
             _configuration = configuration;
+            _imgService = imgService;
         }
         public async Task<bool> LoginUserAsync(UserLoginDto userDto)
         {
@@ -384,6 +386,11 @@ namespace StockBand.Services
             using (var fileStream = new FileStream(pathToImg, FileMode.Create, FileAccess.Write))
             {
                 await userDto.Image.CopyToAsync(fileStream);
+            }
+            if(!await _imgService.CompressImg(pathToImg))
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code49);
+                return false;
             }
             _dbContext.UserDbContext.Update(user);
             await _dbContext.SaveChangesAsync();

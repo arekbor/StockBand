@@ -34,7 +34,6 @@ builder.Services.AddDNTCaptcha(options =>
     options.UseCookieStorageProvider(SameSiteMode.Strict)
         .AbsoluteExpiration(minutes: 5)
         .ShowThousandsSeparators(false)
-        .WithNoise(pixelsDensity: 25, linesCount: 3)
         .WithEncryptionKey("JZ]{nZ%%3<(Y4AsA");
 });
 
@@ -45,7 +44,6 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole(UserRoles.Roles[1]);
     });
 });
-
 
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
@@ -63,6 +61,7 @@ builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITrackService, TrackService>();
 builder.Services.AddScoped<IAlbumService, AlbumService>();
 builder.Services.AddScoped<IHtmlOperationService, HtmlOperationService>();
+builder.Services.AddScoped<IImgService, ImgService>();
 
 var app = builder.Build();
 

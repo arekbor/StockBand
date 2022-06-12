@@ -240,15 +240,11 @@ namespace Stock_Band.Controllers
         [ValidateAntiForgeryToken]
         [Route("account/create/{guid:Guid}")]
         [AllowAnonymous]
+        [ValidateDNTCaptcha(ErrorMessage = $"{Message.Code46}", CaptchaGeneratorLanguage = Language.English, CaptchaGeneratorDisplayMode = DisplayMode.ShowDigits)]
         public async Task<IActionResult> CreateAsync(Guid guid, CreateUserDto dto)
         {
             if (!ModelState.IsValid)
                 return View(dto);
-            if(!_dNTCaptchaValidator.HasRequestValidCaptchaEntry(Language.English, DisplayMode.ShowDigits))
-            {
-                this.ModelState.AddModelError(_dNTCaptchaOptions.CaptchaComponent.CaptchaInputName, Message.Code46);
-                return View(dto);
-            }
             var status = await _userService.CreateUser(guid, dto);
             if (status)
                 return RedirectToAction("login", "account");
