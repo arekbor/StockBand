@@ -23,5 +23,6 @@ namespace StockBand.Interfaces
         public Task<bool> RemoveUserImage(UserProfileImagesTypes type);
         public Task<bool> IsUserImageExists(int id, UserProfileImagesTypes type);
         public bool IsAuthorOrAdmin(int userObjectId);
+        public Task<string> GetUserNameById(int userId);
     }
 }

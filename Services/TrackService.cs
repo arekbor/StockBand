@@ -339,5 +339,20 @@ namespace StockBand.Services
             }
             return false;
         }
+        public async Task<bool> CleanUpMainFolderTracksOfUser(int userId)
+        {
+            var userName = await _userService.GetUserNameById(userId);
+            var directory = UserPath.UserTracksPath(userName);
+            if (!Directory.Exists(directory))
+                return false;
+            Directory.Delete(directory,true);
+            await _userLogService.AddToLogsAsync(LogMessage.Code25(userName), _userContextService.GetUserId());
+            return true;
+        }
+        public async Task<bool> CanCleanUpMainFolderTracksOfUser(int userId)
+        {
+            var result = (await GetTotalSizeOfTracksByUserId(userId) > 0 && await GetTracksCountByUserId(userId) <= 0);
+            return result;
+        }
     }
 }

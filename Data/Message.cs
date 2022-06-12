@@ -62,5 +62,6 @@
         public const string Code47 = "Please enter the security code";
         public const string Code48 = "Security code";
         public const string Code49 = "An error occurred while converting the image";
+        public const string Code50 = "Cannot clear this folder";
     }
 }

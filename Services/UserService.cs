@@ -473,5 +473,14 @@ namespace StockBand.Services
                 return true;
             return false;
         }
+        public async Task<string> GetUserNameById(int userId)
+        {
+            var user = await _dbContext
+                .UserDbContext
+                .FirstOrDefaultAsync(x => x.Id == userId);
+            if(user is null)
+                return string.Empty;
+            return user.Name;
+        }
     }
 }
