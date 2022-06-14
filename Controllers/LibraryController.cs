@@ -285,21 +285,5 @@ namespace StockBand.Controllers
             return File(memory, "audio/mpeg", $"{track.Title}.{track.Extension}", true);
 
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy = "AdminRolePolicy")]
-        [Route("library/clearfolder/{userid:int}")]
-        public async Task<IActionResult> CleanUpMainFolderTracksOfUser(int userid)
-        {
-            if (!await _trackService.CanCleanUpMainFolderTracksOfUser(userid))
-            {
-                TempData["Message"] = Message.Code50;
-                return RedirectToAction("customexception", "exceptions");
-            }
-            if(await _trackService.CleanUpMainFolderTracksOfUser(userid))
-                return RedirectToAction("userspanel", "admin");
-            return RedirectToAction("badrequestpage", "exceptions");
-        }
     }
 }

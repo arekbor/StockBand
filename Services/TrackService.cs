@@ -339,20 +339,29 @@ namespace StockBand.Services
             }
             return false;
         }
-        public async Task<bool> CleanUpMainFolderTracksOfUser(int userId)
+        public async Task<bool> IsAnyTracksContainsInDbContext(int userId)
         {
-            var userName = await _userService.GetUserNameById(userId);
-            var directory = UserPath.UserTracksPath(userName);
-            if (!Directory.Exists(directory))
-                return false;
-            Directory.Delete(directory,true);
-            await _userLogService.AddToLogsAsync(LogMessage.Code25(userName), _userContextService.GetUserId());
-            return true;
-        }
-        public async Task<bool> CanCleanUpMainFolderTracksOfUser(int userId)
-        {
-            var result = (await GetTotalSizeOfTracksByUserId(userId) > 0 && await GetTracksCountByUserId(userId) <= 0);
-            return result;
+            var listOfFiles = new List<string>();
+            string[] files = new string[] { };
+
+            var path = UserPath.UserTracksPath(await _userService.GetUserNameById(userId));
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            files = Directory.GetFiles(path);
+
+            foreach (var file in files)
+            {
+                if (File.Exists(file))
+                    listOfFiles.Add(Path.GetFileNameWithoutExtension(file));
+            }
+
+            var tracksList = await _applicationDbContext
+                   .TrackDbContext
+                   .Where(x => x.UserId == userId)
+                   .Select(x => x.Guid)
+                   .ToListAsync();
+
+            return listOfFiles.Count() == tracksList.Count();
         }
     }
 }

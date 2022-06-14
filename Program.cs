@@ -53,7 +53,6 @@ builder.Services.Configure<KestrelServerOptions>(options =>
     
 });
 builder.Services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
-
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLogService, UserLogService>();
 builder.Services.AddScoped<ILinkService, LinkService>();
@@ -76,6 +75,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 
 }
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

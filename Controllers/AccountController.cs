@@ -194,13 +194,16 @@ namespace Stock_Band.Controllers
             if (!ModelState.IsValid)
                 return View(user);
             var status = await _userService.LoginUserAsync(user);
+
             if (status && returnpage is not null)
             {
                 if(Uri.IsWellFormedUriString(returnpage,UriKind.Relative))
                     return Redirect(returnpage);
             }
             if (status)
+            {
                 return RedirectToAction("profile", "account", new { name = user.Name });
+            }
             return View(user);
         }
         

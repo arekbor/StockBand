@@ -53,8 +53,17 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code03);
                 return false;
             }
+            if (user.Block)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code51);
+                return false;
+            }
+
             await UpdateRememberMeStatus(user.Id, userDto.RememberMe);
             await Cookie(user);
+
+            
+
             await _userLogService.AddToLogsAsync(LogMessage.Code01, user.Id);
             _actionContext.ActionContext.ModelState.Clear();
             return true;
