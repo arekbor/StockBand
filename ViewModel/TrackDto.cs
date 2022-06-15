@@ -16,5 +16,6 @@ namespace StockBand.ViewModel
         public double Size { get; set; }
         public int UserId { get; set; }
         public Guid AlbumGuid { get; set; }
+        public string AlbumName { get; set; }
     }
 }

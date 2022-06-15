@@ -15,6 +15,7 @@ namespace StockBand.ViewModel
         public string TrackAccess { get; set; }
         [Required]
         public IFormFile File { get; set; }
+        [Display(Name = "Choose album")]
         public string AlbumName { get; set; }
         [Display(Name = "Asign album")]
         public bool IsAlbumSelectedToChoose { get; set; }

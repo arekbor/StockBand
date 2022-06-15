@@ -21,6 +21,6 @@ namespace StockBand.Interfaces
         public Task<bool> WavToMp3(Track track);
         public bool IsTrackFileExists(Track track);
         public bool IsAccessTrackAndLyricsAreCompatible(string trackAccess, string lyricsAccess);
-        public Task<bool> IsAnyTracksContainsInDbContext(int userId);
+        public Task<bool> IsUserTracksContextIsCompatibile(int userId);
     }
 }

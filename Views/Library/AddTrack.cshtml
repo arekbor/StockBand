@@ -47,7 +47,7 @@
                             </div>
 
                             <div class="form-group mt-1" id="chooseAlbums">
-                                <label>Choose album</label>
+                                <label asp-for="AlbumName"></label>
                                 <select asp-for="AlbumName" class="form-control">
                                     @foreach (var item in _albumService.GetAllUserAlbums(_userContextService.GetUserId()))
                                     {

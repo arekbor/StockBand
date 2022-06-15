@@ -11,12 +11,16 @@ namespace StockBand.ViewModel
         [MaxLength(200)]
         public string Description { get; set; }
         [Required]
-        [Display(Name = "Access track")]
+        [Display(Name = "Access track")] 
         public string TrackAccess { get; set; }
         [MaxLength(1000)]
         public string Lyrics { get; set; }
         public int UserId { get; set; }
         [Display(Name = "Access lyrics")]
         public string LyricsAccess { get; set; }
+        [Display(Name = "Asign album")]
+        public bool IsAlbumSelectedToChoose { get; set; }
+        [Display(Name = "Change album")]
+        public string AlbumName { get; set; }
     }
 }

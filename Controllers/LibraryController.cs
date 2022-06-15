@@ -135,7 +135,7 @@ namespace StockBand.Controllers
         [Route("library/edittrack/{guid:Guid}")]
         public async Task<IActionResult> EditTrack(Guid guid)
         {
-            var track = await _trackService.GetOnlyTrack(guid);
+            var track = await _trackService.GetWholeTrack(guid);
             if (track is null)
                 return RedirectToAction("badrequestpage", "exceptions");
 
@@ -143,6 +143,7 @@ namespace StockBand.Controllers
                 return RedirectToAction("forbidden", "exceptions");
 
             var viewModel = _mapper.Map<EditTrackDto>(track);
+            viewModel.AlbumName = track.Album.Title;
             return View(viewModel);
         }
         
@@ -252,6 +253,8 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var trackDto = _mapper.Map<TrackDto>(track);
+            trackDto.AlbumName = track.Album.Title;
+            trackDto.AlbumGuid = track.Album.Guid;
             return View(trackDto);
         }
         

@@ -59,6 +59,10 @@
                     <div>Access lyrics: @Model.LyricsAccess</div>
                     <div>Size: @Model.Size MB</div>
                     <div>Type: @Model.Extension</div>
+                    @if (!string.IsNullOrEmpty(Model.AlbumName))
+                    {
+                        <div>Album: <a asp-action="album" asp-controller="library" asp-route-guid="@Model.AlbumGuid" style="text-decoration:none;">@Model.AlbumName</a></div>
+                    }
                 </div>
             </div>
         </div>
@@ -81,6 +85,10 @@
                                 if (_userService.IsAuthorOrAdmin(Model.UserId))
                                 {
                                     <a asp-action="edittrack" asp-controller="library" asp-route-guid="@Model.Guid" class="btn btn-warning mx-2 btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.AlbumName))
+                                {
+                                    <a asp-action="album" asp-controller="library" asp-route-guid="@Model.AlbumGuid" class="btn btn-success mx-2 btn-sm"><i class="bi bi-folder-symlink"></i> @Model.AlbumName</a>
                                 }
                             }
                         </div>

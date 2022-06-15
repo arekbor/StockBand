@@ -119,6 +119,21 @@ namespace StockBand.Services
                 _actionContext.ActionContext.ModelState.AddModelError("", Message.Code45);
                 return false;
             }
+            if (trackDto.IsAlbumSelectedToChoose)
+            {
+                var album = await _albumService.GetAlbumByUserame(trackDto.AlbumName);
+                if (album is null)
+                {
+                    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code39);
+                    return false;
+                }
+                if (await _albumService.GetCountOfAlbumTracks(album) >= int.Parse(_configuration["MaxCountOfTracksAlbum"]))
+                {
+                    _actionContext.ActionContext.ModelState.AddModelError("", Message.Code41);
+                    return false;
+                }
+                track.AlbumGuid = album.Guid;
+            }
 
             track.Title = trackDto.Title;
             track.Description = _htmlOperationService.SanitizeHtml(trackDto.Description);
@@ -339,7 +354,7 @@ namespace StockBand.Services
             }
             return false;
         }
-        public async Task<bool> IsAnyTracksContainsInDbContext(int userId)
+        public async Task<bool> IsUserTracksContextIsCompatibile(int userId)
         {
             var listOfFiles = new List<string>();
             string[] files = new string[] { };
