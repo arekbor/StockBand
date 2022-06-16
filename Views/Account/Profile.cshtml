@@ -15,8 +15,8 @@
     var urlHeader = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("streamimage","account",new {name=Model.Name, type=UserProfileImagesTypes.Header})}";
     var urlProfile = $"{Context.Request.Scheme}://{Context.Request.Host}{Url.Action("profile","account",new {name=Model.Name})}";
 
-    var albumsButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
-    var tracksButton = Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var albumsButton = Model.TypeSearch.Equals(SearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var tracksButton = Model.TypeSearch.Equals(SearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
 } 
 
 <div class="row profileHeader" style="background-image: url(@urlHeader); background-size: 100% 100%; background-repeat: no-repeat; background-position: center;">
@@ -89,17 +89,17 @@
     </div>
 
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
-        <span><i class="bi bi-file-music-fill"></i> Tracks: @Model.TotalTracks</span>
+        <span><i class="bi bi-file-music-fill"></i> @InterfaceContext.Code08(Model.TotalTracks.ToString())</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
-        <span><i class="bi bi-calendar-week-fill"></i> Joined: @Model.CreatedTime.ToString("d")</span>
+        <span><i class="bi bi-calendar-week-fill"></i> @InterfaceContext.Code09(Model.CreatedTime.ToString("d"))</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
-        <span><i class="bi bi-hdd-rack-fill"></i> @Math.Round(Model.TotalSizeOfTracks,2) MB used of @float.Parse(_configuration["SizeTracksLimit"]) MB</span>
+        <span><i class="bi bi-hdd-rack-fill"></i> @InterfaceContext.Code10(Math.Round(Model.TotalSizeOfTracks,2).ToString(), float.Parse(_configuration["SizeTracksLimit"]).ToString())</span>
     </div>
     <div class="col-12 col-md-3 mt-3 mt-md-0 text-center">
         <a asp-action="track" asp-controller="library" asp-route-guid="@_trackService.GetGuidTrackByTitle(Model.LastUpload).GetAwaiter().GetResult().ToString()" style="text-decoration: none;">
-            <i class="bi bi-cloud-plus-fill"></i> Last upload: @Model.LastUpload
+            <span><i class="bi bi-cloud-plus-fill"></i> @InterfaceContext.Code11(Model.LastUpload)</span>
         </a>
     </div>
 </div>
@@ -121,24 +121,23 @@
 <div class="row" style="border-bottom: 1px solid gray;">
     <div class="col-sm-12 col-md-6 col-lg-3">
         <div class="input-group mb-3">
-            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
-            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@ProfileSearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
+            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@SearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
+            <a asp-controller="account" asp-action="profile" asp-route-name="@Model.Name" asp-route-type="@SearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
         </div>
     </div>
 </div>
 
 @if(Model.Library is not null)
 {
-
-    var actionLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "album" : "track";
-    var iconLibrary = Model.TypeSearch.Equals(ProfileSearchTypes.Types[0]) ? "bi bi-folder" : "bi bi-file-earmark-music";
+    var actionLibrary = Model.TypeSearch.Equals(SearchTypes.Types[0]) ? "album" : "track";
+    var iconLibrary = Model.TypeSearch.Equals(SearchTypes.Types[0]) ? "bi bi-folder" : "bi bi-file-earmark-music";
     
     <div class="row">
         @if(Model.Library is not null)
         {
             foreach (var item in Model.Library)
             {
-                if (Model.TypeSearch.Equals(ProfileSearchTypes.Types[1]) && !_trackService.VerifyAccess(item.TrackAccess, item.UserId))
+                if (Model.TypeSearch.Equals(SearchTypes.Types[1]) && !_trackService.VerifyAccess(item.TrackAccess, item.UserId))
                     continue;
                 <div class="col-md-2 col-6 p-3 icon-item">
                     <div class="row">

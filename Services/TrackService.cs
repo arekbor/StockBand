@@ -378,5 +378,24 @@ namespace StockBand.Services
 
             return listOfFiles.Count() == tracksList.Count();
         }
+        public async Task<bool> RemoveTrackFromAlbum(Track track)
+        {
+            if (track is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code35);
+                return false;
+            }
+            if(track.Album is null)
+            {
+                _actionContext.ActionContext.ModelState.AddModelError("", Message.Code53);
+                return false;
+            }
+            track.AlbumGuid = null;
+            track.Album = null;
+
+            _applicationDbContext.TrackDbContext.Update(track);
+            await _applicationDbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }

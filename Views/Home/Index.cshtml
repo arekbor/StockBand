@@ -1,4 +1,123 @@
-﻿@{
+﻿@model HomeDto
+@inject ITrackService _trackService;
+@{
     ViewData["Title"] = PageTitle.PageTitle18;
     Layout = "_Layout";
+    var urlActionContext = Url.ActionContext;
+    var urlQuery = urlActionContext.HttpContext.Request;
+    var acionName = urlActionContext.RouteData.Values["action"].ToString().ToLower();
+    var controllerName = urlActionContext.RouteData.Values["controller"].ToString().ToLower();
+
+    var albumsButton = Model.TypeSearch.Equals(SearchTypes.Types[0]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var tracksButton = Model.TypeSearch.Equals(SearchTypes.Types[1]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
+    var profilesButton = Model.TypeSearch.Equals(SearchTypes.Types[2]) ? "btn btn-outline-info btn-sm mx-1 disabled" : "btn btn-outline-info btn-sm mx-1";
 }
+
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-3">
+        <form method="get" asp-controller="@controllerName" asp-action="@acionName" autocomplete="off">
+            <div class="input-group mb-3">
+                <input id="search" type="text" name="search" class="form-control" placeholder="search">
+                <div class="input-group-prepend">
+                    <button id="searchSubmit" class="btn btn-success" type="submit">Search</button>
+                    <a asp-controller="@controllerName" asp-action="@acionName" class="btn btn-warning" role="button">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row" style="border-bottom: 1px solid gray;">
+    <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="input-group mb-3">
+            <a asp-controller="home" asp-action="index" asp-route-type="@SearchTypes.Types[0]" class="@albumsButton" role="button">Albums</a>
+            <a asp-controller="home" asp-action="index" asp-route-type="@SearchTypes.Types[1]" class="@tracksButton" role="button">Tracks</a>
+            <a asp-controller="home" asp-action="index" asp-route-type="@SearchTypes.Types[2]" class="@profilesButton" role="button">Profiles</a>
+        </div>
+    </div>
+</div>
+
+@if(Model.Library is not null)
+{
+    //var actionLibrary = Model.TypeSearch.Equals(SearchTypes.Types[0]) ? "album" : "track";
+    string actionLibrary = String.Empty;
+    string controllerLibrary = String.Empty;
+    string iconLibrary = String.Empty;
+    string routeLibrary = String.Empty;
+    if (Model.TypeSearch.Equals(SearchTypes.Types[0]))
+    {
+        actionLibrary = "album";
+        controllerLibrary = "library";
+        iconLibrary = "bi bi-folder";
+        routeLibrary = "guid";
+    }
+    
+    else if (Model.TypeSearch.Equals(SearchTypes.Types[1]))
+    {
+        actionLibrary = "track";
+        controllerLibrary = "library";
+        iconLibrary = "bi bi-file-earmark-music";
+        routeLibrary = "guid";
+    }
+    
+    else if (Model.TypeSearch.Equals(SearchTypes.Types[2]))
+    {
+        actionLibrary = "profile";
+        controllerLibrary = "account";
+        iconLibrary = "bi bi-person-circle";
+        routeLibrary = "name";
+    }
+    <div class="row">
+        @if(Model.Library is not null)
+        {
+            foreach (var item in Model.Library)
+            {
+                if (Model.TypeSearch.Equals(SearchTypes.Types[1]) && !_trackService.VerifyAccess(item.TrackAccess, item.UserId))
+                    continue;
+                <div class="col-md-2 col-6 p-3 icon-item">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            @{
+                                string identify = Model.TypeSearch.Equals(SearchTypes.Types[2]) ? item.Name : item.Guid.ToString();
+                                var values = new Dictionary<string, string> { { routeLibrary, identify }};
+                    }
+                            <a asp-action="@actionLibrary" asp-controller="@controllerLibrary" asp-all-route-data="@values" style="text-decoration: none;">
+                                <h1><i class="@iconLibrary"></i></h1>
+                                @if(Model.TypeSearch.Equals(SearchTypes.Types[2]))
+                                {
+                                    <span class="mt-0 align-text-top">@item.Name</span>
+                                }
+                                else
+                                {
+                                    <span class="mt-0 align-text-top">@item.Title</span>
+                                }
+                            </a>
+                        </div>
+                    </div>
+                </div> 
+            }
+        }
+    </div>
+    <div class="row pagginationDiv">
+        <div class="col-12 text-nowrap">
+            <small>@Model.Library.Count of @Model.Library.TotalCount</small>
+            <nav class="nav justify-content-center border-top border-white">
+                <ul class="pagination mt-2">
+                    <li class="page-item @Model.Library.PreviousDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Library.PageIndex-1)">Previous</a></li>
+                    @foreach (var item in Model.Library.Pages(1))
+                    {
+                        <li class="page-item @Model.Library.ActivePage(item)"><a class="page-link " asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@item">@item</a></li>
+                    }
+                    <li class="page-item @Model.Library.NextDisabled()"><a class="page-link" asp-controller="@controllerName" asp-action="@acionName" asp-route-search="@urlQuery.Query["search"]" asp-route-pageNumber="@(Model.Library.PageIndex+1)">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+}
+else
+{
+    <partial name="_NoResultPartial"/>
+}
+
+
+

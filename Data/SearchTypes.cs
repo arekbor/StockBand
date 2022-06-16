@@ -1,11 +1,12 @@
 ﻿namespace StockBand.Data
 {
-    public static class ProfileSearchTypes
+    public static class SearchTypes
     {
         public static string[] Types =
         {
             "albums",
-            "tracks"
+            "tracks",
+            "profiles"
         };
     }
 }

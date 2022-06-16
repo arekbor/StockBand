@@ -142,7 +142,7 @@ namespace Stock_Band.Controllers
         public async Task<IActionResult> Profile(string name, string type, int pageNumber = 1, string search = "")
         {
             if (type is null)
-                type = ProfileSearchTypes.Types[0];
+                type = SearchTypes.Types[0];
 
             var user = await _userService.GetUserByName(name);
             if (user is null)
@@ -156,24 +156,24 @@ namespace Stock_Band.Controllers
             userDto.LastUpload = await _trackService.GetLastUploadTrackNameByUserId(user.Id);
             userDto.TotalSizeOfTracks = await _trackService.GetTotalSizeOfTracksByUserId(user.Id);
 
-            if (type.Equals(ProfileSearchTypes.Types[0]))
+            if (type.Equals(SearchTypes.Types[0]))
             {
                 var albums = _albumService
                 .GetAllUserAlbums(user.Id)
                 .Where(x => x.Title.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
-                userDto.TypeSearch = ProfileSearchTypes.Types[0];
+                userDto.TypeSearch = SearchTypes.Types[0];
                 if (!albums.Any())
                     return View(userDto);
                 userDto.Library = await PaginetedList<dynamic>.CreateAsync(albums.AsNoTracking(), pageNumber);
             }
-            else if (type.Equals(ProfileSearchTypes.Types[1]))
+            else if (type.Equals(SearchTypes.Types[1]))
             {
                 var tracks = _trackService
                 .GetAllUserTracks(user.Id)
                 .Where(x => x.Title.Contains(search))
                 .OrderByDescending(x => x.DateTimeCreate);
-                userDto.TypeSearch = ProfileSearchTypes.Types[1];
+                userDto.TypeSearch = SearchTypes.Types[1];
                 if (!tracks.Any())
                     return View(userDto);
                 userDto.Library = await PaginetedList<dynamic>.CreateAsync(tracks.AsNoTracking(), pageNumber);

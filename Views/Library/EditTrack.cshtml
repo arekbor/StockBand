@@ -29,6 +29,29 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="removeFromAlbumModal" tabindex="-1" role="dialog" aria-labelledby="removeFromAlbumModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="removeFromAlbumModalLabel">Remove from album</h5>
+                    <button type="button" class="close close-btn" data-bs-dismiss="modal" aria-label="Close"><span class="" aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span>@Message.Code52(Model.Title)</span>
+                    </div>
+                    <form method="post" asp-controller="library" asp-action="removefromalbum" asp-route-guidTrack="@Model.Guid">
+                        <div class="form-group mt-3 text-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-center">
         <div class="card formBox">
             <div class="card-header">

@@ -18,15 +18,13 @@ namespace StockBand.Controllers
         private readonly IUserContextService _userContextService;
         private readonly IAlbumService _albumService;
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
-        public LibraryController(ITrackService trackService, IConfiguration configuration, IUserService userService, IAlbumService albumService, IUserContextService userContextService, IMapper mapper)
+        public LibraryController(ITrackService trackService, IUserService userService, IAlbumService albumService, IUserContextService userContextService, IMapper mapper)
         {
             _trackService = trackService;
             _mapper = mapper;
             _userContextService = userContextService;
             _albumService = albumService;
             _userService = userService;
-            _configuration = configuration;
         }
         [HttpGet]
         [Route("library/editalbum/{guid:Guid}")]
@@ -143,7 +141,10 @@ namespace StockBand.Controllers
                 return RedirectToAction("forbidden", "exceptions");
 
             var viewModel = _mapper.Map<EditTrackDto>(track);
-            viewModel.AlbumName = track.Album.Title;
+            if(track.Album is not null)
+            {
+                viewModel.AlbumName = track.Album.Title;
+            }
             return View(viewModel);
         }
         
@@ -253,8 +254,11 @@ namespace StockBand.Controllers
                 return RedirectToAction("customexception", "exceptions");
             }
             var trackDto = _mapper.Map<TrackDto>(track);
-            trackDto.AlbumName = track.Album.Title;
-            trackDto.AlbumGuid = track.Album.Guid;
+            if(track.Album is not null)
+            {
+                trackDto.AlbumName = track.Album.Title;
+                trackDto.AlbumGuid = track.Album.Guid;
+            }
             return View(trackDto);
         }
         
@@ -287,6 +291,21 @@ namespace StockBand.Controllers
             memory.Position = 0;
             return File(memory, "audio/mpeg", $"{track.Title}.{track.Extension}", true);
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("library/removefromalbum/{guidTrack:Guid}")]
+        public async Task<IActionResult> RemoveFromAlbum(Guid guidTrack)
+        {
+            var track = await _trackService.GetWholeTrack(guidTrack);
+            if (track is null)
+            {
+                return RedirectToAction("badrequestpage", "exceptions");
+            }
+            if(await _trackService.RemoveTrackFromAlbum(track))
+                return RedirectToAction("track", "library", new { guid = guidTrack });
+            return View(_mapper.Map<EditTrackDto>(track));
         }
     }
 }

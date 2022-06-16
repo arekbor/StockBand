@@ -64,5 +64,7 @@
         public const string Code49 = "An error occurred while converting the image";
         public const string Code50 = "Cannot clear this folder";
         public const string Code51 = "Your account is blocked";
+        public static Func<string, string> Code52 = x => $"Are you sure you want to remove '{x}' from this album?";
+        public const string Code53 = "This track does not belong to any album";
     }
 }

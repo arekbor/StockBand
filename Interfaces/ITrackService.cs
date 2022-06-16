@@ -22,5 +22,6 @@ namespace StockBand.Interfaces
         public bool IsTrackFileExists(Track track);
         public bool IsAccessTrackAndLyricsAreCompatible(string trackAccess, string lyricsAccess);
         public Task<bool> IsUserTracksContextIsCompatibile(int userId);
+        public Task<bool> RemoveTrackFromAlbum(Track track);
     }
 }

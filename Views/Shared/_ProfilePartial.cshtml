@@ -1,19 +1,23 @@
-﻿<li class="nav-item dropdown">
+﻿@{
+    var userName = User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
+}
+
+<li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" style="color:@User.FindFirst(x => x.Type == "Color").Value" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         @User.Identity.Name
     </a>
     <ul class="dropdown-menu dropdownCustom" aria-labelledby="dropdownMenuUserPanel">
         <li>
-            <a class="dropdown-item" asp-controller="account" asp-action="profile" asp-route-name="@User.FindFirst(x => x.Type == ClaimTypes.Name).Value">Profile</a>
+            <a class="dropdown-item" asp-controller="account" asp-action="profile" asp-route-name="@userName">@InterfaceContext.Code01</a>
         </li>
         <li>
-            <a class="dropdown-item" asp-controller="account" asp-action="userlog">Logs</a>
+            <a class="dropdown-item" asp-controller="account" asp-action="userlog">@InterfaceContext.Code02</a>
         </li>
         <li>
-            <a class="dropdown-item" asp-controller="account" asp-action="usersettings">Settings</a>
+            <a class="dropdown-item" asp-controller="account" asp-action="usersettings">@InterfaceContext.Code03</a>
         </li>
 		<li>
-            <a class="dropdown-item" asp-controller="account" asp-action="logout">Logout</a>
+            <a class="dropdown-item" asp-controller="account" asp-action="logout">@InterfaceContext.Code04(userName)</a>
         </li>
     </ul>
 </li>
